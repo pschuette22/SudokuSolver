@@ -27,6 +27,9 @@ class Board {
     
     var solvedCells = 0
     
+    var possibilityChangedMade = 0
+    
+    
     init(values: [[Int]]) {
         
         
@@ -163,6 +166,19 @@ class Board {
             
             // If there are no directly solvable cells, but not all cells are solved look for in-group eliminations
             if solvedCells < 81 {
+                
+                possibilityChangedMade = 0
+                // Check to see if any values are the last possibility
+                for group in groups {
+                    group.lastPossibilityElimination()
+                }
+                
+                // If solvable cells were found, continue
+                if !solveable.isEmpty {
+                    continue
+                }
+                
+                
                 for group in groups {
                     
                     // Try to do grouping elimination. Break out when cells have become solvable
@@ -172,6 +188,28 @@ class Board {
                     
                 }
                 
+                // If solvable cells were found, continue
+                if !solveable.isEmpty {
+                    continue
+                }
+                
+                // Do double grouping elimination
+
+                for i in 0..<9 {
+                    
+                    let square = (squares[i/3])[i%3]
+                    if square.didDoubleGroupingElimination() && !solveable.isEmpty {
+                        break
+                    }
+                }
+                
+                // Do x wing elimination
+                
+                
+                if possibilityChangedMade == 0 && solveable.isEmpty {
+                    debugPrint("Unable to solve puzzle")
+                    break
+                }
                 
             } else {
                 isSolved = true

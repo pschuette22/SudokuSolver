@@ -55,10 +55,6 @@ class Cell: Equatable {
     var groups: [Group] = []
     
     
-    // Multiplication of all possibility prime key valyes
-    // 223092870 is product of [1-9] prime keys multiplied together
-    var primeKeyProduct: UInt = 223092870
-    
     /**
      Initialize a cell with optional value
     */
@@ -74,9 +70,8 @@ class Cell: Equatable {
     func removePossible(value: UInt) {
         if let index = possibleValues.index(of: value) {
             possibleValues.remove(at: index)
+            board.possibilityChangedMade+=1
         }
-        
-        primeKeyProduct = primeKeyProduct/Utils.primeKey(for: value)
         
         // If there is only one cell left, this is a solvable cell
         if possibilities == 1 {

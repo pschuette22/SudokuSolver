@@ -14,8 +14,10 @@ class Group {
 //    // Prime value sum of all solved cell values
 //    var primeSum: UInt { get set }
     
+    
     var cells: [Cell]!
-
+    
+    
     var solved = 0
 
     
@@ -34,6 +36,26 @@ class Group {
                 mCell.removePossible(value: value)
             }
         }
+    }
+    
+    
+    
+    func lastPossibilityElimination() {
+        
+        for i in 1...9 {
+            
+            let iCells = cells.filter({!$0.isSolved && $0.possibleValues.contains(UInt(i))})
+            
+            if iCells.count == 1 {
+                board.possibilityChangedMade += (iCells[0].possibleValues.count - 1)
+                iCells[0].possibleValues.removeAll()
+                iCells[0].possibleValues.append(UInt(i))
+                board.addSolvable(cell: iCells[0])
+                
+            }
+            
+        }
+        
     }
     
     
@@ -126,8 +148,6 @@ class Group {
             }
             
         }
-        
-        
         
         return result
     }
