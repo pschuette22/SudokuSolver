@@ -169,46 +169,46 @@ var solveTime:TimeInterval
 //board.print()
 //
 
-//values.removeAll()
-//debugPrint("unsolvable Expert puzzle")
-//values.append([0,0,8,0,0,0,5,0,0])
-//values.append([0,7,0,4,0,6,0,8,0])
-//values.append([3,0,0,0,0,0,0,0,6])
-//values.append([0,0,4,8,0,2,7,0,0])
-//values.append([5,0,0,0,0,0,0,0,3])
-//values.append([0,0,1,5,0,4,2,0,0])
-//values.append([1,0,0,0,0,0,0,0,5])
-//values.append([0,5,0,3,0,9,0,2,0])
-//values.append([0,0,6,0,0,0,9,0,0])
-//
-//
-//board = Board(values: values)
-//
-//debugPrint("Presolved board")
-//board.print()
-//
-//start = Date()
-//// Solve the puzzle
-//board.solve()
-//end = Date()
-//
-//solveTime = end.timeIntervalSince(start)
-//debugPrint("Solved in \(solveTime) millis")
-//
-//// print the result
-//board.print()
+values.removeAll()
+debugPrint("unsolvable Expert puzzle")
+values.append([0,0,8,0,0,0,5,0,0])
+values.append([0,7,0,4,0,6,0,8,0])
+values.append([3,0,0,0,0,0,0,0,6])
+values.append([0,0,4,8,0,2,7,0,0])
+values.append([5,0,0,0,0,0,0,0,3])
+values.append([0,0,1,5,0,4,2,0,0])
+values.append([1,0,0,0,0,0,0,0,5])
+values.append([0,5,0,3,0,9,0,2,0])
+values.append([0,0,6,0,0,0,9,0,0])
+
+
+board = Board(values: values)
+
+debugPrint("Presolved board")
+board.print()
+
+start = Date()
+// Solve the puzzle
+board.solve()
+end = Date()
+
+solveTime = end.timeIntervalSince(start)
+debugPrint("Solved in \(solveTime) millis")
+
+// print the result
+board.print()
 
 values.removeAll()
 debugPrint("Expert puzzle")
-values.append([5,2,0,0,3,0,0,0,0])
-values.append([0,0,0,0,8,0,0,2,0])
-values.append([6,0,8,0,0,0,1,0,0])
-values.append([0,0,0,6,0,0,0,4,0])
-values.append([9,0,0,5,0,8,0,0,2])
-values.append([0,1,0,0,0,7,0,0,0])
-values.append([0,0,9,0,0,0,8,0,3])
-values.append([0,7,0,0,6,0,0,0,0])
-values.append([0,0,0,0,4,0,0,5,6])
+values.append([0,0,3,0,8,1,0,0,9])
+values.append([2,0,0,0,0,0,0,0,8])
+values.append([1,9,0,0,5,0,0,0,0])
+values.append([0,2,6,0,0,0,0,0,0])
+values.append([0,0,1,8,0,5,3,0,0])
+values.append([0,0,0,0,0,0,5,6,0])
+values.append([0,0,0,0,1,0,0,9,5])
+values.append([4,0,0,0,0,0,0,0,3])
+values.append([7,0,0,2,3,0,4,0,0])
 
 
 board = Board(values: values)
