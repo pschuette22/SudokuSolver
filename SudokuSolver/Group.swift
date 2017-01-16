@@ -117,7 +117,7 @@ class Group {
     
     
     
-    // Calculates all the permutations of a
+    // Calculates all the combinations of cells for a given count
     // Based on http://stackoverflow.com/questions/25162500/apple-swift-generate-combinations-with-repetition
     func combinations(cells: [Cell], count: Int) -> [[Cell]] {
 

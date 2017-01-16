@@ -109,6 +109,78 @@ class Board {
     }
     
     
+    func doXWingElimination() {
+        
+        for i in 1...9 {
+            
+            // Do xwing elimination for rows
+            let xwingRows = rows.filter({$0.cells.filter({$0.possibleValues.contains(UInt(i))}).count == 2})
+            // Filter rows containing two cells with possible values of i
+            if xwingRows.count >= 2 {
+                for r1 in 0..<xwingRows.count-1 {
+                    let r1Cells = xwingRows[r1].cells.filter({$0.possibleValues.contains(UInt(i))})
+                    for r2 in 1..<xwingRows.count {
+                        if r1 == r2 {
+                            continue
+                        } else {
+                            let r2Cells = xwingRows[r2].cells.filter({$0.possibleValues.contains(UInt(i))})
+                            
+                            if (r1Cells[0].x == r2Cells[0].x && r1Cells[1].x == r2Cells[1].x) || (r1Cells[0].x == r2Cells[1].x && r1Cells[1].x == r2Cells[0].x) {
+                                
+                                // Remove possibilities from first column
+                                var elimCells = columns[r1Cells[0].x].cells.filter({!r1Cells.contains($0) && !r2Cells.contains($0) && $0.possibleValues.contains(UInt(i))})
+                                for cell in elimCells {
+                                    cell.removePossible(value: UInt(i))
+                                }
+                                
+                                // Remove possibilities from second column
+                                elimCells = columns[r1Cells[1].x].cells.filter({!r1Cells.contains($0) && !r2Cells.contains($0) && $0.possibleValues.contains(UInt(i))})
+                                for cell in elimCells {
+                                    cell.removePossible(value: UInt(i))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+            // do xwing elimination for columns
+            let xwingCols = columns.filter({$0.cells.filter({$0.possibleValues.contains(UInt(i))}).count == 2})
+            // Filter columns containing two cells with possible values of i
+            if xwingCols.count >= 2 {
+                for c1 in 0..<xwingCols.count-1 {
+                    let c1Cells = xwingCols[c1].cells.filter({$0.possibleValues.contains(UInt(i))})
+                    for c2 in 1..<xwingCols.count {
+                        if c1 == c2 {
+                            continue
+                        } else {
+                            let c2Cells = xwingCols[c2].cells.filter({$0.possibleValues.contains(UInt(i))})
+                            
+                            if (c1Cells[0].y == c2Cells[0].y && c1Cells[1].y == c2Cells[1].y) || (c1Cells[0].y == c2Cells[1].y && c1Cells[1].y == c2Cells[0].y) {
+                                
+                                // Remove possibilities from first column
+                                var elimCells = rows[c1Cells[0].y].cells.filter({!c1Cells.contains($0) && !c2Cells.contains($0) && $0.possibleValues.contains(UInt(i))})
+                                for cell in elimCells {
+                                    cell.removePossible(value: UInt(i))
+                                }
+                                
+                                // Remove possibilities from second column
+                                elimCells = rows[c1Cells[1].y].cells.filter({!c1Cells.contains($0) && !c2Cells.contains($0) && $0.possibleValues.contains(UInt(i))})
+                                for cell in elimCells {
+                                    cell.removePossible(value: UInt(i))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+    }
+    
+    
     func print() {
         // Print the board
         
@@ -203,7 +275,12 @@ class Board {
                     }
                 }
                 
+                if !solveable.isEmpty {
+                    continue
+                }
+                // Last resort...
                 // Do x wing elimination
+                doXWingElimination()
                 
                 
                 if possibilityChangedMade == 0 && solveable.isEmpty {
