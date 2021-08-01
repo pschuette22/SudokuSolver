@@ -9,7 +9,6 @@ import Foundation
 
 final class Square: Group {
     let id = UUID()
-    
     var arrangedCells: [[Cell]]
     var cells: [Cell] {
         arrangedCells.flatMap { $0 }
@@ -22,14 +21,14 @@ final class Square: Group {
 }
 
 // MARK: - Square+Equatable
-extension Square {
+extension Square: Equatable {
     static func == (lhs: Square, rhs: Square) -> Bool {
         lhs.id == rhs.id
     }
 }
 
 // MARK: - Square+Hashable
-extension Square {
+extension Square: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

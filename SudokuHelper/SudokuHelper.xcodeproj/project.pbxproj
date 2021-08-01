@@ -28,6 +28,7 @@
 		D7B502A626B5043A007908DA /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502A526B5043A007908DA /* Square.swift */; };
 		D7B502AA26B51359007908DA /* PuzzleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502A926B51359007908DA /* PuzzleTests.swift */; };
 		D7B502AE26B5151E007908DA /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502AD26B5151E007908DA /* String+Extensions.swift */; };
+		D7B502B026B5B945007908DA /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502AF26B5B945007908DA /* Array+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		D7B502A526B5043A007908DA /* Square.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square.swift; sourceTree = "<group>"; };
 		D7B502A926B51359007908DA /* PuzzleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleTests.swift; sourceTree = "<group>"; };
 		D7B502AD26B5151E007908DA /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		D7B502AF26B5B945007908DA /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				D7B502AD26B5151E007908DA /* String+Extensions.swift */,
+				D7B502AF26B5B945007908DA /* Array+Extensions.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -404,6 +407,7 @@
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
 				D7B5029226B4AF4B007908DA /* AppCoordinator.swift in Sources */,
 				D7B502AE26B5151E007908DA /* String+Extensions.swift in Sources */,
+				D7B502B026B5B945007908DA /* Array+Extensions.swift in Sources */,
 				D7B502A626B5043A007908DA /* Square.swift in Sources */,
 				D7B5028526B260BA007908DA /* PuzzleViewController.swift in Sources */,
 				D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */,

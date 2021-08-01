@@ -9,29 +9,38 @@ import Foundation
 
 
 protocol Group: AnyObject, Identifiable, Hashable {
+    var id: UUID { get }
     var cells: [Cell] { get }
 }
 
-
+// MARK: - Cell value helpers
 extension Group {
     var isSolved: Bool {
-        cells.first(where: { $0.value == nil }) == nil
+        remainingValues.isEmpty
     }
     
-    var remainingValues: Set<Int> {
-        var values = Set<Int>(1...9)
-        cells.forEach {
-            guard let value = $0.value else { return }
+    var solvedValues: Set<Int> {
+        cells.compactMap(\.value).set
+    }
 
-            values.remove(value)
-        }
-        return values
+    var remainingValues: Set<Int> {
+        Cell.validValues.subtracting(solvedValues)
     }
 }
 
+// MARK: - Possibility removal
 extension Group {
     @discardableResult
-    func remove(possibility: Int) -> [Cell] {
-        cells.filter{ $0.possibilities.remove(possibility) != nil }
+    func remove(possibility: Int) -> Set<Cell> {
+        cells.filter{ $0.possibilities.remove(possibility) != nil }.set
+    }
+    
+    @discardableResult
+    func remove(possibilities: Set<Int>) -> Set<Cell> {
+        var cells = Set<Cell>()
+        possibilities.forEach {
+            cells = cells.union(self.remove(possibility: $0))
+        }
+        return cells
     }
 }

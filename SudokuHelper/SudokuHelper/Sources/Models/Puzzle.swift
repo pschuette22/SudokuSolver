@@ -6,19 +6,21 @@
 //
 
 import Foundation
-
+import CoreGraphics
 
 struct Puzzle: Equatable {
+    typealias Location = (x: Int, y: Int)
     
     let cells: [[Cell]]
     private(set) var verticalLines = [Line]()
     private(set) var horizontalLines = [Line]()
     private(set) var squares = [Square]()
+    private static let validValues = Set<Int>(1...9)
     
     init(values: [[Int]]) {
         let cells = values.map {
             $0.map { value in
-                value > 0 ? Cell(value: value, isPredefined: true) : Cell()
+                Self.validValues.contains(value) ? Cell(value: value, isPredefined: true) : Cell()
             }
         }
         self.init(cells: cells)
@@ -29,13 +31,17 @@ struct Puzzle: Equatable {
         // Setup the horizontal lines
         self.cells = cells
         for line in cells {
-            horizontalLines.append(Line(.horizontal, cells: line))
+            let horizontalLine = Line(.horizontal, cells: line)
+            horizontalLines.append(horizontalLine)
+            horizontalLine.remove(possibilities: horizontalLine.solvedValues)
         }
         
         // Setup the vertical lines
         for i in 0..<9 {
             let verticalCells = cells.map { $0[i] }
-            verticalLines.append(Line(.vertical, cells: verticalCells))
+            let verticalLine = Line(.vertical, cells: verticalCells)
+            verticalLines.append(verticalLine)
+            verticalLine.remove(possibilities: verticalLine.solvedValues)
         }
         
         // Setup the squares
@@ -45,9 +51,18 @@ struct Puzzle: Equatable {
                 for yOffset in 0..<3 {
                     squareCells.append(Array(cells[(y*3)+yOffset][x*3...(x*3+2)]))
                 }
-                squares.append(Square(arrangedCells: squareCells))
+                let square = Square(arrangedCells: squareCells)
+                squares.append(square)
+                square.remove(possibilities: square.solvedValues)
             }
         }
+    }
+}
+
+// MARK: - Access Control
+extension Puzzle {
+    func cell(at location: Location) -> Cell {
+        self.cells[location.y][location.x]
     }
 }
 

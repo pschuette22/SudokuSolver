@@ -90,6 +90,33 @@ final class PuzzleTests: XCTestCase {
         for square in puzzle.squares {
             XCTAssertTrue(square.remainingValues.isEmpty)
         }
-
+    }
+    
+    func testExpectedPossibilities() {
+        // remove's 5 and 1 from all groups intersecting 0,0
+        let values = [
+            /* ========================= */
+            [0,2,3,/*-*/4,0,6,/*-*/7,8,9,],
+            [4,0,6,/*-*/7,8,9,/*-*/1,2,3,],
+            [7,8,9,/*-*/1,2,3,/*-*/4,5,6,],
+            /* ========================= */
+            [9,1,2,/*-*/3,4,5,/*-*/6,7,8,],
+            [3,4,5,/*-*/0,7,8,/*-*/9,1,2,],
+            [6,7,8,/*-*/9,1,2,/*-*/3,4,5,],
+            /* ========================= */
+            [2,3,4,/*-*/5,6,7,/*-*/8,9,1,],
+            [0,6,7,/*-*/8,9,1,/*-*/2,3,4,],
+            [8,9,1,/*-*/2,3,4,/*-*/5,6,7,],
+            /* ========================= */
+        ]
+        
+        let puzzle = Puzzle(values: values)
+        puzzle.print()
+        XCTAssertEqual(puzzle.cell(at: (x: 0, y: 0)).possibilities, Set<Int>([1,5]))
+        XCTAssertEqual(puzzle.cell(at: (x: 4, y: 0)).possibilities, Set<Int>([5]))
+        XCTAssertEqual(puzzle.cell(at: (x: 1, y: 1)).possibilities, Set<Int>([5]))
+        XCTAssertEqual(puzzle.cell(at: (x: 0, y: 7)).possibilities, Set<Int>([5]))
+        // Random one to make sure axis' are correct
+        XCTAssertEqual(puzzle.cell(at: (x: 3, y: 4)).possibilities, Set<Int>([6]))
     }
 }

@@ -15,7 +15,6 @@ final class Line: Group {
     }
 
     let id = UUID()
-
     var cells: [Cell]
     let axis: Axis
     
@@ -31,20 +30,20 @@ final class Line: Group {
             case .vertical:
                 $0.verticalLine = self
             }
-        }
+        }        
     }
 }
 
 
 // MARK: - Line+Equatable
-extension Line {
+extension Line: Equatable {
     static func == (lhs: Line, rhs: Line) -> Bool {
         lhs.id == rhs.id
     }
 }
 
 // MARK: - Line+Hashable
-extension Line {
+extension Line: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

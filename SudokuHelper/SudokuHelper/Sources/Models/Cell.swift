@@ -9,12 +9,12 @@ import Foundation
 
 
 final class Cell: Identifiable {
+    static let validValues = Set<Int>(1...9)
     let id = UUID()
-    private static let validValues = Array(1...9)
 
     var isPredefined: Bool
     var value: Int?
-    var possibilities = Set<Int>(1...9)
+    var possibilities: Set<Int>
     
     weak var horizontalLine: Line?
     weak var verticalLine: Line?
@@ -27,12 +27,13 @@ final class Cell: Identifiable {
             Self.validValues.contains(value)
         else {
             self.isPredefined = false
+            self.possibilities = Self.validValues
             return
         }
 
         self.value = value
         self.isPredefined = isPredefined
-        possibilities = Set<Int>([value])
+        possibilities = Set<Int>()
     }
     
 }
@@ -57,17 +58,16 @@ extension Cell {
     @discardableResult
     func set(value: Int) -> Set<Int> {
         guard
-            value >= 1 && value <= 9
+            Self.validValues.contains(value)
         else {
             assertionFailure("Attempted to set invalid cell value")
             return Set<Int>()
         }
 
-        var others = Set<Int>(possibilities)
-        others.remove(value)
+        let others = possibilities.subtracting([value].set)
         self.value = value
-        possibilities = Set<Int>([value])
-        
+        possibilities.removeAll()
+
         // TODO: Note that we can remove this as a possibility from associated groups
         
         return others
