@@ -30,6 +30,11 @@ struct Puzzle: Equatable {
     init(cells: [[Cell]]) {
         // Setup the horizontal lines
         self.cells = cells
+        initGroups()
+    }
+    
+    mutating
+    func initGroups() {
         for line in cells {
             let horizontalLine = Line(.horizontal, cells: line)
             horizontalLines.append(horizontalLine)
@@ -78,6 +83,25 @@ extension Puzzle {
             cells.append(line)
         }
         return Puzzle(cells: cells)
+    }
+    
+    static var mostlyFull: Puzzle {
+        let values = [
+            /* ========================= */
+            [0,0,0,/*-*/4,0,6,/*-*/7,8,9,],
+            [0,0,0,/*-*/7,8,9,/*-*/1,2,3,],
+            [0,0,0,/*-*/1,2,3,/*-*/4,5,6,],
+            /* ========================= */
+            [9,1,2,/*-*/3,4,5,/*-*/6,7,8,],
+            [3,4,5,/*-*/0,7,8,/*-*/9,1,2,],
+            [6,7,8,/*-*/9,1,2,/*-*/3,4,5,],
+            /* ========================= */
+            [2,3,4,/*-*/5,6,7,/*-*/0,0,0,],
+            [0,6,7,/*-*/8,9,1,/*-*/0,0,0,],
+            [8,9,1,/*-*/2,3,4,/*-*/0,0,0,],
+            /* ========================= */
+        ]
+        return Puzzle(values: values)
     }
 }
 

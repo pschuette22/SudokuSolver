@@ -18,6 +18,7 @@ final class AppCoordinator: Coordinator {
     
     required init(session: AppSession) {
         self.session = session
+        navigationController.navigationBar.isTranslucent = false
     }
 
 }
@@ -41,7 +42,8 @@ extension AppCoordinator {
 private extension AppCoordinator {
     func buildPuzzleController() -> PuzzleViewController {
         let controller = PuzzleViewController()
-        let manager = PuzzleViewManager()
+        // TODO: Inject solvable puzzle
+        let manager = PuzzleViewManager(puzzle: Puzzle.mostlyFull)
         controller.manager = manager
         return controller
     }

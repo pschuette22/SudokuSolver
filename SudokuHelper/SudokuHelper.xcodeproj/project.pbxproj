@@ -29,6 +29,11 @@
 		D7B502AA26B51359007908DA /* PuzzleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502A926B51359007908DA /* PuzzleTests.swift */; };
 		D7B502AE26B5151E007908DA /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502AD26B5151E007908DA /* String+Extensions.swift */; };
 		D7B502B026B5B945007908DA /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B502AF26B5B945007908DA /* Array+Extensions.swift */; };
+		D7F7227426B741AA009D92D9 /* ViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227326B741AA009D92D9 /* ViewManager.swift */; };
+		D7F7227626B741D3009D92D9 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227526B741D3009D92D9 /* ViewState.swift */; };
+		D7F7227826B74CCD009D92D9 /* CellViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227726B74CCD009D92D9 /* CellViewCell.swift */; };
+		D7F7227A26B74D08009D92D9 /* StatefulView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227926B74D08009D92D9 /* StatefulView.swift */; };
+		D7F7227C26B75815009D92D9 /* Registerable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227B26B75815009D92D9 /* Registerable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +82,11 @@
 		D7B502A926B51359007908DA /* PuzzleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleTests.swift; sourceTree = "<group>"; };
 		D7B502AD26B5151E007908DA /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		D7B502AF26B5B945007908DA /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		D7F7227326B741AA009D92D9 /* ViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewManager.swift; sourceTree = "<group>"; };
+		D7F7227526B741D3009D92D9 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
+		D7F7227726B74CCD009D92D9 /* CellViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewCell.swift; sourceTree = "<group>"; };
+		D7F7227926B74D08009D92D9 /* StatefulView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulView.swift; sourceTree = "<group>"; };
+		D7F7227B26B75815009D92D9 /* Registerable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registerable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				D7B5029526B4B3DD007908DA /* InitialSceneViewController.swift */,
+				D7F7227226B74195009D92D9 /* _Protocols */,
 				D7B5028326B2606D007908DA /* Puzzle */,
 			);
 			path = Scenes;
@@ -208,6 +219,7 @@
 			children = (
 				D7B5028426B260BA007908DA /* PuzzleViewController.swift */,
 				D7B5029926B4B595007908DA /* PuzzleViewManager.swift */,
+				D7F7227726B74CCD009D92D9 /* CellViewCell.swift */,
 			);
 			path = Puzzle;
 			sourceTree = "<group>";
@@ -264,6 +276,17 @@
 				D7B502AF26B5B945007908DA /* Array+Extensions.swift */,
 			);
 			path = Foundation;
+			sourceTree = "<group>";
+		};
+		D7F7227226B74195009D92D9 /* _Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				D7F7227326B741AA009D92D9 /* ViewManager.swift */,
+				D7F7227526B741D3009D92D9 /* ViewState.swift */,
+				D7F7227926B74D08009D92D9 /* StatefulView.swift */,
+				D7F7227B26B75815009D92D9 /* Registerable.swift */,
+			);
+			path = _Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -406,9 +429,14 @@
 				D7B502A426B503DD007908DA /* Line.swift in Sources */,
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
 				D7B5029226B4AF4B007908DA /* AppCoordinator.swift in Sources */,
+				D7F7227426B741AA009D92D9 /* ViewManager.swift in Sources */,
 				D7B502AE26B5151E007908DA /* String+Extensions.swift in Sources */,
+				D7F7227A26B74D08009D92D9 /* StatefulView.swift in Sources */,
 				D7B502B026B5B945007908DA /* Array+Extensions.swift in Sources */,
+				D7F7227C26B75815009D92D9 /* Registerable.swift in Sources */,
 				D7B502A626B5043A007908DA /* Square.swift in Sources */,
+				D7F7227826B74CCD009D92D9 /* CellViewCell.swift in Sources */,
+				D7F7227626B741D3009D92D9 /* ViewState.swift in Sources */,
 				D7B5028526B260BA007908DA /* PuzzleViewController.swift in Sources */,
 				D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */,
 				D7B5029A26B4B595007908DA /* PuzzleViewManager.swift in Sources */,

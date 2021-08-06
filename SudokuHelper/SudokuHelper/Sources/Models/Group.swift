@@ -43,4 +43,8 @@ extension Group {
         }
         return cells
     }
+    
+    func contains(cell: Cell) -> Bool {
+        cells.contains(cell)
+    }
 }

@@ -52,9 +52,7 @@ extension Cell: Hashable {
     }
 }
 
-// MARK: - Cell value
 extension Cell {
-
     @discardableResult
     func set(value: Int) -> Set<Int> {
         guard
@@ -71,6 +69,19 @@ extension Cell {
         // TODO: Note that we can remove this as a possibility from associated groups
         
         return others
+    }
+    
+    func sharesGroup(with cell: Cell?) -> Bool {
+        guard
+            let cell = cell
+        else {
+            return false
+            
+        }
+        
+        return (verticalLine?.contains(cell: cell) ?? false) ||
+            (horizontalLine?.contains(cell: cell) ?? false) ||
+            (square?.contains(cell: cell) ?? false)
     }
 }
 
