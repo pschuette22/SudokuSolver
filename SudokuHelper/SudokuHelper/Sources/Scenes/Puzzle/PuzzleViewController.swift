@@ -99,37 +99,55 @@ private extension PuzzleViewController {
         
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
             let contentSize = layoutEnvironment.container.effectiveContentSize
-            let columns = 9
             let spacing = CGFloat(2)
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
                 heightDimension: .fractionalHeight(1.0)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            let groupSize = NSCollectionLayoutSize(
+            let fullRowSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
                 heightDimension: .absolute(contentSize.width/9)
             )
-            let group = NSCollectionLayoutGroup.horizontal(
-                layoutSize: groupSize,
-                subitem: item,
-                count: columns
+            let partialRowSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1/3),
+                heightDimension: .fractionalHeight(1)
             )
+            let partialRow = NSCollectionLayoutGroup.horizontal(
+                layoutSize: partialRowSize,
+                subitem: item,
+                count: 3
+            )
+            partialRow.interItemSpacing = .fixed(spacing)
+            let row = NSCollectionLayoutGroup.horizontal(
+                layoutSize: fullRowSize,
+                subitem: partialRow,
+                count: 3
+            )
+            row.interItemSpacing = .fixed(2 * spacing)
+            
+            let rowCollectionSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .fractionalWidth(1/3)
+            )
+            let rowCollection = NSCollectionLayoutGroup.vertical(
+                layoutSize: rowCollectionSize,
+                subitem: row,
+                count: 3
+            )
+            rowCollection.interItemSpacing = .fixed(spacing)
 
-            group.interItemSpacing = .fixed(spacing)
-
-            let section = NSCollectionLayoutSection(group: group)
+            let section = NSCollectionLayoutSection(group: rowCollection)
             section.decorationItems = [ElementKind.background.decoratorItem]
-            section.interGroupSpacing = spacing
+            section.interGroupSpacing = 2 * spacing
 
             // TODO: space based on screen size for iPad
             section.contentInsets = NSDirectionalEdgeInsets(
-                top: spacing,
-                leading: spacing,
-                bottom: spacing,
-                trailing: spacing
+                top: 2 * spacing,
+                leading: 2 * spacing,
+                bottom: 2 * spacing,
+                trailing: 2 * spacing
             )
-            
             
             return section
         }

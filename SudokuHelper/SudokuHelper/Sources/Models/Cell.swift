@@ -15,10 +15,20 @@ final class Cell: Identifiable {
     var isPredefined: Bool
     var value: Int?
     var possibilities: Set<Int>
+    var isSolved: Bool { value != nil }
     
-    weak var horizontalLine: Line?
-    weak var verticalLine: Line?
-    weak var square: Square?
+    unowned var horizontalLine: Line!
+    unowned var verticalLine: Line!
+    unowned var square: Square!
+    
+    func line(axis: Line.Axis) -> Line {
+        switch axis {
+        case .horizontal:
+            return horizontalLine
+        case .vertical:
+            return verticalLine
+        }
+    }
 
     
     init(value: Int?=nil, isPredefined: Bool=false) {
@@ -65,9 +75,6 @@ extension Cell {
         let others = possibilities.subtracting([value].set)
         self.value = value
         possibilities.removeAll()
-
-        // TODO: Note that we can remove this as a possibility from associated groups
-        
         return others
     }
     
@@ -79,16 +86,23 @@ extension Cell {
             
         }
         
-        return (verticalLine?.contains(cell: cell) ?? false) ||
-            (horizontalLine?.contains(cell: cell) ?? false) ||
-            (square?.contains(cell: cell) ?? false)
+        return verticalLine.contains(cell: cell) ||
+            horizontalLine.contains(cell: cell) ||
+            square.contains(cell: cell)
+    }
+    
+    var siblings: Set<Cell> {
+        var set = verticalLine.cells.set
+        set.formUnion(horizontalLine.cells.set)
+        set.formUnion(square.cells.set)
+        set.remove(self)
+        return set
     }
 }
 
 
 // MARK: - Printing
 extension Cell {
-    
     func printValue() -> String {
         if let value = value {
             return String(value)

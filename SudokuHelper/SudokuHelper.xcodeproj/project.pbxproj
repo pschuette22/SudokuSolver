@@ -34,6 +34,9 @@
 		D7F7227826B74CCD009D92D9 /* CellViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227726B74CCD009D92D9 /* CellViewCell.swift */; };
 		D7F7227A26B74D08009D92D9 /* StatefulView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227926B74D08009D92D9 /* StatefulView.swift */; };
 		D7F7227C26B75815009D92D9 /* Registerable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7227B26B75815009D92D9 /* Registerable.swift */; };
+		D7F7228226BEFD3D009D92D9 /* SolutionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7228126BEFD3D009D92D9 /* SolutionEngine.swift */; };
+		D7F7228426BEFE3C009D92D9 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7228326BEFE3C009D92D9 /* Move.swift */; };
+		D7F7228926BF2472009D92D9 /* Array+ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F7228826BF2472009D92D9 /* Array+ExtensionsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +90,9 @@
 		D7F7227726B74CCD009D92D9 /* CellViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewCell.swift; sourceTree = "<group>"; };
 		D7F7227926B74D08009D92D9 /* StatefulView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulView.swift; sourceTree = "<group>"; };
 		D7F7227B26B75815009D92D9 /* Registerable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registerable.swift; sourceTree = "<group>"; };
+		D7F7228126BEFD3D009D92D9 /* SolutionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionEngine.swift; sourceTree = "<group>"; };
+		D7F7228326BEFE3C009D92D9 /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
+		D7F7228826BF2472009D92D9 /* Array+ExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+ExtensionsTests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +181,7 @@
 				D7B502AB26B51506007908DA /* Extensions */,
 				D7B5029B26B4B757007908DA /* Models */,
 				D7B5027E26B259B8007908DA /* Scenes */,
+				D7F7228026BEFD15009D92D9 /* Solution */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -236,10 +243,10 @@
 		D7B5029B26B4B757007908DA /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				D7B5029C26B4B768007908DA /* Puzzle.swift */,
-				D7B5029F26B4C0B4007908DA /* Group.swift */,
 				D7B502A126B4C0EE007908DA /* Cell.swift */,
+				D7B5029F26B4C0B4007908DA /* Group.swift */,
 				D7B502A326B503DD007908DA /* Line.swift */,
+				D7B5029C26B4B768007908DA /* Puzzle.swift */,
 				D7B502A526B5043A007908DA /* Square.swift */,
 			);
 			path = Models;
@@ -248,6 +255,7 @@
 		D7B502A726B51333007908DA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D7F7228726BF2460009D92D9 /* Extensions */,
 				D7B502A826B5133D007908DA /* Models */,
 			);
 			path = Sources;
@@ -272,8 +280,8 @@
 		D7B502AC26B5150E007908DA /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
-				D7B502AD26B5151E007908DA /* String+Extensions.swift */,
 				D7B502AF26B5B945007908DA /* Array+Extensions.swift */,
+				D7B502AD26B5151E007908DA /* String+Extensions.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -287,6 +295,23 @@
 				D7F7227B26B75815009D92D9 /* Registerable.swift */,
 			);
 			path = _Protocols;
+			sourceTree = "<group>";
+		};
+		D7F7228026BEFD15009D92D9 /* Solution */ = {
+			isa = PBXGroup;
+			children = (
+				D7F7228126BEFD3D009D92D9 /* SolutionEngine.swift */,
+				D7F7228326BEFE3C009D92D9 /* Move.swift */,
+			);
+			path = Solution;
+			sourceTree = "<group>";
+		};
+		D7F7228726BF2460009D92D9 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D7F7228826BF2472009D92D9 /* Array+ExtensionsTests.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,6 +450,7 @@
 				D7B5029626B4B3DD007908DA /* InitialSceneViewController.swift in Sources */,
 				D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */,
 				D7B502A226B4C0EE007908DA /* Cell.swift in Sources */,
+				D7F7228226BEFD3D009D92D9 /* SolutionEngine.swift in Sources */,
 				D7B5029426B4AF5C007908DA /* _Coordinator.swift in Sources */,
 				D7B502A426B503DD007908DA /* Line.swift in Sources */,
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
@@ -440,6 +466,7 @@
 				D7B5028526B260BA007908DA /* PuzzleViewController.swift in Sources */,
 				D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */,
 				D7B5029A26B4B595007908DA /* PuzzleViewManager.swift in Sources */,
+				D7F7228426BEFE3C009D92D9 /* Move.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,6 +474,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7F7228926BF2472009D92D9 /* Array+ExtensionsTests.swift in Sources */,
 				D7B5026226B258A7007908DA /* SudokuHelperTests.swift in Sources */,
 				D7B502AA26B51359007908DA /* PuzzleTests.swift in Sources */,
 			);

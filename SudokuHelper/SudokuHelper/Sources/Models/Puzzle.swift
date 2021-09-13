@@ -8,32 +8,62 @@
 import Foundation
 import CoreGraphics
 
-struct Puzzle: Equatable {
+class Puzzle {
     typealias Location = (x: Int, y: Int)
-    
+
+    let id = UUID()
     let cells: [[Cell]]
     private(set) var verticalLines = [Line]()
     private(set) var horizontalLines = [Line]()
     private(set) var squares = [Square]()
-    private static let validValues = Set<Int>(1...9)
     
-    init(values: [[Int]]) {
+    var groups: [Group] {
+        var groups = [Group]()
+        groups.append(contentsOf: verticalLines)
+        groups.append(contentsOf: horizontalLines)
+        groups.append(contentsOf: squares)
+        return groups
+    }
+    
+    // TODO: Revisit how this is done.
+    // We should not calculate it every time
+    
+    /// Find all the possibilities left in the puzzle
+    var remainingValues: Set<Int> {
+        return cells
+            .flattened
+            .reduce(into: Set<Int>()) { result, cell in
+                guard !cell.isSolved else { return }
+
+                result.formUnion(cell.possibilities)
+            }
+    }
+    
+    func lines(withAxis axis: Line.Axis) -> [Line] {
+        switch axis {
+        case .horizontal:
+            return horizontalLines
+        case .vertical:
+            return verticalLines
+        }
+    }
+    
+    convenience init(values: [[Int]]) {
         let cells = values.map {
             $0.map { value in
-                Self.validValues.contains(value) ? Cell(value: value, isPredefined: true) : Cell()
+                Cell.validValues.contains(value) ? Cell(value: value, isPredefined: true) : Cell()
             }
         }
         self.init(cells: cells)
     }
     
     
-    init(cells: [[Cell]]) {
+    required init(cells: [[Cell]]) {
         // Setup the horizontal lines
         self.cells = cells
         initGroups()
     }
     
-    mutating
     func initGroups() {
         for line in cells {
             let horizontalLine = Line(.horizontal, cells: line)
@@ -61,6 +91,14 @@ struct Puzzle: Equatable {
                 square.remove(possibilities: square.solvedValues)
             }
         }
+    }
+}
+
+// MARK: - Puzzle+Equatable
+extension Puzzle: Equatable {
+    static func == (lhs: Puzzle, rhs: Puzzle) -> Bool {
+        return lhs.id == rhs.id
+            && lhs.cells == rhs.cells
     }
 }
 

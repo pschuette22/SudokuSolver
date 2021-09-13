@@ -8,7 +8,7 @@
 import Foundation
 
 
-protocol Group: AnyObject, Identifiable, Hashable {
+protocol Group: NSObject {
     var id: UUID { get }
     var cells: [Cell] { get }
 }
@@ -25,6 +25,14 @@ extension Group {
 
     var remainingValues: Set<Int> {
         Cell.validValues.subtracting(solvedValues)
+    }
+    
+    var unsolvedCells: Set<Cell> {
+        cells.filter({ !$0.isSolved }).set
+    }
+
+    func cells(containingPossibility possibility: Int) -> Set<Cell> {
+        cells.filter({ $0.possibilities.contains(possibility) }).set
     }
 }
 

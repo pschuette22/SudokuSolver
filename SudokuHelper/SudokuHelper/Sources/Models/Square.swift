@@ -7,29 +7,23 @@
 
 import Foundation
 
-final class Square: Group {
+final class Square: NSObject, Group {
     let id = UUID()
     var arrangedCells: [[Cell]]
     var cells: [Cell] {
-        arrangedCells.flatMap { $0 }
+        arrangedCells.flattened
     }
     
     init(arrangedCells: [[Cell]]) {
         self.arrangedCells = arrangedCells
-        cells.forEach { $0.square = self }
+        super.init()
+        arrangedCells.flattened.forEach { $0.square = self }
     }
 }
 
 // MARK: - Square+Equatable
-extension Square: Equatable {
+extension Square {
     static func == (lhs: Square, rhs: Square) -> Bool {
         lhs.id == rhs.id
-    }
-}
-
-// MARK: - Square+Hashable
-extension Square: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
     }
 }
