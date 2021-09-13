@@ -33,6 +33,7 @@ enum Move {
 extension Move: Hashable {
     func hash(into hasher: inout Hasher) {
         switch self {
+        // If these ever colide, it is a bug
         case let .eliminate(value, cell, _),
              let .solve(value, cell, _):
             hasher.combine(value)

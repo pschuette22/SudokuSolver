@@ -39,6 +39,13 @@ class Puzzle {
             }
     }
     
+    var isSolved: Bool {
+        cells
+            .flattened
+            .filter { !$0.isSolved }
+            .isEmpty
+    }
+    
     func lines(withAxis axis: Line.Axis) -> [Line] {
         switch axis {
         case .horizontal:

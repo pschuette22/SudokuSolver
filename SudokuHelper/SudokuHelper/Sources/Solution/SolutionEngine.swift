@@ -23,22 +23,63 @@ public class SolutionEngine {
 extension SolutionEngine {
     @discardableResult
     func execute(_ move: Move) -> Set<Move> {
+        history.append(move)
+        var resultingMoves = Set<Move>()
+        
         switch move {
         case let .eliminate(possibility, cell, _):
             cell.possibilities.remove(possibility)
             // TODO: use this to kick off finding other moves efficiently
         case let .solve(value, cell, _):
             cell.set(value: value)
+            cell.siblings.forEach { cell in
+                if cell.possibilities.contains(value) {
+                    resultingMoves.insert(.eliminate(value, cell, .solvedInSibling))
+                }
+            }
         }
         
-        return Set<Move>()
+        return resultingMoves
     }
     
     
     // MARK: - Solve the puzzle
     @discardableResult
     func solve() -> Bool {
-        return false
+        while !availableMoves.isEmpty || !puzzle.isSolved {
+            if !availableMoves.isEmpty {
+                let resultingMoves = execute(availableMoves.removeFirst())
+                
+                if !resultingMoves.isEmpty {
+                    availableMoves.formUnion(resultingMoves)
+                }
+                
+                continue
+            }
+            
+
+            let moveFindingTasks: [() -> Void] = [
+                { self.availableMoves.formUnion(self.singlePossibilityInCellMoves()) },
+                { self.availableMoves.formUnion(self.singlePossibilityInGroupMoves()) },
+                { self.availableMoves.formUnion(self.limitedPossibilitiesInGroupMoves()) },
+                { self.availableMoves.formUnion(self.requiredInAdjacentGroupMoves()) },
+                { self.availableMoves.formUnion(self.swordFishEliminationMoves()) }
+            ]
+            
+            for task in moveFindingTasks {
+                if !availableMoves.isEmpty {
+                    break
+                }
+                task()
+            }
+            
+            if availableMoves.isEmpty {
+                break
+            }
+        }
+        
+        
+        return puzzle.isSolved
     }
 }
 
@@ -131,29 +172,25 @@ private extension SolutionEngine {
                 let verticalLines = squareCells.reduce(into: Set<Line>(), { $0.insert($1.verticalLine) })
                 let horizontalLines = squareCells.reduce(into: Set<Line>(), { $0.insert($1.horizontalLine) })
                 
-                var otherLineCells: Set<Cell>!
-                
                 if
-                    verticalLines.count == 1,
-                    let verticalLine = verticalLines.first {
-                    
-                    otherLineCells = verticalLine
+                    verticalLines.count == 1
+                {
+                    verticalLines.first??
                         .cells(containingPossibility: value)
                         .subtracting(squareCells)
+                        .forEach {
+                            moves.insert(.eliminate(value, $0, .valueRequiredInAdjacentGroup))
+                        }
     
                 } else if
-                    horizontalLines.count == 1,
-                    let horizontalLine = horizontalLines.first {
-                    otherLineCells = horizontalLine
+                    horizontalLines.count == 1
+                {
+                    horizontalLines.first??
                         .cells(containingPossibility: value)
                         .subtracting(squareCells)
-    
-                } else {
-                    return
-                }
-                
-                otherLineCells.forEach { cell in
-                    moves.insert(.eliminate(value, cell, .valueRequiredInAdjacentGroup))
+                        .forEach {
+                            moves.insert(.eliminate(value, $0, .valueRequiredInAdjacentGroup))
+                        }
                 }
             }
         }
@@ -174,7 +211,7 @@ private extension SolutionEngine {
         for axis in Line.Axis.allCases {
             let otherAxis = axis.other
             for value in values {
-                var lines = puzzle.lines(withAxis: axis)
+                let lines = puzzle.lines(withAxis: axis)
                     .filter { !$0.isSolved && $0.cells(containingPossibility: value).count == 2 }
                 
                 guard lines.count > 1 else { break }
@@ -218,27 +255,27 @@ private extension SolutionEngine {
         return moves
     }
     
-    func movesAfterEliminating(value: Int, in cell: Cell) -> [Move] {
-        var moves = [Move]()
-        // If this
-        if
-            cell.possibilities.count == 1,
-            let value = cell.possibilities.first
-        {
-            moves.append(.solve(value, cell, .singlePossibilityInCell))
-        }
-
-        
-        // TODO: Look into optimizations for searching for moves after elimitating a possibility
-        
-        return moves
-    }
-    
-    func movesAfterSolving(for value: Int, in cell: Cell) -> [Move] {
-        cell.siblings.filter(
-            { !$0.isSolved && $0.possibilities.contains(value) }
-        ).map {
-            .eliminate(value, $0, .solvedInSibling)
-        }
-    }
+//    func movesAfterEliminating(value: Int, in cell: Cell) -> [Move] {
+//        var moves = [Move]()
+//        // If this
+//        if
+//            cell.possibilities.count == 1,
+//            let value = cell.possibilities.first
+//        {
+//            moves.append(.solve(value, cell, .singlePossibilityInCell))
+//        }
+//
+//
+//        // TODO: Look into optimizations for searching for moves after elimitating a possibility
+//
+//        return moves
+//    }
+//
+//    func movesAfterSolving(for value: Int, in cell: Cell) -> [Move] {
+//        cell.siblings.filter(
+//            { !$0.isSolved && $0.possibilities.contains(value) }
+//        ).map {
+//            .eliminate(value, $0, .solvedInSibling)
+//        }
+//    }
 }
