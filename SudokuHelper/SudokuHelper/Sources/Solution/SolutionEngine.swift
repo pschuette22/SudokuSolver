@@ -29,13 +29,16 @@ extension SolutionEngine {
         switch move {
         case let .eliminate(possibility, cell, _):
             cell.possibilities.remove(possibility)
+            if cell.possibilities.count == 1 {
+                resultingMoves.insert(.solve(cell.possibilities.first!, cell, .singlePossibilityInCell))
+            }
             // TODO: use this to kick off finding other moves efficiently
         case let .solve(value, cell, _):
             cell.set(value: value)
             cell.siblings.forEach { cell in
-                if cell.possibilities.contains(value) {
-                    resultingMoves.insert(.eliminate(value, cell, .solvedInSibling))
-                }
+                guard cell.possibilities.contains(value) else { return }
+                    
+                resultingMoves.insert(.eliminate(value, cell, .solvedInSibling))
             }
         }
         
@@ -59,6 +62,7 @@ extension SolutionEngine {
             
 
             let moveFindingTasks: [() -> Void] = [
+                // This first one should be redundant, but it is quick so a double check is fine
                 { self.availableMoves.formUnion(self.singlePossibilityInCellMoves()) },
                 { self.availableMoves.formUnion(self.singlePossibilityInGroupMoves()) },
                 { self.availableMoves.formUnion(self.limitedPossibilitiesInGroupMoves()) },
@@ -128,10 +132,10 @@ private extension SolutionEngine {
                     let combinedPossibilities = cells.reduce(Set<Int>()) { $0.union($1.possibilities) }
                     // if combinedPossibilities.count < limit, we have reached an error state
                     // TODO: handle error states when identified to avoid further computations
-                    if combinedPossibilities.count < limit {
-                        // We are in an error state
-                        assertionFailure("Error state reached when looking for limited possibilities in groups")
-                    }
+//                    if combinedPossibilities.count < limit {
+//                        // We are in an error state
+//                        assertionFailure("Error state reached when looking for limited possibilities in groups")
+//                    }
                     return combinedPossibilities.count <= limit
                 }
                 
@@ -255,6 +259,7 @@ private extension SolutionEngine {
         return moves
     }
     
+    // TODO: optimize solving by seeding move testing after value eliminations
 //    func movesAfterEliminating(value: Int, in cell: Cell) -> [Move] {
 //        var moves = [Move]()
 //        // If this
