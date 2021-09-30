@@ -8,16 +8,4 @@
 import Foundation
 import UIKit
 
-final class InitialSceneViewController: UIViewController {
-    
-}
-
-// MARK: - Lifecycle
-
-extension InitialSceneViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        print("Loaded initial scene!")
-    }
-}
+final class InitialSceneViewController: UIViewController { }

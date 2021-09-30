@@ -8,29 +8,77 @@
 import Foundation
 import CoreGraphics
 
-struct Puzzle: Equatable {
+class Puzzle {
     typealias Location = (x: Int, y: Int)
-    
+
+    let id = UUID()
     let cells: [[Cell]]
     private(set) var verticalLines = [Line]()
     private(set) var horizontalLines = [Line]()
     private(set) var squares = [Square]()
-    private static let validValues = Set<Int>(1...9)
     
-    init(values: [[Int]]) {
-        let cells = values.map {
-            $0.map { value in
-                Self.validValues.contains(value) ? Cell(value: value, isPredefined: true) : Cell()
+    var groups: [Group] {
+        var groups = [Group]()
+        groups.append(contentsOf: verticalLines)
+        groups.append(contentsOf: horizontalLines)
+        groups.append(contentsOf: squares)
+        return groups
+    }
+    
+    // TODO: Revisit how this is done.
+    // We should not calculate it every time
+    
+    /// Find all the possibilities left in the puzzle
+    var remainingValues: Set<Int> {
+        return cells
+            .flattened
+            .reduce(into: Set<Int>()) { result, cell in
+                guard !cell.isSolved else { return }
+
+                result.formUnion(cell.possibilities)
+            }
+    }
+    
+    var isSolved: Bool {
+        cells
+            .flattened
+            .filter { !$0.isSolved }
+            .isEmpty
+    }
+    
+    var isValid: Bool {
+        groups.allSatisfy({ $0.isValid })
+    }
+    
+    func lines(withAxis axis: Line.Axis) -> [Line] {
+        switch axis {
+        case .horizontal:
+            return horizontalLines
+        case .vertical:
+            return verticalLines
+        }
+    }
+    
+    convenience init(values: [[Int]]) {
+        let cells = values.enumerated().map { yIndex, cellArray in
+            cellArray.enumerated().map { xIndex, value -> Cell in
+                Cell.validValues.contains(value) ?
+                    Cell(position: (x: xIndex, y: yIndex), value: value, isPredefined: true) :
+                    Cell(position: (x: xIndex, y: yIndex))
             }
         }
         self.init(cells: cells)
     }
     
     
-    init(cells: [[Cell]]) {
+    required init(cells: [[Cell]]) {
         // Setup the horizontal lines
         self.cells = cells
-        for line in cells {
+        initGroups()
+    }
+    
+    private func initGroups() {
+        for (index, line) in cells.enumerated() {
             let horizontalLine = Line(.horizontal, cells: line)
             horizontalLines.append(horizontalLine)
             horizontalLine.remove(possibilities: horizontalLine.solvedValues)
@@ -59,6 +107,14 @@ struct Puzzle: Equatable {
     }
 }
 
+// MARK: - Puzzle+Equatable
+extension Puzzle: Equatable {
+    static func == (lhs: Puzzle, rhs: Puzzle) -> Bool {
+        return lhs.id == rhs.id
+            && lhs.cells == rhs.cells
+    }
+}
+
 // MARK: - Access Control
 extension Puzzle {
     func cell(at location: Location) -> Cell {
@@ -70,14 +126,49 @@ extension Puzzle {
 extension Puzzle {
     static var new: Puzzle {
         var cells = [[Cell]]()
-        for _ in 0..<9 {
+        for y in 0..<9 {
             var line = [Cell]()
-            for _ in 0..<9 {
-                line.append(Cell())
+            for x in 0..<9 {
+                line.append(Cell(position: (x: x, y: y)))
             }
             cells.append(line)
         }
         return Puzzle(cells: cells)
+    }
+    
+    static var mostlyFull: Puzzle {
+        let values = [
+            /* ========================= */
+            [0,0,0,/*-*/4,0,6,/*-*/7,8,9,],
+            [0,0,0,/*-*/7,8,9,/*-*/1,2,3,],
+            [0,0,0,/*-*/1,2,3,/*-*/4,5,6,],
+            /* ========================= */
+            [9,1,2,/*-*/3,4,5,/*-*/6,7,8,],
+            [3,4,5,/*-*/0,7,8,/*-*/9,1,2,],
+            [6,7,8,/*-*/9,1,2,/*-*/3,4,5,],
+            /* ========================= */
+            [2,3,4,/*-*/5,6,7,/*-*/0,0,0,],
+            [0,6,7,/*-*/8,9,1,/*-*/0,0,0,],
+            [8,9,1,/*-*/2,3,4,/*-*/0,0,0,],
+            /* ========================= */
+        ]
+        return Puzzle(values: values)
+    }
+    
+    static var expert2Values: [[Int]] {
+        [
+            [0,9,1,  0,7,0,  0,4,0],
+            [2,0,4,  0,0,0,  0,0,0],
+            [0,5,0,  3,0,0,  0,0,0],
+            
+            [1,0,0,  0,2,0,  0,0,8],
+            [0,0,7,  6,0,3,  2,0,0],
+            [9,3,0,  0,5,0,  0,0,3],
+            
+            [0,0,0,  0,0,7,  0,3,0],
+            [0,0,0,  0,0,0,  9,0,6],
+            [0,6,0,  0,1,0,  5,7,0],
+        ]
     }
 }
 

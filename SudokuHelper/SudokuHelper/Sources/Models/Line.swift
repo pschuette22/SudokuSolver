@@ -8,10 +8,19 @@
 import Foundation
 
 
-final class Line: Group {
-    enum Axis {
+final class Line: NSObject, Group {
+    enum Axis: CaseIterable {
         case horizontal
         case vertical
+        
+        var other: Axis {
+            switch self {
+            case .horizontal:
+                return .vertical
+            case .vertical:
+                return .horizontal
+            }
+        }
     }
 
     let id = UUID()
@@ -21,6 +30,7 @@ final class Line: Group {
     init(_ axis: Axis, cells: [Cell]) {
         self.cells = cells
         self.axis = axis
+        super.init()
         
         cells.forEach {
             switch axis {
@@ -36,16 +46,8 @@ final class Line: Group {
 
 
 // MARK: - Line+Equatable
-extension Line: Equatable {
+extension Line {
     static func == (lhs: Line, rhs: Line) -> Bool {
         lhs.id == rhs.id
     }
 }
-
-// MARK: - Line+Hashable
-extension Line: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
