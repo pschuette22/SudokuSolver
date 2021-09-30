@@ -48,16 +48,13 @@ extension Array where Element: Equatable {
     }
     
     func permutations(ofSize size: Int, where isIncluded: (([Element]) -> Bool)?=nil) -> [[Element]] {
-        guard
-            size > 0
-        else {
-            assertionFailure("invalid size of combinations")
-            return []
-        }
+        guard size >= count else { return [] }
 
         var result = [[Element]]()
 
-        if size == 1 {
+        if size == count {
+            result = [self]
+        } else if size == 1 {
             result = self.map { [$0] }
         } else {
             forEach { item in
@@ -88,16 +85,13 @@ extension Array where Element: Equatable {
 // MARK: - Array+Extensions where Element is Hashable
 extension Array where Element: Hashable {
     func combinations(ofSize size: Int, where isIncluded: (([Element]) -> Bool)?=nil) -> [[Element]] {
-        guard
-            size > 0
-        else {
-            assertionFailure("invalid size of combinations")
-            return []
-        }
+        guard size <= count else { return [] }
 
         var result = [[Element]]()
 
-        if size == 1 {
+        if size == count {
+            result = [self]
+        } else if size == 1 {
             result = self.map { [$0] }
         } else {
             

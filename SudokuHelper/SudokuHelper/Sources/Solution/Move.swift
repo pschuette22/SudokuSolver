@@ -9,7 +9,7 @@ import Foundation
 
 
 /// Reason for placing a given move
-enum Strategy {
+enum Strategy: String {
     /// Value was solved because it is the last possibility in a cell
     case singlePossibilityInCell
     /// Value was solved because it is the last possibility in a given group
@@ -27,6 +27,30 @@ enum Strategy {
 enum Move {
     case eliminate(_ possibility: Int, _ cell: Cell, _ strategy: Strategy)
     case solve(_ value: Int, _ cell: Cell, _ strategy: Strategy)
+    
+    var value: Int {
+        switch self {
+        case let .eliminate(value, _, _),
+             let .solve(value, _, _):
+            return value
+        }
+    }
+    
+    var cell: Cell {
+        switch self {
+        case let .eliminate(_, cell, _),
+             let .solve(_ , cell, _):
+            return cell
+        }
+    }
+    
+    var strategy: Strategy {
+        switch self {
+        case let .eliminate(_, _, strategy),
+             let .solve(_, _, strategy):
+            return strategy
+        }
+    }
 }
 
 // MARK: - Move+Hashable

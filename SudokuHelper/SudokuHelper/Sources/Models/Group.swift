@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 protocol Group: NSObject {
     var id: UUID { get }
     var cells: [Cell] { get }
@@ -17,6 +16,27 @@ protocol Group: NSObject {
 extension Group {
     var isSolved: Bool {
         remainingValues.isEmpty
+    }
+    
+    var isValid: Bool {
+        let cellPossibilities = cells
+            .compactMap({ $0.isSolved ? nil : $0.possibilities })
+            .flattened
+            .set
+    
+        let solvedValues = cells
+            .compactMap({ $0.isSolved ? $0.value : nil})
+            .set
+        
+        let groupValues = solvedValues.union(cellPossibilities)
+        
+        let isValid = groupValues.isSubset(of: Cell.validValues) && groupValues.count == Cell.validValues.count
+        
+        if !isValid {
+            print("This is not a valid group")
+        }
+        
+        return isValid
     }
     
     var solvedValues: Set<Int> {
@@ -47,7 +67,7 @@ extension Group {
     func remove(possibilities: Set<Int>) -> Set<Cell> {
         var cells = Set<Cell>()
         possibilities.forEach {
-            cells = cells.union(self.remove(possibility: $0))
+            cells.formUnion(self.remove(possibility: $0))
         }
         return cells
     }

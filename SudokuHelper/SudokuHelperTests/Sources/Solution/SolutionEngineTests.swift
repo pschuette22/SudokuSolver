@@ -17,26 +17,78 @@ final class SolutionEngineTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    // TODO: test individual moves
+    
 
     func testExpertPuzzleSolve() {
         let puzzle = Puzzle(
-            values: [
-                [0,0,0,0,0,0,0,0,0],
-                [0,4,1,6,0,0,0,8,0],
-                [0,0,9,0,0,0,6,2,0],
-                [4,0,0,0,6,0,0,1,0],
-                [0,0,0,5,0,2,0,0,0],
-                [0,0,0,0,9,0,0,0,2],
-                [0,6,2,0,0,0,8,0,0],
-                [0,5,0,0,0,6,1,7,0],
-                [0,0,0,1,0,0,0,0,0],
-            ]
+            values: Self.expert3Values
         )
         
         let engine = SolutionEngine(puzzle: puzzle)
         engine.solve()
+        print(engine.history.reduce(into: Set<String>(), { $0.insert($1.strategy.rawValue)}))
+
         XCTAssertTrue(puzzle.isSolved)
-        
+        XCTAssertTrue(puzzle.isValid)
+
         puzzle.print()
     }
+}
+
+// MARK: - Solved in sibling tests
+extension SolutionEngineTests {
+    
+    func testSolvedInSibling() {
+        
+    }
+    
+}
+
+
+private extension SolutionEngineTests {
+    
+    static let expert1Values: [[Int]] = [
+        [0,0,0,  0,0,3,  0,0,0],
+        [0,4,1,  6,0,0,  0,8,0],
+        [0,0,9,  0,0,0,  6,2,0],
+        
+        [4,0,0,  0,6,0,  0,1,0],
+        [0,0,0,  5,3,2,  0,0,0],
+        [0,3,0,  0,9,0,  0,0,2],
+        
+        [0,6,2,  0,0,0,  8,0,0],
+        [0,5,0,  0,0,6,  1,7,0],
+        [0,0,0,  1,0,0,  0,0,0],
+    ]
+    
+    static let expert2Values: [[Int]] = [
+        [0,9,1,  0,7,0,  0,4,0],
+        [2,0,4,  0,0,0,  0,0,0],
+        [0,5,0,  3,0,0,  0,0,0],
+        
+        [1,0,0,  0,2,0,  0,0,8],
+        [0,0,7,  6,0,3,  2,0,0],
+        [9,0,0,  0,5,0,  0,0,3],
+        
+        [0,0,0,  0,0,7,  0,3,0],
+        [0,0,0,  0,0,0,  9,0,6],
+        [0,6,0,  0,1,0,  5,7,0],
+    ]
+    
+    static let expert3Values: [[Int]] = [
+        [8,0,0,  0,0,2,  0,0,3],
+        [0,0,0,  7,0,0,  9,0,0],
+        [9,0,0,  0,0,6,  0,4,0],
+        
+        [0,0,0,  0,1,0,  8,0,4],
+        [0,0,6,  0,0,0,  5,0,0],
+        [7,0,9,  0,8,0,  0,0,0],
+        
+        [0,3,0,  4,0,0,  0,0,6],
+        [0,0,2,  0,0,7,  0,0,0],
+        [6,0,0,  3,0,0,  0,0,5],
+    ]
+    
 }

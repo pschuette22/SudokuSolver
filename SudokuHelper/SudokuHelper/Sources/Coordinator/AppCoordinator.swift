@@ -43,7 +43,7 @@ private extension AppCoordinator {
     func buildPuzzleController() -> PuzzleViewController {
         let controller = PuzzleViewController()
         // TODO: Inject solvable puzzle
-        let manager = PuzzleViewManager(puzzle: Puzzle.mostlyFull)
+        let manager = PuzzleViewManager(puzzle: Puzzle(values: Puzzle.expert2Values))
         controller.manager = manager
         return controller
     }

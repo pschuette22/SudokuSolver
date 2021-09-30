@@ -46,6 +46,10 @@ class Puzzle {
             .isEmpty
     }
     
+    var isValid: Bool {
+        groups.allSatisfy({ $0.isValid })
+    }
+    
     func lines(withAxis axis: Line.Axis) -> [Line] {
         switch axis {
         case .horizontal:
@@ -56,9 +60,11 @@ class Puzzle {
     }
     
     convenience init(values: [[Int]]) {
-        let cells = values.map {
-            $0.map { value in
-                Cell.validValues.contains(value) ? Cell(value: value, isPredefined: true) : Cell()
+        let cells = values.enumerated().map { yIndex, cellArray in
+            cellArray.enumerated().map { xIndex, value -> Cell in
+                Cell.validValues.contains(value) ?
+                    Cell(position: (x: xIndex, y: yIndex), value: value, isPredefined: true) :
+                    Cell(position: (x: xIndex, y: yIndex))
             }
         }
         self.init(cells: cells)
@@ -71,8 +77,8 @@ class Puzzle {
         initGroups()
     }
     
-    func initGroups() {
-        for line in cells {
+    private func initGroups() {
+        for (index, line) in cells.enumerated() {
             let horizontalLine = Line(.horizontal, cells: line)
             horizontalLines.append(horizontalLine)
             horizontalLine.remove(possibilities: horizontalLine.solvedValues)
@@ -120,10 +126,10 @@ extension Puzzle {
 extension Puzzle {
     static var new: Puzzle {
         var cells = [[Cell]]()
-        for _ in 0..<9 {
+        for y in 0..<9 {
             var line = [Cell]()
-            for _ in 0..<9 {
-                line.append(Cell())
+            for x in 0..<9 {
+                line.append(Cell(position: (x: x, y: y)))
             }
             cells.append(line)
         }
@@ -147,6 +153,22 @@ extension Puzzle {
             /* ========================= */
         ]
         return Puzzle(values: values)
+    }
+    
+    static var expert2Values: [[Int]] {
+        [
+            [0,9,1,  0,7,0,  0,4,0],
+            [2,0,4,  0,0,0,  0,0,0],
+            [0,5,0,  3,0,0,  0,0,0],
+            
+            [1,0,0,  0,2,0,  0,0,8],
+            [0,0,7,  6,0,3,  2,0,0],
+            [9,3,0,  0,5,0,  0,0,3],
+            
+            [0,0,0,  0,0,7,  0,3,0],
+            [0,0,0,  0,0,0,  9,0,6],
+            [0,6,0,  0,1,0,  5,7,0],
+        ]
     }
 }
 

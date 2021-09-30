@@ -10,7 +10,10 @@ import Foundation
 public class SolutionEngine {
     let puzzle: Puzzle
 
-    private var history = [Move]()
+    private(set) var history = [Move]()
+    var strategiesUsed: Set<Strategy> {
+        history.reduce(into: Set<Strategy>()) { $0.insert($1.strategy) }
+    }
     
     private var availableMoves = Set<Move>()
     
@@ -23,16 +26,18 @@ public class SolutionEngine {
 extension SolutionEngine {
     @discardableResult
     func execute(_ move: Move) -> Set<Move> {
-        history.append(move)
         var resultingMoves = Set<Move>()
         
         switch move {
         case let .eliminate(possibility, cell, _):
-            cell.possibilities.remove(possibility)
-            if cell.possibilities.count == 1 {
+            
+            if
+                cell.possibilities.remove(possibility) != nil,
+                cell.possibilities.count == 1
+            {
                 resultingMoves.insert(.solve(cell.possibilities.first!, cell, .singlePossibilityInCell))
-            }
-            // TODO: use this to kick off finding other moves efficiently
+            } // TODO: else, use this to kick off finding other moves efficiently
+            
         case let .solve(value, cell, _):
             cell.set(value: value)
             cell.siblings.forEach { cell in
@@ -41,6 +46,17 @@ extension SolutionEngine {
                 resultingMoves.insert(.eliminate(value, cell, .solvedInSibling))
             }
         }
+        
+        history.append(move)
+        
+        if !puzzle.isValid {
+            print("puzzle is not valid!")
+            print(history.reduce(into: Set<String>(), { $0.insert($1.strategy.rawValue) }))
+            print("\n")
+            print(history.map({ $0.strategy.rawValue }))
+            print("\n")
+        }
+        
         
         return resultingMoves
     }
@@ -51,7 +67,8 @@ extension SolutionEngine {
     func solve() -> Bool {
         while !availableMoves.isEmpty || !puzzle.isSolved {
             if !availableMoves.isEmpty {
-                let resultingMoves = execute(availableMoves.removeFirst())
+                let move = availableMoves.removeFirst()
+                let resultingMoves = execute(move)
                 
                 if !resultingMoves.isEmpty {
                     availableMoves.formUnion(resultingMoves)
@@ -60,20 +77,19 @@ extension SolutionEngine {
                 continue
             }
             
-
             let moveFindingTasks: [() -> Void] = [
                 // This first one should be redundant, but it is quick so a double check is fine
                 { self.availableMoves.formUnion(self.singlePossibilityInCellMoves()) },
                 { self.availableMoves.formUnion(self.singlePossibilityInGroupMoves()) },
+                { self.availableMoves.formUnion(self.solvedInSiblingCellMoves()) },
                 { self.availableMoves.formUnion(self.limitedPossibilitiesInGroupMoves()) },
                 { self.availableMoves.formUnion(self.requiredInAdjacentGroupMoves()) },
-                { self.availableMoves.formUnion(self.swordFishEliminationMoves()) }
+                { self.availableMoves.formUnion(self.swordFishEliminationMoves()) },
             ]
             
             for task in moveFindingTasks {
-                if !availableMoves.isEmpty {
-                    break
-                }
+                guard availableMoves.isEmpty else { break }
+
                 task()
             }
             
@@ -88,12 +104,18 @@ extension SolutionEngine {
 }
 
 // MARK: - Move finding
-private extension SolutionEngine {
+extension SolutionEngine {
     func singlePossibilityInCellMoves(_ cells: [Cell]?=nil) -> Set<Move> {
         (cells ?? puzzle.cells.flattened)
-            .filter { !$0.isSolved && $0.possibilities.count == 1 }
-            .map {
-                Move.solve($0.possibilities.first!, $0, .singlePossibilityInCell)
+            .compactMap { cell in
+                guard
+                    !cell.isSolved
+                    && cell.possibilities.count == 1
+                else {
+                    return nil
+                }
+                
+                return Move.solve(cell.possibilities.first!, cell, .singlePossibilityInCell)
             }.set
     }
     
@@ -115,6 +137,19 @@ private extension SolutionEngine {
         return moves
     }
     
+    func solvedInSiblingCellMoves(_ cells: [Cell]?=nil) -> Set<Move> {
+        (cells ?? puzzle.cells.flattened)
+            .filter { $0.isSolved }
+            .compactMap { cell -> [Move]? in
+                guard let value = cell.value else { return nil }
+                
+                return cell.siblings
+                    .filter({ $0.possibilities.contains(value) })
+                    .map({ Move.eliminate(value, $0, .solvedInSibling) })
+            }
+            .flattened
+            .set
+    }
     
     /// If there is some combination of X cells in a given group whose given count of aggregated possibilities
     /// is equal to X, we may remove these possibilites from all other cells in the group
@@ -125,17 +160,21 @@ private extension SolutionEngine {
         (groups ?? puzzle.groups).forEach { group in
             let remainingValues = group.remainingValues
 
+            guard remainingValues.count > 2 else { return }
+            
             for limit in 2..<remainingValues.count {
                 // All combinations of cells where possibilities == count of cells in combination
 
-                let combinations = group.cells.combinations(ofSize: limit) { cells in
-                    let combinedPossibilities = cells.reduce(Set<Int>()) { $0.union($1.possibilities) }
+                let combinations = group.cells
+                    .filter({ !$0.isSolved })
+                    .combinations(ofSize: limit) { cells in
+                    let combinedPossibilities = cells.reduce(into: Set<Int>()) { $0.formUnion($1.possibilities) }
                     // if combinedPossibilities.count < limit, we have reached an error state
                     // TODO: handle error states when identified to avoid further computations
-//                    if combinedPossibilities.count < limit {
-//                        // We are in an error state
-//                        assertionFailure("Error state reached when looking for limited possibilities in groups")
-//                    }
+                    if combinedPossibilities.count < limit {
+                        // We are in an error state
+                        assertionFailure("Error state reached when looking for limited possibilities in groups")
+                    }
                     return combinedPossibilities.count <= limit
                 }
                 
@@ -144,7 +183,7 @@ private extension SolutionEngine {
              
                 let removeCandidates = group.unsolvedCells
                 combinations.forEach { combination in
-                    let combinationValues = combination.reduce(Set<Int>()) { $0.union($1.possibilities) }
+                    let combinationValues = combination.reduce(into: Set<Int>()) { $0.formUnion($1.possibilities) }
                     let removable = removeCandidates.filter { !combination.contains($0) }
                     removable.forEach { cell in
                         let nonpossibilities = cell.possibilities.intersection(combinationValues)
@@ -171,15 +210,20 @@ private extension SolutionEngine {
         puzzle.squares.forEach { square in
             square.remainingValues.forEach { value in
                 let squareCells = square.cells(containingPossibility: value)
-                guard squareCells.count <= 3 else { return }
+                guard (2...3).contains(squareCells.count) else { return }
                 
-                let verticalLines = squareCells.reduce(into: Set<Line>(), { $0.insert($1.verticalLine) })
-                let horizontalLines = squareCells.reduce(into: Set<Line>(), { $0.insert($1.horizontalLine) })
+                let verticalLines = squareCells
+                    .reduce(into: Set<Line>()) { $0.insert($1.verticalLine) }
+                    .compactMap { $0 }
+                let horizontalLines = squareCells
+                    .reduce(into: Set<Line>()) { $0.insert($1.horizontalLine) }
+                    .compactMap { $0 }
                 
                 if
-                    verticalLines.count == 1
+                    verticalLines.count == 1,
+                    let verticalLine = verticalLines.first
                 {
-                    verticalLines.first??
+                    verticalLine
                         .cells(containingPossibility: value)
                         .subtracting(squareCells)
                         .forEach {
@@ -187,9 +231,10 @@ private extension SolutionEngine {
                         }
     
                 } else if
-                    horizontalLines.count == 1
+                    horizontalLines.count == 1,
+                    let horizontalLine = horizontalLines.first
                 {
-                    horizontalLines.first??
+                    horizontalLine
                         .cells(containingPossibility: value)
                         .subtracting(squareCells)
                         .forEach {
@@ -218,7 +263,7 @@ private extension SolutionEngine {
                 let lines = puzzle.lines(withAxis: axis)
                     .filter { !$0.isSolved && $0.cells(containingPossibility: value).count == 2 }
                 
-                guard lines.count > 1 else { break }
+                guard lines.count > 1 else { continue }
                 
                 for lineCount in 2...lines.count {
                     for lineCombo in lines.combinations(ofSize: lineCount) {
@@ -232,7 +277,7 @@ private extension SolutionEngine {
                         
                         if otherAxisLines.count == lineCount {
                             // There are an even number of lines on each axis.
-                            let removeCells = otherAxisLines.reduce(into: Set<Cell>(), { $0.formUnion($1.cells(containingPossibility: value)) })
+                            let removeCells = otherAxisLines.reduce(into: Set<Cell>(), { $0.formUnion($1?.cells(containingPossibility: value) ?? []) })
                                 .subtracting(evaluatingCells)
                             
                             removeCells.forEach {
