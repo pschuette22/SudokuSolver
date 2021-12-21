@@ -16,9 +16,3 @@ class ViewModel<State: ViewState> {
         self.state = state
     }
 }
-
-extension ViewModel {
-    func changeState(_ changeHandler: (State) -> State) {
-        self.state = changeHandler(state)
-    }
-}
