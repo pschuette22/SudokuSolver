@@ -1,5 +1,5 @@
 //
-//  PuzzleViewModel.swift
+//  PuzzleViewControllerModel.swift
 //  SudokuHelper
 //
 //  Created by Peter Schuette on 7/30/21.
