@@ -1,11 +1,12 @@
 //
-//  PuzzleViewManager.swift
+//  PuzzleViewControllerModel.swift
 //  SudokuHelper
 //
 //  Created by Peter Schuette on 7/30/21.
 //
 
 import Foundation
+import Combine
 
 // MARK: - CellViewState
 struct CellViewState: ViewState {
@@ -13,20 +14,20 @@ struct CellViewState: ViewState {
     let value: Int?
     let isValueBold: Bool
     let possibilities: Set<Int>
-    let isFocued: Bool
+    let isFocused: Bool
     let isHighlighted: Bool
     
     init(
         cell: Cell,
         at location: Puzzle.Location,
-        isFocued: Bool=false,
+        isFocused: Bool=false,
         isHighlighted: Bool=false
     ) {
         self.location = location
         value = cell.value
         isValueBold = cell.isPredefined
         possibilities = cell.possibilities
-        self.isFocued = isFocued
+        self.isFocused = isFocused
         self.isHighlighted = isHighlighted
         // TODO: setup group highlighting
     }
@@ -36,7 +37,7 @@ struct CellViewState: ViewState {
         hasher.combine(value ?? 0)
         hasher.combine(isValueBold)
         hasher.combine(possibilities)
-        hasher.combine(isFocued)
+        hasher.combine(isFocused)
         hasher.combine(isHighlighted)
     }
     
@@ -55,27 +56,29 @@ struct PuzzleViewState: ViewState {
                 return CellViewState(
                     cell: cell,
                     at: (x: x, y: y),
-                    isFocued: cell == focused,
+                    isFocused: cell == focused,
                     isHighlighted: cell.sharesGroup(with: focused))
             }
-            
         }
     }
 }
 
 // MARK: - PuzzleViewManager
-final class PuzzleViewManager: ViewManager {
-    typealias ViewState = PuzzleViewState
-    enum StateChange {
-        
+final class PuzzleViewControllerModel: ViewModel<PuzzleViewState> {
+    convenience init(puzzle: Puzzle) {
+        let state = PuzzleViewState(cells: puzzle.cells, focused: nil)
+        self.init(initialState: state)
     }
     
-    private(set) var state: PuzzleViewState
-    private var puzzle: Puzzle
-    
-    required init(puzzle: Puzzle) {
-        self.puzzle = puzzle
-        self.state = PuzzleViewState(cells: puzzle.cells, focused: nil)
+    required init(initialState state: PuzzleViewState) {
+        super.init(initialState: state)
     }
-    
+}
+
+// MARK: - PuzzleViewDelegate
+
+extension PuzzleViewControllerModel: PuzzleViewDelegate {
+    func didTapCell(at position: Puzzle.Location) {
+        Logger.log(.warning, message: "Did tap cell!", params: ["position": position])
+    }
 }

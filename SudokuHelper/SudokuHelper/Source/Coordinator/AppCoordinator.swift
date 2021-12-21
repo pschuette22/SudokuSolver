@@ -41,10 +41,8 @@ extension AppCoordinator {
 // MARK: - Controller Factory
 private extension AppCoordinator {
     func buildPuzzleController() -> PuzzleViewController {
-        let controller = PuzzleViewController()
+        let controller = PuzzleViewController(model: .init(puzzle: Puzzle(values: Puzzle.expert2Values)))
         // TODO: Inject solvable puzzle
-        let manager = PuzzleViewManager(puzzle: Puzzle(values: Puzzle.expert2Values))
-        controller.manager = manager
         return controller
     }
     
