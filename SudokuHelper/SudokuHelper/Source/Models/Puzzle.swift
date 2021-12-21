@@ -78,7 +78,7 @@ class Puzzle {
     }
     
     private func initGroups() {
-        for (index, line) in cells.enumerated() {
+        for (_, line) in cells.enumerated() {
             let horizontalLine = Line(.horizontal, cells: line)
             horizontalLines.append(horizontalLine)
             horizontalLine.remove(possibilities: horizontalLine.solvedValues)
@@ -168,6 +168,22 @@ extension Puzzle {
             [0,0,0,  0,0,7,  0,3,0],
             [0,0,0,  0,0,0,  9,0,6],
             [0,6,0,  0,1,0,  5,7,0],
+        ]
+    }
+    
+    static var blank: [[Int]] {
+        [
+            [0,0,0,  0,0,0,  0,0,0],
+            [0,0,0,  0,0,0,  0,0,0],
+            [0,0,0,  0,0,0,  0,0,0],
+
+            [0,0,0,  0,0,0,  0,0,0],
+            [0,0,0,  0,0,0,  0,0,0],
+            [0,0,0,  0,0,0,  0,0,0],
+
+            [0,0,0,  0,0,0,  0,0,0],
+            [0,0,0,  0,0,0,  0,0,0],
+            [0,0,0,  0,0,0,  0,0,0],
         ]
     }
 }

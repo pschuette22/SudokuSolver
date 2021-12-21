@@ -23,7 +23,7 @@ final class SolutionEngineTests: XCTestCase {
 
     func testExpertPuzzleSolve() {
         let puzzle = Puzzle(
-            values: Self.expert3Values
+            values: Self.expert5Values
         )
         
         let engine = SolutionEngine(puzzle: puzzle)
@@ -48,6 +48,20 @@ extension SolutionEngineTests {
 
 
 private extension SolutionEngineTests {
+    
+    static let template: [[Int]] = [
+        [0,0,0,  0,0,0,  0,0,0],
+        [0,0,0,  0,0,0,  0,0,0],
+        [0,0,0,  0,0,0,  0,0,0],
+
+        [0,0,0,  0,0,0,  0,0,0],
+        [0,0,0,  0,0,0,  0,0,0],
+        [0,0,0,  0,0,0,  0,0,0],
+
+        [0,0,0,  0,0,0,  0,0,0],
+        [0,0,0,  0,0,0,  0,0,0],
+        [0,0,0,  0,0,0,  0,0,0],
+    ]
     
     static let expert1Values: [[Int]] = [
         [0,0,0,  0,0,3,  0,0,0],
@@ -89,6 +103,34 @@ private extension SolutionEngineTests {
         [0,3,0,  4,0,0,  0,0,6],
         [0,0,2,  0,0,7,  0,0,0],
         [6,0,0,  3,0,0,  0,0,5],
+    ]
+    
+    static let expert4Values: [[Int]] = [
+        [0,0,8,  0,0,0,  0,9,7],
+        [0,2,0,  0,0,7,  0,0,0],
+        [0,0,7,  0,0,2,  4,1,0],
+        
+        [7,0,0,  3,0,0,  0,2,0],
+        [0,0,0,  6,0,5,  0,0,0],
+        [0,3,0,  0,0,4,  0,0,6],
+
+        [0,8,1,  5,0,0,  6,0,0],
+        [0,0,0,  8,0,0,  0,3,0],
+        [4,9,0,  0,0,0,  1,0,0],
+    ]
+    
+    static let expert5Values: [[Int]] = [
+        [9,0,0,  0,8,7,  0,0,0],
+        [0,0,8,  0,0,0,  0,0,0],
+        [2,3,0,  1,4,0,  0,0,7],
+
+        [0,0,2,  9,5,0,  0,0,0],
+        [6,0,0,  0,0,0,  0,0,2],
+        [0,0,0,  0,7,4,  9,0,0],
+
+        [3,0,0,  0,6,5,  0,2,4],
+        [0,0,0,  0,0,0,  5,0,0],
+        [0,0,0,  3,9,0,  0,0,8],
     ]
     
 }
