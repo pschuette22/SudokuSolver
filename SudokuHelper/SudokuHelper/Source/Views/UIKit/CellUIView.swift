@@ -80,6 +80,7 @@ extension CellUIView {
             label.translatesAutoresizingMaskIntoConstraints = false
             label.minimumScaleFactor = 0.5
             label.textAlignment = .center
+            label.textColor = .gray
             label.text = "\(possibility)"
             contentView.addSubview(label)
             possibilityLabels[possibility] = label
@@ -94,6 +95,7 @@ extension CellUIView {
         valueLabel.minimumScaleFactor = 0.5
         valueLabel.textAlignment = .center
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        valueLabel.textColor = .black
         NSLayoutConstraint.activate([
             valueLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Self.possibilitySpacing),
             valueLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: Self.possibilitySpacing),
