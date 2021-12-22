@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol PuzzleViewDelegate: AnyObject {
+protocol PuzzleUIViewDelegate: AnyObject {
     func didTapCell(at position: Puzzle.Location)
 }
 
@@ -18,7 +18,7 @@ final class PuzzleUIView: SHView<PuzzleViewState> {
     private static let cellIndexes = 0...8
     private static let interGroupSpacing: CGFloat = 4
     private static let interCellSpacing: CGFloat = 2
-    weak var delegate: PuzzleViewDelegate?
+    weak var delegate: PuzzleUIViewDelegate?
     private var cellViews = [Y: [X: CellUIView]]()
  
     required override init(frame: CGRect) {
@@ -45,6 +45,14 @@ final class PuzzleUIView: SHView<PuzzleViewState> {
     
 }
 
+// MARK: - CellUIViewDelegate
+
+extension PuzzleUIView: CellUIViewDelegate {
+    func didTap(cell: CellUIView, at position: Cell.Position) {
+        delegate?.didTapCell(at: position)
+    }
+}
+
 // MARK: - Subviews
 
 private extension PuzzleUIView {
@@ -57,6 +65,7 @@ private extension PuzzleUIView {
                 let cellView = CellUIView(position: (x: x, y: y))
                 cellView.translatesAutoresizingMaskIntoConstraints = false
                 addSubview(cellView)
+                cellView.delegate = self
                 cellViews[y]?[x] = cellView
 
                 position(cellView, at: (x: x, y: y))

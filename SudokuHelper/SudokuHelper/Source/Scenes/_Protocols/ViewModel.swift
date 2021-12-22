@@ -16,3 +16,11 @@ class ViewModel<State: ViewState> {
         self.state = state
     }
 }
+
+extension ViewModel {
+    func update(_ changeHandler: @escaping (inout State) -> Void) {
+        var mutatingState = self.state
+        changeHandler(&mutatingState)
+        self.state = mutatingState
+    }
+}

@@ -9,11 +9,3 @@ import Foundation
 
 
 protocol ViewState: Hashable { }
-
-extension ViewState {
-    mutating
-    func update(_ changeHandler: @escaping (inout Self) -> Self) {
-        var copy = self
-        self = changeHandler(&copy)
-    }
-}

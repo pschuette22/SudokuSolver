@@ -12,6 +12,8 @@
 		D730E7F42770F94C00DFCC0E /* CellUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F32770F94C00DFCC0E /* CellUIView.swift */; };
 		D730E7F62770FF8300DFCC0E /* _SHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F52770FF8300DFCC0E /* _SHView.swift */; };
 		D730E7FA27711D3C00DFCC0E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F927711D3C00DFCC0E /* Logger.swift */; };
+		D730E7FD2772D0FC00DFCC0E /* CellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7FC2772D0FC00DFCC0E /* CellViewState.swift */; };
+		D730E8002772D13D00DFCC0E /* PuzzleViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7FF2772D13D00DFCC0E /* PuzzleViewState.swift */; };
 		D78C657526EF252B000ADBE5 /* SolutionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78C657426EF252B000ADBE5 /* SolutionEngineTests.swift */; };
 		D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5024A26B258A6007908DA /* AppDelegate.swift */; };
 		D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5024C26B258A6007908DA /* SceneDelegate.swift */; };
@@ -67,6 +69,8 @@
 		D730E7F32770F94C00DFCC0E /* CellUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellUIView.swift; sourceTree = "<group>"; };
 		D730E7F52770FF8300DFCC0E /* _SHView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _SHView.swift; sourceTree = "<group>"; };
 		D730E7F927711D3C00DFCC0E /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		D730E7FC2772D0FC00DFCC0E /* CellViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewState.swift; sourceTree = "<group>"; };
+		D730E7FF2772D13D00DFCC0E /* PuzzleViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewState.swift; sourceTree = "<group>"; };
 		D78C657426EF252B000ADBE5 /* SolutionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionEngineTests.swift; sourceTree = "<group>"; };
 		D7B5024726B258A6007908DA /* SudokuHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SudokuHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B5024A26B258A6007908DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -158,8 +162,8 @@
 			isa = PBXGroup;
 			children = (
 				D730E7F52770FF8300DFCC0E /* _SHView.swift */,
-				D730E7F32770F94C00DFCC0E /* CellUIView.swift */,
-				D730E7F12770F91300DFCC0E /* PuzzleUIView.swift */,
+				D730E7FB2772D0E500DFCC0E /* Cell */,
+				D730E7FE2772D12B00DFCC0E /* Puzzle */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -170,6 +174,24 @@
 				D730E7F927711D3C00DFCC0E /* Logger.swift */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		D730E7FB2772D0E500DFCC0E /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				D730E7F32770F94C00DFCC0E /* CellUIView.swift */,
+				D730E7FC2772D0FC00DFCC0E /* CellViewState.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		D730E7FE2772D12B00DFCC0E /* Puzzle */ = {
+			isa = PBXGroup;
+			children = (
+				D730E7F12770F91300DFCC0E /* PuzzleUIView.swift */,
+				D730E7FF2772D13D00DFCC0E /* PuzzleViewState.swift */,
+			);
+			path = Puzzle;
 			sourceTree = "<group>";
 		};
 		D78C657326EF2518000ADBE5 /* Solution */ = {
@@ -513,6 +535,7 @@
 				D7B5029626B4B3DD007908DA /* InitialSceneViewController.swift in Sources */,
 				D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */,
 				D730E7F22770F91300DFCC0E /* PuzzleUIView.swift in Sources */,
+				D730E7FD2772D0FC00DFCC0E /* CellViewState.swift in Sources */,
 				D7B502A226B4C0EE007908DA /* Cell.swift in Sources */,
 				D730E7EB2770D19C00DFCC0E /* ViewController.swift in Sources */,
 				D730E7F62770FF8300DFCC0E /* _SHView.swift in Sources */,
@@ -521,6 +544,7 @@
 				D730E7FA27711D3C00DFCC0E /* Logger.swift in Sources */,
 				D730E7F42770F94C00DFCC0E /* CellUIView.swift in Sources */,
 				D7B502A426B503DD007908DA /* Line.swift in Sources */,
+				D730E8002772D13D00DFCC0E /* PuzzleViewState.swift in Sources */,
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
 				D7B5029226B4AF4B007908DA /* AppCoordinator.swift in Sources */,
 				D7F7227426B741AA009D92D9 /* ViewModel.swift in Sources */,
