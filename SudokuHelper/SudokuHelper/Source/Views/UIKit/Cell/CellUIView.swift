@@ -7,9 +7,15 @@
 
 import UIKit
 
+protocol CellUIViewDelegate: AnyObject {
+    func didTap(cell: CellUIView, at position: Cell.Position)
+}
+
 final class CellUIView: SHView<CellViewState> {
+    weak var delegate: CellUIViewDelegate?
     /// Position of the cell within the puzzle
-    let position: Cell.Position
+    private let position: Cell.Position
+    /// View containing the content of the cell
     private lazy var contentView = UIView(frame: .init(origin: .zero, size: frame.size))
     /// Label displaying solved value
     private lazy var valueLabel = UILabel()
@@ -26,6 +32,8 @@ final class CellUIView: SHView<CellViewState> {
         backgroundColor = .white
         
         setupSubviews()
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didRegisterTap(_:))))
     }
     
     required init?(coder: NSCoder) {
@@ -54,6 +62,15 @@ final class CellUIView: SHView<CellViewState> {
         } else {
             self.contentView.backgroundColor = .white
         }
+    }
+}
+
+// MARK: - Tap Handling
+
+extension CellUIView {
+    @objc
+    private func didRegisterTap(_ sender: UIView) {
+        delegate?.didTap(cell: self, at: position)
     }
 }
 

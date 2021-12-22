@@ -32,6 +32,7 @@ final class PuzzleViewController: ViewController<PuzzleViewState, PuzzleViewCont
         let puzzleSideLength = minimumSideLength - (Self.defaultMargin * 2)
         puzzleView = PuzzleUIView()
         puzzleView.translatesAutoresizingMaskIntoConstraints = false
+        puzzleView.delegate = self
         view.addSubview(puzzleView)
         
         NSLayoutConstraint.activate([
@@ -49,7 +50,7 @@ final class PuzzleViewController: ViewController<PuzzleViewState, PuzzleViewCont
 
 // MARK: - PuzzleViewDelegate
 
-extension PuzzleViewController: PuzzleViewDelegate {
+extension PuzzleViewController: PuzzleUIViewDelegate {
     func didTapCell(at position: Puzzle.Location) {
         model.didTapCell(at: position)
     }
