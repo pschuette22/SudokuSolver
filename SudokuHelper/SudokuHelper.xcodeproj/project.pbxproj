@@ -10,10 +10,16 @@
 		D730E7EB2770D19C00DFCC0E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7EA2770D19C00DFCC0E /* ViewController.swift */; };
 		D730E7F22770F91300DFCC0E /* PuzzleUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F12770F91300DFCC0E /* PuzzleUIView.swift */; };
 		D730E7F42770F94C00DFCC0E /* CellUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F32770F94C00DFCC0E /* CellUIView.swift */; };
-		D730E7F62770FF8300DFCC0E /* _SHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F52770FF8300DFCC0E /* _SHView.swift */; };
+		D730E7F62770FF8300DFCC0E /* SHView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F52770FF8300DFCC0E /* SHView.swift */; };
 		D730E7FA27711D3C00DFCC0E /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7F927711D3C00DFCC0E /* Logger.swift */; };
 		D730E7FD2772D0FC00DFCC0E /* CellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7FC2772D0FC00DFCC0E /* CellViewState.swift */; };
 		D730E8002772D13D00DFCC0E /* PuzzleViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E7FF2772D13D00DFCC0E /* PuzzleViewState.swift */; };
+		D730E8032772E6D700DFCC0E /* InputControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E8022772E6D700DFCC0E /* InputControlView.swift */; };
+		D730E8052772E70600DFCC0E /* InputControlViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E8042772E70600DFCC0E /* InputControlViewState.swift */; };
+		D730E8082773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E8072773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift */; };
+		D730E80A2773BF5100DFCC0E /* InputControlBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E8092773BF5100DFCC0E /* InputControlBarView.swift */; };
+		D730E80C2773BFBD00DFCC0E /* InputControlBarViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E80B2773BFBD00DFCC0E /* InputControlBarViewState.swift */; };
+		D730E80E2773D94300DFCC0E /* PuzzleViewControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E80D2773D94300DFCC0E /* PuzzleViewControllerState.swift */; };
 		D78C657526EF252B000ADBE5 /* SolutionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78C657426EF252B000ADBE5 /* SolutionEngineTests.swift */; };
 		D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5024A26B258A6007908DA /* AppDelegate.swift */; };
 		D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5024C26B258A6007908DA /* SceneDelegate.swift */; };
@@ -67,10 +73,16 @@
 		D730E7EA2770D19C00DFCC0E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D730E7F12770F91300DFCC0E /* PuzzleUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleUIView.swift; sourceTree = "<group>"; };
 		D730E7F32770F94C00DFCC0E /* CellUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellUIView.swift; sourceTree = "<group>"; };
-		D730E7F52770FF8300DFCC0E /* _SHView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _SHView.swift; sourceTree = "<group>"; };
+		D730E7F52770FF8300DFCC0E /* SHView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SHView.swift; sourceTree = "<group>"; };
 		D730E7F927711D3C00DFCC0E /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		D730E7FC2772D0FC00DFCC0E /* CellViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellViewState.swift; sourceTree = "<group>"; };
 		D730E7FF2772D13D00DFCC0E /* PuzzleViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewState.swift; sourceTree = "<group>"; };
+		D730E8022772E6D700DFCC0E /* InputControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputControlView.swift; sourceTree = "<group>"; };
+		D730E8042772E70600DFCC0E /* InputControlViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputControlViewState.swift; sourceTree = "<group>"; };
+		D730E8072773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extensions.swift"; sourceTree = "<group>"; };
+		D730E8092773BF5100DFCC0E /* InputControlBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputControlBarView.swift; sourceTree = "<group>"; };
+		D730E80B2773BFBD00DFCC0E /* InputControlBarViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputControlBarViewState.swift; sourceTree = "<group>"; };
+		D730E80D2773D94300DFCC0E /* PuzzleViewControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewControllerState.swift; sourceTree = "<group>"; };
 		D78C657426EF252B000ADBE5 /* SolutionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionEngineTests.swift; sourceTree = "<group>"; };
 		D7B5024726B258A6007908DA /* SudokuHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SudokuHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B5024A26B258A6007908DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -161,8 +173,9 @@
 		D730E7F02770F8FD00DFCC0E /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				D730E7F52770FF8300DFCC0E /* _SHView.swift */,
+				D730E7F52770FF8300DFCC0E /* SHView.swift */,
 				D730E7FB2772D0E500DFCC0E /* Cell */,
+				D730E8012772E67B00DFCC0E /* InputControl */,
 				D730E7FE2772D12B00DFCC0E /* Puzzle */,
 			);
 			path = UIKit;
@@ -192,6 +205,25 @@
 				D730E7FF2772D13D00DFCC0E /* PuzzleViewState.swift */,
 			);
 			path = Puzzle;
+			sourceTree = "<group>";
+		};
+		D730E8012772E67B00DFCC0E /* InputControl */ = {
+			isa = PBXGroup;
+			children = (
+				D730E8022772E6D700DFCC0E /* InputControlView.swift */,
+				D730E8042772E70600DFCC0E /* InputControlViewState.swift */,
+				D730E8092773BF5100DFCC0E /* InputControlBarView.swift */,
+				D730E80B2773BFBD00DFCC0E /* InputControlBarViewState.swift */,
+			);
+			path = InputControl;
+			sourceTree = "<group>";
+		};
+		D730E8062773BC6100DFCC0E /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				D730E8072773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift */,
+			);
+			path = UIKit;
 			sourceTree = "<group>";
 		};
 		D78C657326EF2518000ADBE5 /* Solution */ = {
@@ -311,6 +343,7 @@
 			children = (
 				D7B5028426B260BA007908DA /* PuzzleViewController.swift */,
 				D7B5029926B4B595007908DA /* PuzzleViewControllerModel.swift */,
+				D730E80D2773D94300DFCC0E /* PuzzleViewControllerState.swift */,
 			);
 			path = Puzzle;
 			sourceTree = "<group>";
@@ -357,6 +390,7 @@
 		D7B502AB26B51506007908DA /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D730E8062773BC6100DFCC0E /* UIKit */,
 				D7B502AC26B5150E007908DA /* Foundation */,
 			);
 			path = Extensions;
@@ -531,20 +565,26 @@
 			files = (
 				D7B502A026B4C0B4007908DA /* Group.swift in Sources */,
 				D7B5028226B25DD9007908DA /* AppSession.swift in Sources */,
+				D730E80E2773D94300DFCC0E /* PuzzleViewControllerState.swift in Sources */,
 				D7B5029826B4B507007908DA /* Environment.swift in Sources */,
+				D730E8032772E6D700DFCC0E /* InputControlView.swift in Sources */,
 				D7B5029626B4B3DD007908DA /* InitialSceneViewController.swift in Sources */,
+				D730E8082773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift in Sources */,
 				D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */,
 				D730E7F22770F91300DFCC0E /* PuzzleUIView.swift in Sources */,
 				D730E7FD2772D0FC00DFCC0E /* CellViewState.swift in Sources */,
 				D7B502A226B4C0EE007908DA /* Cell.swift in Sources */,
 				D730E7EB2770D19C00DFCC0E /* ViewController.swift in Sources */,
-				D730E7F62770FF8300DFCC0E /* _SHView.swift in Sources */,
+				D730E80C2773BFBD00DFCC0E /* InputControlBarViewState.swift in Sources */,
+				D730E7F62770FF8300DFCC0E /* SHView.swift in Sources */,
 				D7F7228226BEFD3D009D92D9 /* SolutionEngine.swift in Sources */,
 				D7B5029426B4AF5C007908DA /* _Coordinator.swift in Sources */,
 				D730E7FA27711D3C00DFCC0E /* Logger.swift in Sources */,
 				D730E7F42770F94C00DFCC0E /* CellUIView.swift in Sources */,
 				D7B502A426B503DD007908DA /* Line.swift in Sources */,
 				D730E8002772D13D00DFCC0E /* PuzzleViewState.swift in Sources */,
+				D730E8052772E70600DFCC0E /* InputControlViewState.swift in Sources */,
+				D730E80A2773BF5100DFCC0E /* InputControlBarView.swift in Sources */,
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
 				D7B5029226B4AF4B007908DA /* AppCoordinator.swift in Sources */,
 				D7F7227426B741AA009D92D9 /* ViewModel.swift in Sources */,
