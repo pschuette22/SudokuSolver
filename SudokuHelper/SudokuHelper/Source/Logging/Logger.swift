@@ -25,10 +25,16 @@ enum Logger {
         }
     }
     
-    static func log(_ level: Level, message: String, params: [String: Any]? = nil) {
-        
+    static func log(
+        _ level: Level,
+        file: String = #file,
+        line: Int = #line,
+        message: String,
+        params: [String: Any]? = nil
+    ) {
+        let simpleFile = file.components(separatedBy: "/").last ?? file
         #if DEBUG
-        var message = level.prefix + " - " + message
+        var message = "[\(simpleFile) line \(line)] " + level.prefix + " - " + message
         if let params = params, !params.isEmpty {
             message += "\n"
             message += "\(params)"

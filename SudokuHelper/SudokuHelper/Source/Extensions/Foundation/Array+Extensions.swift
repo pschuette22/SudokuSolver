@@ -7,11 +7,11 @@
 
 import Foundation
 
-
-// MARK: - Array where Element is Hashable
-extension Array where Element: Hashable {
-    var set: Set<Element> {
-        Set(self)
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        guard index < count else { return nil }
+        
+        return self[index]
     }
 }
 
@@ -84,6 +84,10 @@ extension Array where Element: Equatable {
 
 // MARK: - Array+Extensions where Element is Hashable
 extension Array where Element: Hashable {
+    var set: Set<Element> {
+        Set(self)
+    }
+    
     func combinations(ofSize size: Int, where isIncluded: (([Element]) -> Bool)?=nil) -> [[Element]] {
         guard size <= count else { return [] }
 

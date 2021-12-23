@@ -9,6 +9,6 @@ import UIKit
 
 class SHView<State: ViewState>: UIView {
     func render(_ state: State) {
-        fatalError("render(_ state:) was not overridden")
+        Logger.log(.error, message: "render(_ state:) was not overridden")
     }
 }

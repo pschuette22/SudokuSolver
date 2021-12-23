@@ -8,15 +8,17 @@
 import Foundation
 import Combine
 
-final class PuzzleViewControllerModel: ViewModel<PuzzleViewState> {
+final class PuzzleViewControllerModel: ViewModel<PuzzleViewControllerState> {
     private var selectedCellLocation: Puzzle.Location?
 
     convenience init(puzzle: Puzzle) {
-        let state = PuzzleViewState(cells: puzzle.cells, focused: nil)
+        let state = PuzzleViewControllerState(
+            puzzleViewState: PuzzleViewState(cells: puzzle.cells, focused: nil)
+        )
         self.init(initialState: state)
     }
     
-    required init(initialState state: PuzzleViewState) {
+    required init(initialState state: PuzzleViewControllerState) {
         super.init(initialState: state)
     }
 }
@@ -48,7 +50,7 @@ extension PuzzleViewControllerModel {
             let groupMaxY = groupMinY + 2
             let groupYRange = groupMinY...groupMaxY
             
-            let cellStates = state.cellStates.enumerated().map { y, cellRowStates in
+            let cellStates = state.puzzleViewState.cellStates.enumerated().map { y, cellRowStates in
                 cellRowStates.enumerated().map { [y] x, cellState -> CellViewState in
                     var modifiedState = cellState
                     
@@ -71,13 +73,13 @@ extension PuzzleViewControllerModel {
                 }
             }
             
-            state.set(cellStates: cellStates)
+            state.set(puzzleCellViewStates: cellStates)
         }
     }
     
     private func removeGroupHighlighting() {
         update { state in
-            let cellStates = state.cellStates.enumerated().map { _, cellRowStates in
+            let cellStates = state.puzzleViewState.cellStates.enumerated().map { _, cellRowStates in
                 cellRowStates.enumerated().map { _, cellState -> CellViewState in
                     var modifiedState = cellState
     
@@ -88,7 +90,7 @@ extension PuzzleViewControllerModel {
                 }
             }
             
-            state.set(cellStates: cellStates)
+            state.set(puzzleCellViewStates: cellStates)
         }
     }
 }
