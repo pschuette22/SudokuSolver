@@ -57,7 +57,6 @@ final class PuzzleViewController: ViewController<PuzzleViewControllerState, Puzz
             puzzleView.heightAnchor.constraint(equalTo: puzzleView.widthAnchor),
             puzzleView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             puzzleView.topAnchor.constraint(equalTo: view.topAnchor, constant: Self.defaultMargin),
-//            puzzleView.bottomAnchor.constraint(lessThanOrEqualTo: inputControlBar.topAnchor, constant: -Self.inputControlBarPadding)
         ])
     }
     
