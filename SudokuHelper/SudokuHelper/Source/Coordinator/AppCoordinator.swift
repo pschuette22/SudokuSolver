@@ -11,6 +11,7 @@ import UIKit
 final class AppCoordinator: Coordinator {
     enum Scene {
         case puzzle
+        case detector
     }
     
     let session: AppSession
@@ -26,11 +27,13 @@ final class AppCoordinator: Coordinator {
 // MARK: - Coordinator Functions
 extension AppCoordinator {
     func start() {
-        present(.puzzle)
+        present(.detector)
     }
     
     func present(_ scene: Scene) {
         switch scene {
+        case .detector:
+            presentDetectorScene()
         case .puzzle:
             presentPuzzleScene()
         }
@@ -46,6 +49,9 @@ private extension AppCoordinator {
         return controller
     }
     
+    func buildDetectorController() -> DetectorViewController {
+        return DetectorViewController()
+    }
 }
 
 // MARK: - Presentation Helpers
@@ -53,6 +59,13 @@ private extension AppCoordinator {
     func presentPuzzleScene() {
         navigationController.pushViewController(
             buildPuzzleController(),
+            animated: false
+        )
+    }
+    
+    func presentDetectorScene() {
+        navigationController.pushViewController(
+            buildDetectorController(),
             animated: false
         )
     }

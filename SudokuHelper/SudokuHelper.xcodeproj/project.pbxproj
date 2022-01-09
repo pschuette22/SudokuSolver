@@ -21,6 +21,10 @@
 		D730E80C2773BFBD00DFCC0E /* InputControlBarViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E80B2773BFBD00DFCC0E /* InputControlBarViewState.swift */; };
 		D730E80E2773D94300DFCC0E /* PuzzleViewControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D730E80D2773D94300DFCC0E /* PuzzleViewControllerState.swift */; };
 		D78C657526EF252B000ADBE5 /* SolutionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78C657426EF252B000ADBE5 /* SolutionEngineTests.swift */; };
+		D7A5F4332776330B00D97B11 /* DetectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A5F4322776330B00D97B11 /* DetectorViewController.swift */; };
+		D7A5F4352776332000D97B11 /* DetectorViewControllerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A5F4342776332000D97B11 /* DetectorViewControllerModel.swift */; };
+		D7A5F4372776332E00D97B11 /* DetectorViewControllerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A5F4362776332E00D97B11 /* DetectorViewControllerState.swift */; };
+		D7A5F4392776765900D97B11 /* Sudoku.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = D7A5F42F2776328F00D97B11 /* Sudoku.mlmodel */; };
 		D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5024A26B258A6007908DA /* AppDelegate.swift */; };
 		D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5024C26B258A6007908DA /* SceneDelegate.swift */; };
 		D7B5025426B258A7007908DA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B5025326B258A7007908DA /* Assets.xcassets */; };
@@ -84,6 +88,10 @@
 		D730E80B2773BFBD00DFCC0E /* InputControlBarViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputControlBarViewState.swift; sourceTree = "<group>"; };
 		D730E80D2773D94300DFCC0E /* PuzzleViewControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleViewControllerState.swift; sourceTree = "<group>"; };
 		D78C657426EF252B000ADBE5 /* SolutionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionEngineTests.swift; sourceTree = "<group>"; };
+		D7A5F42F2776328F00D97B11 /* Sudoku.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Sudoku.mlmodel; sourceTree = "<group>"; };
+		D7A5F4322776330B00D97B11 /* DetectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectorViewController.swift; sourceTree = "<group>"; };
+		D7A5F4342776332000D97B11 /* DetectorViewControllerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectorViewControllerModel.swift; sourceTree = "<group>"; };
+		D7A5F4362776332E00D97B11 /* DetectorViewControllerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectorViewControllerState.swift; sourceTree = "<group>"; };
 		D7B5024726B258A6007908DA /* SudokuHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SudokuHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B5024A26B258A6007908DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7B5024C26B258A6007908DA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -234,6 +242,24 @@
 			path = Solution;
 			sourceTree = "<group>";
 		};
+		D7A5F42E2776328200D97B11 /* CoreML */ = {
+			isa = PBXGroup;
+			children = (
+				D7A5F42F2776328F00D97B11 /* Sudoku.mlmodel */,
+			);
+			path = CoreML;
+			sourceTree = "<group>";
+		};
+		D7A5F431277632F500D97B11 /* Detector */ = {
+			isa = PBXGroup;
+			children = (
+				D7A5F4322776330B00D97B11 /* DetectorViewController.swift */,
+				D7A5F4342776332000D97B11 /* DetectorViewControllerModel.swift */,
+				D7A5F4362776332E00D97B11 /* DetectorViewControllerState.swift */,
+			);
+			path = Detector;
+			sourceTree = "<group>";
+		};
 		D7B5023E26B258A6007908DA = {
 			isa = PBXGroup;
 			children = (
@@ -305,6 +331,7 @@
 		D7B5027B26B25962007908DA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D7A5F42E2776328200D97B11 /* CoreML */,
 				D7B5025326B258A7007908DA /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -332,6 +359,7 @@
 			children = (
 				D7F7227226B74195009D92D9 /* _Protocols */,
 				D730E7E82770D17200DFCC0E /* Base */,
+				D7A5F431277632F500D97B11 /* Detector */,
 				D730E7E92770D18200DFCC0E /* InitialScene */,
 				D7B5028326B2606D007908DA /* Puzzle */,
 			);
@@ -563,6 +591,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7A5F4392776765900D97B11 /* Sudoku.mlmodel in Sources */,
 				D7B502A026B4C0B4007908DA /* Group.swift in Sources */,
 				D7B5028226B25DD9007908DA /* AppSession.swift in Sources */,
 				D730E80E2773D94300DFCC0E /* PuzzleViewControllerState.swift in Sources */,
@@ -583,7 +612,10 @@
 				D730E7F42770F94C00DFCC0E /* CellUIView.swift in Sources */,
 				D7B502A426B503DD007908DA /* Line.swift in Sources */,
 				D730E8002772D13D00DFCC0E /* PuzzleViewState.swift in Sources */,
+				D7A5F4372776332E00D97B11 /* DetectorViewControllerState.swift in Sources */,
+				D7A5F4332776330B00D97B11 /* DetectorViewController.swift in Sources */,
 				D730E8052772E70600DFCC0E /* InputControlViewState.swift in Sources */,
+				D7A5F4352776332000D97B11 /* DetectorViewControllerModel.swift in Sources */,
 				D730E80A2773BF5100DFCC0E /* InputControlBarView.swift in Sources */,
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
 				D7B5029226B4AF4B007908DA /* AppCoordinator.swift in Sources */,
@@ -769,7 +801,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WLBMJNA5RN;
+				DEVELOPMENT_TEAM = 384WS8QBWW;
 				INFOPLIST_FILE = SudokuHelper/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -789,7 +821,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WLBMJNA5RN;
+				DEVELOPMENT_TEAM = 384WS8QBWW;
 				INFOPLIST_FILE = SudokuHelper/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (

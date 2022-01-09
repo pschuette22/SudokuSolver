@@ -18,7 +18,7 @@ final class PuzzleViewControllerModel: ViewModel<PuzzleViewControllerState> {
         self.init(initialState: state)
     }
     
-    required init(initialState state: PuzzleViewControllerState) {
+    override init(initialState state: PuzzleViewControllerState) {
         super.init(initialState: state)
     }
 }
