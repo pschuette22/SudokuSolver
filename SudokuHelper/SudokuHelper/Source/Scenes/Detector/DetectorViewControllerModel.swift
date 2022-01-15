@@ -9,6 +9,7 @@ import Foundation
 import CoreML
 import Vision
 import CoreGraphics
+import UIKit
 
 final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> {
 
@@ -17,7 +18,7 @@ final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> 
     
     init(
         initialState state: DetectorViewControllerState = .init(),
-        requiredConfidence: Float = 0.85,
+        requiredConfidence: Float = 0.95,
         sudokuModelURL: URL = Bundle.main.url(forResource: "Sudoku", withExtension: "mlmodelc")!
     ) {
         self.requiredConfidence = requiredConfidence
@@ -58,7 +59,7 @@ extension DetectorViewControllerModel {
             didNotDetectSudoku()
             return
         }
-        
+
         let objectDetectionRequest = VNCoreMLRequest(model: visionModel) {
             [weak self, image, bufferSize, dispatchQueue, requiredConfidence] (request, error) in
             dispatchQueue.async {
@@ -71,55 +72,31 @@ extension DetectorViewControllerModel {
                     return
                 }
                 
+                var objectBounds = VNImageRectForNormalizedRect(mostConfident.boundingBox, Int(bufferSize.width), Int(bufferSize.height))
                 // Flipped for UIKit orientation origin
-                var boundingBox = mostConfident.boundingBox
-                print("original bounds: \(mostConfident.boundingBox)")
-                // Scale for center crop. Assumes center square of image was used to identify sudoku
-                let smallSide = min(bufferSize.width, bufferSize.height)
-                let scaleX = (bufferSize.width - smallSide) / (bufferSize.width * 2)
-                let scaleY = (bufferSize.height - smallSide) / (bufferSize.height * 2)
-                boundingBox.origin = .init(
-                    x: boundingBox.origin.x + scaleX,
-                    y: boundingBox.origin.y + scaleY
-                )
-                print("Scaled bounds \(boundingBox)")
-                boundingBox.origin.y = 1 - (boundingBox.origin.y + boundingBox.height)
-                print("Flipped bounds: \(boundingBox)")
-
-//                CGRect(
-//                    x: mostConfident.boundingBox.origin.x,
-//                    y: mostConfident.boundingBox.origin.y, // + mostConfident.boundingBox.height),
-//                    width: mostConfident.boundingBox.width,
-//                    height: mostConfident.boundingBox.height
+//                var boundingBox = mostConfident.boundingBox
+//                // Scale for center crop. Assumes center square of image was used to identify sudoku
+//                let longSide = max(bufferSize.width, bufferSize.height)
+//                let scaleX = (longSide - bufferSize.width) / (bufferSize.width * 2)
+//                let scaleY = (longSide - bufferSize.height) / (bufferSize.height * 2)
+//                boundingBox.origin = .init(
+//                    x: boundingBox.origin.x + scaleX,
+//                    y: boundingBox.origin.y + scaleY
 //                )
-                
-                
-                
-//                let objectBounds = VNImageRectForNormalizedRect(
-//                    boundingBox,
-//                    Int(bufferSize.width),
-//                    Int(bufferSize.height)
-//                )
-
-//                let width = container.width
-//                let height = container.height
-//                let boundingBox = CGRect(
-//                    x: width * mostConfident.boundingBox.origin.x,
-//                    y: height * mostConfident.boundingBox.origin.y,
-//                    width: width * mostConfident.boundingBox.width,
-//                    height: height * mostConfident.boundingBox.height)
-//
+//                boundingBox.origin.y = 1 - (boundingBox.origin.y + boundingBox.height)
+                objectBounds.origin.y = bufferSize.height - (objectBounds.height + objectBounds.origin.y)
                 self?.update {
                     $0.toDetectedSudoku(
                         in: image,
                         withSize: bufferSize,
-                        frameInImage: boundingBox,
+                        frameInImage: objectBounds,
                         confidence: mostConfident.confidence
                     )
                 }
                 
                 if mostConfident.confidence > requiredConfidence {
-                    print("Confidently found bounds: \(boundingBox)")
+                    print("Very confident")
+                    self?.parseSudoku(in: image, ofSize: bufferSize, withFrame: objectBounds)
                 } else {
                     // TODO: something else?
                 }
@@ -145,6 +122,33 @@ extension DetectorViewControllerModel {
     
     func didFailToStartCaptureSession(_ error: Error) {
         Logger.log(.error, message: "Failed to start capture session", params: ["error": error])
+    }
+}
+
+// MARK: - Image Parsing
+
+extension DetectorViewControllerModel {
+    func parseSudoku(in image: CGImage, ofSize size: CGSize, withFrame frame: CGRect) {
+        guard case .detectedSudoku = state.context else { return }
+        
+//        // Do I need to expand the clipping at all to ensure that the whole puzzle w/ boarders is captured ?
+//        let clippedImageFrame = CGRect(
+//            x: frame.origin.x * size.width,
+//            y: frame.origin.y * size.height,
+//            width: frame.width * size.width,
+//            height: frame.height * size.height
+//        )
+//
+        guard
+            let croppedImage = image.cropping(to: frame)
+        else {
+            update { $0.toDetecting() }
+            return
+        }
+
+        update {
+            $0.toParsingSudoku(in: croppedImage)
+        }
     }
 }
 

@@ -17,7 +17,8 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     private lazy var previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
     private var detectedSudokuPreview: UIView?
     private let visionInputVerifierView: UIImageView = UIImageView()
-    
+    private let parsingContainerView = UIView()
+    private var parsingSudokuImage: UIImageView?
     
     required init(model: DetectorViewControllerModel = .init()) {
         super.init(model: model)
@@ -43,40 +44,46 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     override func setupSubviews() {
         setupCaptureSession()
         setupPreviewLayer()
+        setupParsingContainer()
         setupVisionInputVerifier()
     }
 
     override func render(_ state: DetectorViewControllerState) {
         Logger.log(.debug, message: "Render DetectorViewControllerState", params: ["state": state])
+        previewContainer.isHidden = !state.isPreviewLayerDisplayed
+        parsingContainerView.isHidden = !state.isParsingViewDisplayed
+        
         switch state.context {
         case .detecting:
             removeSudokuDetectionPreview()
             visionInputVerifierView.image = nil
 
         case let .detectedSudoku(image, size, frame, confidence):
-            // TODO: Normalize frame to displayed image
-            let scaleX = previewLayer.frame.width / size.width
-            let scaleY = previewLayer.frame.height / size.height
-            let scale = max(scaleX, scaleY)
-            let translateX = (scale - scaleX) / (scale * 2)
-            let translateY = (scale - scaleY) / (scale * 2)
-            let translatedFrame = CGRect(
-                x: frame.origin.x - translateX,
-                y: frame.origin.y - translateY,
-                width: frame.size.width + translateX,
-                height: frame.size.height + translateY
+            let scaleX = size.width / previewLayer.frame.width
+            let scaleY = size.height / previewLayer.frame.height
+            let scale = min(scaleX, scaleY)
+            let translateX = ((1 - scaleX) * previewLayer.frame.width) / 2
+            let translateY = ((1 - scaleY) * previewLayer.frame.height) / 2 // (scaleY - scale) / (scale * 2)
+            let normalizedFrame = CGRect(
+                x: frame.origin.x + translateX, // + (translateX * frame.size.width),
+                y: frame.origin.y + translateY, // + (translateY * frame.size.height),
+                width: frame.size.width / scale, // + (translateX * frame.size.width * 2),
+                height: frame.size.height / scale// + (translateX * frame.size.width * 2)
             )
             
-            let normalizedFrame = CGRect(
-                x: translatedFrame.origin.x * previewLayer.frame.width,
-                y: translatedFrame.origin.y * previewLayer.frame.height,
-                width: translatedFrame.width * previewLayer.frame.width,
-                height: translatedFrame.height * previewLayer.frame.height
-            )
+//            let normalizedFrame = CGRect(
+//                x: translatedFrame.origin.x * previewLayer.frame.width,
+//                y: translatedFrame.origin.y * previewLayer.frame.height,
+//                width: translatedFrame.width * previewLayer.frame.width,
+//                height: translatedFrame.height * previewLayer.frame.height
+//            )
 
             drawSudokuDetectionPreview(frame: normalizedFrame, confidence: confidence)
             visionInputVerifierView.image = UIImage(cgImage: image)
-            print("Drew it!")
+            
+        case let .parsingSudoku(image):
+            captureSession.stopRunning()
+            drawSudokuBeingParsed(from: UIImage(cgImage: image))
         }
     }
     
@@ -112,14 +119,17 @@ extension DetectorViewController {
         }
 
         captureSession.beginConfiguration()
-        captureSession.sessionPreset = .medium
+        captureSession.sessionPreset = .vga640x480
 
-        guard captureSession.canAddInput(deviceInput) else {
+        guard
+            captureSession.canAddInput(deviceInput)
+        else {
             model.didFailToSetupCaptureSession()
             Logger.log(.error, message: "Could not add video device input to the session")
             captureSession.commitConfiguration()
             return
         }
+
         captureSession.addInput(deviceInput)
         
         let videoDataOutput = AVCaptureVideoDataOutput()
@@ -161,14 +171,26 @@ extension DetectorViewController {
         previewContainer.translatesAutoresizingMaskIntoConstraints = false
         previewContainer.clipsToBounds = true
         NSLayoutConstraint.activate([
-            previewContainer.topAnchor.constraint(equalTo: view.topAnchor),
-            previewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            previewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            previewContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            previewContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            previewContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            previewContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            previewContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
         previewLayer.contentsGravity = .resizeAspectFill
         previewLayer.videoGravity = .resizeAspectFill
         previewContainer.layer.addSublayer(previewLayer)
+    }
+    
+    func setupParsingContainer() {
+        view.addSubview(parsingContainerView)
+        parsingContainerView.translatesAutoresizingMaskIntoConstraints = false
+        parsingContainerView.clipsToBounds = false
+        NSLayoutConstraint.activate([
+            parsingContainerView.topAnchor.constraint(equalTo: view.topAnchor),
+            parsingContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            parsingContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            parsingContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
     
     func setupVisionInputVerifier() {
@@ -210,14 +232,11 @@ extension DetectorViewController {
         var `ciImage` = CIImage(cvPixelBuffer: imageBuffer)
         
         var orientation: CGImagePropertyOrientation
-        var imageSize = bufferSize
         switch videoOrientation {
         case .portrait:
             orientation = .up
-//            imageSize = .init(width: bufferSize.height, height: bufferSize.width)
         case .portraitUpsideDown:
             orientation = .down
-//            imageSize = .init(width: bufferSize.height, height: bufferSize.width)
         case .landscapeRight:
             orientation = .left
         case .landscapeLeft:
@@ -229,9 +248,10 @@ extension DetectorViewController {
 
         ciImage = ciImage.oriented(forExifOrientation: Int32(orientation.rawValue))
         
+        
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
         
-        return (image: cgImage, size: imageSize)
+        return (image: cgImage, size: ciImage.extent.size)
     }
 }
 
@@ -277,4 +297,19 @@ private extension DetectorViewController {
         detectedSudokuPreview = preview
     }
     
+    func drawSudokuBeingParsed(from image: UIImage) {
+        parsingSudokuImage?.removeFromSuperview()
+        let parsingSudokuImage = UIImageView(image: image)
+        parsingSudokuImage.contentMode = .scaleAspectFit
+        parsingContainerView.addSubview(parsingSudokuImage)
+        NSLayoutConstraint.activate([
+            parsingSudokuImage.topAnchor.constraint(greaterThanOrEqualTo: parsingContainerView.topAnchor, constant: 24),
+            parsingSudokuImage.leftAnchor.constraint(greaterThanOrEqualTo: parsingContainerView.leftAnchor, constant: 24),
+            parsingSudokuImage.rightAnchor.constraint(lessThanOrEqualTo: parsingContainerView.rightAnchor, constant: -24),
+            parsingSudokuImage.bottomAnchor.constraint(lessThanOrEqualTo: parsingContainerView.bottomAnchor, constant: -24),
+            parsingSudokuImage.centerXAnchor.constraint(equalTo: parsingContainerView.centerXAnchor),
+            parsingSudokuImage.centerYAnchor.constraint(equalTo: parsingContainerView.centerYAnchor),
+        ])
+        self.parsingSudokuImage = parsingSudokuImage
+    }
 }

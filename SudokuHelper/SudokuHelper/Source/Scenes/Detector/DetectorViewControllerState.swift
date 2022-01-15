@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreGraphics
+import UIKit
 
 struct DetectorViewControllerState: ViewState {
     enum Context: Hashable {
@@ -17,8 +18,10 @@ struct DetectorViewControllerState: ViewState {
             frameInImage: CGRect,
             confidence: Float
         )
-        // case parsingSudoku
-        // case 
+        case parsingSudoku(
+            image: CGImage
+        )
+        // case parsedSudoku(image, imageSize, cells, values)
     }
     private(set) var context: Context
     
@@ -29,8 +32,32 @@ struct DetectorViewControllerState: ViewState {
     }
 }
 
+// MARK: - Queries
 extension DetectorViewControllerState {
+    var isPreviewLayerDisplayed: Bool {
+        switch context {
+        case .detecting, .detectedSudoku:
+            return true
+        
+        case .parsingSudoku:
+            return false
+        }
+    }
     
+    var isParsingViewDisplayed: Bool {
+        switch context {
+        case .detecting, .detectedSudoku:
+            return false
+            
+        case .parsingSudoku:
+            return true
+        }
+    }
+}
+
+// MARK: - Mutations
+
+extension DetectorViewControllerState {
     mutating
     func toDetecting() {
         self.context = .detecting
@@ -41,6 +68,10 @@ extension DetectorViewControllerState {
         self.context = .detectedSudoku(image: image, imageSize: imageSize, frameInImage: frame, confidence: confidence)
     }
     
+    mutating
+    func toParsingSudoku(in image: CGImage) {
+        self.context = .parsingSudoku(image: image)
+    }
 }
 
 // MARK: - CGRect+Hashable
@@ -53,9 +84,11 @@ extension CGRect: Hashable {
     }
 }
 
+// MARK: - CGSize+Hashable
+
 extension CGSize: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine("width:\(width)")
-        hasher.combine("height:\(height)")
+        hasher.combine("w:\(width)")
+        hasher.combine("h:\(height)")
     }
 }
