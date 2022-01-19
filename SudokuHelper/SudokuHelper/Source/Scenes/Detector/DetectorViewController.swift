@@ -49,8 +49,8 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     }
 
     override func render(_ state: DetectorViewControllerState) {
-        previewContainer.isHidden = !state.isPreviewLayerDisplayed
-        parsingContainerView.isHidden = !state.isParsingViewDisplayed
+        previewContainer.isHidden = state.isPreviewLayerDisplayed == false
+        parsingContainerView.isHidden = state.isParsingViewDisplayed == false
         
         switch state.context {
         case .detecting:
@@ -58,39 +58,21 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             visionInputVerifierView.image = nil
 
         case let .detectedSudoku(image, size, frame, confidence):
-            print("previewLayer frame size: \(previewLayer.frame.size)")
-            print("buffer size: \(size)")
             let scaleX = previewLayer.frame.width / size.width
             let scaleY = previewLayer.frame.height / size.height
             let scale = max(scaleX, scaleY)
-            print("scaleX: \(scaleX)")
-            print("scaleY: \(scaleY)")
-            print("preview scale: \(scale)")
-            let clippedHeight = ((scale - scaleY) * previewLayer.frame.height / 2)
-            let clippedWidth = ((scale - scaleX) * previewLayer.frame.width / 2)
-            print("clipped width: \(clippedWidth)")
-            print("clipped height: \(clippedHeight)")
+            let clippedWidth = ((scale - scaleX) * size.width) / 2
+            let clippedHeight = ((scale - scaleY) * size.height) / 2
             
             let normalizedFrame = CGRect(
-                x: (frame.origin.x * scale) - clippedWidth, // + (translateX * frame.size.width),
-                y: (frame.origin.y * scale) - clippedHeight, // + (translateY * frame.size.height),
-                width: frame.size.width * scale, // + (translateX * frame.size.width * 2),
-                height: frame.size.height * scale // + (translateX * frame.size.width * 2)
+                x: (frame.origin.x * scale) - clippedWidth,
+                y: (frame.origin.y * scale) - clippedHeight,
+                width: frame.size.width * scale,
+                height: frame.size.height * scale
             )
-            
-//            let normalizedFrame = CGRect(
-//                x: translatedFrame.origin.x * previewLayer.frame.width,
-//                y: translatedFrame.origin.y * previewLayer.frame.height,
-//                width: translatedFrame.width * previewLayer.frame.width,
-//                height: translatedFrame.height * previewLayer.frame.height
-//            )
 
             drawSudokuDetectionPreview(frame: normalizedFrame, confidence: confidence)
             visionInputVerifierView.image = UIImage(cgImage: image)
-            
-            if let croppedImage = image.cropping(to: frame) {
-                drawSudokuBeingParsed(from: UIImage(cgImage: croppedImage))
-            }
 
         case let .parsingSudoku(image):
             captureSession.stopRunning()
@@ -187,7 +169,7 @@ extension DetectorViewController {
             previewContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             previewContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
-        previewLayer.contentsGravity = .resizeAspectFill
+        previewLayer.contentsGravity = .center
         previewLayer.videoGravity = .resizeAspectFill
         previewContainer.layer.addSublayer(previewLayer)
     }

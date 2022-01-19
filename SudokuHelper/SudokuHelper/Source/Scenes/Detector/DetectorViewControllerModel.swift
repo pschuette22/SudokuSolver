@@ -73,24 +73,16 @@ extension DetectorViewControllerModel {
                 }
                 
                 var objectBounds = VNImageRectForNormalizedRect(mostConfident.boundingBox, Int(bufferSize.width), Int(bufferSize.height))
+
                 // expand by 5% for blank space padding
                 let horizontalExpand = objectBounds.width * 0.05
                 let verticalExpand = objectBounds.height * 0.05
-                objectBounds.origin.x -= horizontalExpand / 2
-                objectBounds.origin.y -= verticalExpand / 2
+                objectBounds.origin.x -= (horizontalExpand / 2)
+                objectBounds.origin.y -= (verticalExpand / 2)
                 objectBounds.size.height += verticalExpand
-                objectBounds.size.height += horizontalExpand
-                // Flipped for UIKit orientation origin
-//                var boundingBox = mostConfident.boundingBox
-//                // Scale for center crop. Assumes center square of image was used to identify sudoku
-//                let longSide = max(bufferSize.width, bufferSize.height)
-//                let scaleX = (longSide - bufferSize.width) / (bufferSize.width * 2)
-//                let scaleY = (longSide - bufferSize.height) / (bufferSize.height * 2)
-//                boundingBox.origin = .init(
-//                    x: boundingBox.origin.x + scaleX,
-//                    y: boundingBox.origin.y + scaleY
-//                )
-//                boundingBox.origin.y = 1 - (boundingBox.origin.y + boundingBox.height)
+                objectBounds.size.width += horizontalExpand
+
+                // Flip for UIKit/CoreGraphics frame coordinate system
                 objectBounds.origin.y = bufferSize.height - (objectBounds.height + objectBounds.origin.y)
                 self?.update {
                     $0.toDetectedSudoku(
