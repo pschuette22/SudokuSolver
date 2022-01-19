@@ -73,6 +73,13 @@ extension DetectorViewControllerModel {
                 }
                 
                 var objectBounds = VNImageRectForNormalizedRect(mostConfident.boundingBox, Int(bufferSize.width), Int(bufferSize.height))
+                // expand by 5% for blank space padding
+                let horizontalExpand = objectBounds.width * 0.05
+                let verticalExpand = objectBounds.height * 0.05
+                objectBounds.origin.x -= horizontalExpand / 2
+                objectBounds.origin.y -= verticalExpand / 2
+                objectBounds.size.height += verticalExpand
+                objectBounds.size.height += horizontalExpand
                 // Flipped for UIKit orientation origin
 //                var boundingBox = mostConfident.boundingBox
 //                // Scale for center crop. Assumes center square of image was used to identify sudoku
@@ -95,15 +102,14 @@ extension DetectorViewControllerModel {
                 }
                 
                 if mostConfident.confidence > requiredConfidence {
-                    print("Very confident")
-                    self?.parseSudoku(in: image, ofSize: bufferSize, withFrame: objectBounds)
+//                    self?.parseSudoku(in: image, ofSize: bufferSize, withFrame: objectBounds)
                 } else {
                     // TODO: something else?
                 }
             }
         }
         
-        objectDetectionRequest.imageCropAndScaleOption = .centerCrop
+        objectDetectionRequest.imageCropAndScaleOption = .scaleFill
         
         let handler = VNImageRequestHandler(cgImage: image, options: [:])
         DispatchQueue.global(qos: .userInitiated).async { [handler, objectDetectionRequest] in

@@ -49,7 +49,6 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     }
 
     override func render(_ state: DetectorViewControllerState) {
-        Logger.log(.debug, message: "Render DetectorViewControllerState", params: ["state": state])
         previewContainer.isHidden = !state.isPreviewLayerDisplayed
         parsingContainerView.isHidden = !state.isParsingViewDisplayed
         
@@ -59,16 +58,24 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             visionInputVerifierView.image = nil
 
         case let .detectedSudoku(image, size, frame, confidence):
-            let scaleX = size.width / previewLayer.frame.width
-            let scaleY = size.height / previewLayer.frame.height
-            let scale = min(scaleX, scaleY)
-            let translateX = ((1 - scaleX) * previewLayer.frame.width) / 2
-            let translateY = ((1 - scaleY) * previewLayer.frame.height) / 2 // (scaleY - scale) / (scale * 2)
+            print("previewLayer frame size: \(previewLayer.frame.size)")
+            print("buffer size: \(size)")
+            let scaleX = previewLayer.frame.width / size.width
+            let scaleY = previewLayer.frame.height / size.height
+            let scale = max(scaleX, scaleY)
+            print("scaleX: \(scaleX)")
+            print("scaleY: \(scaleY)")
+            print("preview scale: \(scale)")
+            let clippedHeight = ((scale - scaleY) * previewLayer.frame.height / 2)
+            let clippedWidth = ((scale - scaleX) * previewLayer.frame.width / 2)
+            print("clipped width: \(clippedWidth)")
+            print("clipped height: \(clippedHeight)")
+            
             let normalizedFrame = CGRect(
-                x: frame.origin.x + translateX, // + (translateX * frame.size.width),
-                y: frame.origin.y + translateY, // + (translateY * frame.size.height),
-                width: frame.size.width / scale, // + (translateX * frame.size.width * 2),
-                height: frame.size.height / scale// + (translateX * frame.size.width * 2)
+                x: (frame.origin.x * scale) - clippedWidth, // + (translateX * frame.size.width),
+                y: (frame.origin.y * scale) - clippedHeight, // + (translateY * frame.size.height),
+                width: frame.size.width * scale, // + (translateX * frame.size.width * 2),
+                height: frame.size.height * scale // + (translateX * frame.size.width * 2)
             )
             
 //            let normalizedFrame = CGRect(
@@ -81,6 +88,10 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             drawSudokuDetectionPreview(frame: normalizedFrame, confidence: confidence)
             visionInputVerifierView.image = UIImage(cgImage: image)
             
+            if let croppedImage = image.cropping(to: frame) {
+                drawSudokuBeingParsed(from: UIImage(cgImage: croppedImage))
+            }
+
         case let .parsingSudoku(image):
             captureSession.stopRunning()
             drawSudokuBeingParsed(from: UIImage(cgImage: image))
@@ -184,12 +195,12 @@ extension DetectorViewController {
     func setupParsingContainer() {
         view.addSubview(parsingContainerView)
         parsingContainerView.translatesAutoresizingMaskIntoConstraints = false
-        parsingContainerView.clipsToBounds = false
+        parsingContainerView.clipsToBounds = true
         NSLayoutConstraint.activate([
-            parsingContainerView.topAnchor.constraint(equalTo: view.topAnchor),
-            parsingContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            parsingContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            parsingContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            parsingContainerView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.25),
+            parsingContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
+            parsingContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.25),
+            parsingContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
         ])
     }
     
@@ -298,15 +309,16 @@ private extension DetectorViewController {
     }
     
     func drawSudokuBeingParsed(from image: UIImage) {
+        parsingContainerView.isHidden = false
         parsingSudokuImage?.removeFromSuperview()
         let parsingSudokuImage = UIImageView(image: image)
+        parsingSudokuImage.clipsToBounds = false
         parsingSudokuImage.contentMode = .scaleAspectFit
         parsingContainerView.addSubview(parsingSudokuImage)
+        parsingContainerView.clipsToBounds = false
         NSLayoutConstraint.activate([
-            parsingSudokuImage.topAnchor.constraint(greaterThanOrEqualTo: parsingContainerView.topAnchor, constant: 24),
-            parsingSudokuImage.leftAnchor.constraint(greaterThanOrEqualTo: parsingContainerView.leftAnchor, constant: 24),
-            parsingSudokuImage.rightAnchor.constraint(lessThanOrEqualTo: parsingContainerView.rightAnchor, constant: -24),
-            parsingSudokuImage.bottomAnchor.constraint(lessThanOrEqualTo: parsingContainerView.bottomAnchor, constant: -24),
+            parsingSudokuImage.widthAnchor.constraint(equalToConstant: 80.0),
+            parsingSudokuImage.heightAnchor.constraint(equalToConstant: 80.0),
             parsingSudokuImage.centerXAnchor.constraint(equalTo: parsingContainerView.centerXAnchor),
             parsingSudokuImage.centerYAnchor.constraint(equalTo: parsingContainerView.centerYAnchor),
         ])
