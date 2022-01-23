@@ -94,7 +94,7 @@ extension DetectorViewControllerModel {
                 }
                 
                 if mostConfident.confidence > requiredConfidence {
-//                    self?.parseSudoku(in: image, ofSize: bufferSize, withFrame: objectBounds)
+                    self?.parseSudoku(in: image, ofSize: bufferSize, withFrame: objectBounds)
                 } else {
                     // TODO: something else?
                 }
@@ -129,14 +129,6 @@ extension DetectorViewControllerModel {
     func parseSudoku(in image: CGImage, ofSize size: CGSize, withFrame frame: CGRect) {
         guard case .detectedSudoku = state.context else { return }
         
-//        // Do I need to expand the clipping at all to ensure that the whole puzzle w/ boarders is captured ?
-//        let clippedImageFrame = CGRect(
-//            x: frame.origin.x * size.width,
-//            y: frame.origin.y * size.height,
-//            width: frame.width * size.width,
-//            height: frame.height * size.height
-//        )
-//
         guard
             let croppedImage = image.cropping(to: frame)
         else {
@@ -150,6 +142,8 @@ extension DetectorViewControllerModel {
     }
 }
 
+
+// MARK: - CGRect+CustomStringConvertible
 
 extension CGRect: CustomStringConvertible {
     public var description: String {

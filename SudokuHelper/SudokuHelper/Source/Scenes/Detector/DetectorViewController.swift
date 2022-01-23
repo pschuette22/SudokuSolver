@@ -45,7 +45,9 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
         setupCaptureSession()
         setupPreviewLayer()
         setupParsingContainer()
+        #if DEBUG
         setupVisionInputVerifier()
+        #endif
     }
 
     override func render(_ state: DetectorViewControllerState) {
@@ -63,7 +65,6 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             let scale = max(scaleX, scaleY)
             let clippedWidth = ((scale - scaleX) * size.width) / 2
             let clippedHeight = ((scale - scaleY) * size.height) / 2
-            
             let normalizedFrame = CGRect(
                 x: (frame.origin.x * scale) - clippedWidth,
                 y: (frame.origin.y * scale) - clippedHeight,
@@ -72,8 +73,10 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             )
 
             drawSudokuDetectionPreview(frame: normalizedFrame, confidence: confidence)
-            visionInputVerifierView.image = UIImage(cgImage: image)
 
+            #if DEBUG
+            visionInputVerifierView.image = UIImage(cgImage: image)
+            #endif
         case let .parsingSudoku(image):
             captureSession.stopRunning()
             drawSudokuBeingParsed(from: UIImage(cgImage: image))
@@ -179,10 +182,10 @@ extension DetectorViewController {
         parsingContainerView.translatesAutoresizingMaskIntoConstraints = false
         parsingContainerView.clipsToBounds = true
         NSLayoutConstraint.activate([
-            parsingContainerView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.25),
-            parsingContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
-            parsingContainerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.25),
-            parsingContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
+            parsingContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            parsingContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            parsingContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            parsingContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
     
