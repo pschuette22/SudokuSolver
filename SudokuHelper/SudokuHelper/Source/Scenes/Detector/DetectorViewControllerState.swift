@@ -21,7 +21,12 @@ struct DetectorViewControllerState: ViewState {
         case parsingSudoku(
             image: CGImage
         )
-        // case parsedSudoku(image, imageSize, cells, values)
+        case parsedSudoku(
+            image: CGImage,
+            imageSize: CGSize,
+            cells: [[CGRect]],
+            values: [[Int]]
+        )
     }
     private(set) var context: Context
     
@@ -39,7 +44,7 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku:
             return true
         
-        case .parsingSudoku:
+        case .parsingSudoku, .parsedSudoku:
             return false
         }
     }
@@ -49,7 +54,7 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku:
             return false
             
-        case .parsingSudoku:
+        case .parsingSudoku, .parsedSudoku:
             return true
         }
     }
@@ -71,6 +76,11 @@ extension DetectorViewControllerState {
     mutating
     func toParsingSudoku(in image: CGImage) {
         self.context = .parsingSudoku(image: image)
+    }
+    
+    mutating
+    func toParsedSudoku(in image: CGImage, withSize imageSize: CGSize, cellFrames: [[CGRect]], values: [[Int]]) {
+        self.context = .parsedSudoku(image: image, imageSize: imageSize, cells: cellFrames, values: values)
     }
 }
 

@@ -139,6 +139,8 @@ extension DetectorViewControllerModel {
         update {
             $0.toParsingSudoku(in: croppedImage)
         }
+        
+        
     }
 }
 

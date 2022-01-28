@@ -42,7 +42,7 @@ enum Logger {
         NSLog(message)
         
         if case .error = level {
-            assertionFailure()
+            assertionFailure("\(file) [\(line)]: " + message)
         }
         #endif
     }

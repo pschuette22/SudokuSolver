@@ -80,6 +80,11 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
         case let .parsingSudoku(image):
             captureSession.stopRunning()
             drawSudokuBeingParsed(from: UIImage(cgImage: image))
+            // TODO: some sort of parsing animation
+            
+        case let .parsedSudoku(image, imageSize, cells, values):
+            // TODO: handle this
+            Logger.log(.debug, message: "Parsed sudoku", params: ["values": values])
         }
     }
     
