@@ -79,8 +79,12 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             #endif
         case let .parsingSudoku(image):
             captureSession.stopRunning()
-            drawSudokuBeingParsed(from: UIImage(cgImage: image))
+            drawSudokuBeingParsed(from: image)
             // TODO: some sort of parsing animation
+        
+        case let.locatedCells(image, cells):
+            let drawingResult = drawSudokuBeingParsed(from: image)
+            draw(locatedCells: cells, scale: drawingResult.scale)
             
         case let .parsedSudoku(image, imageSize, cells, values):
             // TODO: handle this
@@ -287,31 +291,55 @@ private extension DetectorViewController {
         detectedSudokuPreview = nil
     }
     
-    func drawSudokuDetectionPreview(frame: CGRect, confidence: Float) {
+    func drawSudokuDetectionPreview(frame: CGRect, confidence: CGFloat) {
         removeSudokuDetectionPreview()
         
         let preview = UIView(frame: frame)
         preview.backgroundColor = .clear
-        preview.layer.borderColor = UIColor.yellow.withAlphaComponent(CGFloat(confidence)).cgColor
+        preview.layer.borderColor = UIColor.yellow.withAlphaComponent(confidence).cgColor
         preview.layer.borderWidth = 3.0
         previewContainer.addSubview(preview)
         detectedSudokuPreview = preview
     }
     
-    func drawSudokuBeingParsed(from image: UIImage) {
+    @discardableResult
+    func drawSudokuBeingParsed(from image: CGImage) -> (image: UIImageView, scale: CGPoint) {
+        parsingSudokuImage?.subviews.forEach { $0.removeFromSuperview() }
         parsingContainerView.isHidden = false
         parsingSudokuImage?.removeFromSuperview()
-        let parsingSudokuImage = UIImageView(image: image)
+        let parsingSudokuImage = UIImageView(image: UIImage(cgImage: image))
         parsingSudokuImage.clipsToBounds = false
-        parsingSudokuImage.contentMode = .scaleAspectFit
+        parsingSudokuImage.contentMode = .scaleToFill
+        parsingSudokuImage.translatesAutoresizingMaskIntoConstraints = false
         parsingContainerView.addSubview(parsingSudokuImage)
         parsingContainerView.clipsToBounds = false
+        let scale = min(view.frame.width / CGFloat(image.width), view.frame.height / CGFloat(image.height))
+        
         NSLayoutConstraint.activate([
-            parsingSudokuImage.widthAnchor.constraint(equalToConstant: 80.0),
-            parsingSudokuImage.heightAnchor.constraint(equalToConstant: 80.0),
+            parsingSudokuImage.widthAnchor.constraint(equalToConstant: scale * CGFloat(image.width)),
+            parsingSudokuImage.heightAnchor.constraint(equalToConstant: scale * CGFloat(image.height)),
             parsingSudokuImage.centerXAnchor.constraint(equalTo: parsingContainerView.centerXAnchor),
             parsingSudokuImage.centerYAnchor.constraint(equalTo: parsingContainerView.centerYAnchor),
         ])
         self.parsingSudokuImage = parsingSudokuImage
+        
+        return (image: parsingSudokuImage, scale: CGPoint(x: scale, y: scale))
+    }
+    
+    func draw(locatedCells: [DetectorViewControllerState.LocatedCell], scale: CGPoint) {
+        locatedCells.forEach {
+            let scaledRect = CGRect(
+                x: $0.frame.origin.x * scale.x,
+                y: $0.frame.origin.y * scale.y,
+                width: $0.frame.width * scale.x,
+                height: $0.frame.height * scale.y
+            )
+            
+            let boxView = UIView(frame: scaledRect)
+            boxView.backgroundColor = .clear
+            boxView.layer.borderColor = UIColor.blue.cgColor
+            boxView.layer.borderWidth = 2
+            self.parsingSudokuImage?.addSubview(boxView)
+        }
     }
 }

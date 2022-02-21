@@ -10,16 +10,29 @@ import CoreGraphics
 import UIKit
 
 struct DetectorViewControllerState: ViewState {
+    struct LocatedCell: Hashable {
+        enum CellType: Hashable {
+            case filled
+            case empty
+        }
+        let frame: CGRect
+        let type: CellType
+    }
+    
     enum Context: Hashable {
         case detecting
         case detectedSudoku(
             image: CGImage,
             imageSize: CGSize,
             frameInImage: CGRect,
-            confidence: Float
+            confidence: CGFloat
         )
         case parsingSudoku(
             image: CGImage
+        )
+        case locatedCells(
+            image: CGImage,
+            cells: [LocatedCell]
         )
         case parsedSudoku(
             image: CGImage,
@@ -44,7 +57,7 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku:
             return true
         
-        case .parsingSudoku, .parsedSudoku:
+        case .parsingSudoku, .locatedCells, .parsedSudoku:
             return false
         }
     }
@@ -54,7 +67,7 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku:
             return false
             
-        case .parsingSudoku, .parsedSudoku:
+        case .parsingSudoku, .locatedCells, .parsedSudoku:
             return true
         }
     }
@@ -69,13 +82,18 @@ extension DetectorViewControllerState {
     }
     
     mutating
-    func toDetectedSudoku(in image: CGImage, withSize imageSize: CGSize, frameInImage frame: CGRect, confidence: Float) {
+    func toDetectedSudoku(in image: CGImage, withSize imageSize: CGSize, frameInImage frame: CGRect, confidence: CGFloat) {
         self.context = .detectedSudoku(image: image, imageSize: imageSize, frameInImage: frame, confidence: confidence)
     }
     
     mutating
     func toParsingSudoku(in image: CGImage) {
         self.context = .parsingSudoku(image: image)
+    }
+    
+    mutating
+    func toLocatedCells(in image: CGImage, cells: [LocatedCell]) {
+        self.context = .locatedCells(image: image, cells: cells)
     }
     
     mutating

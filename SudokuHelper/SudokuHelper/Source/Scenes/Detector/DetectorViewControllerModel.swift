@@ -12,24 +12,77 @@ import CoreGraphics
 import UIKit
 
 final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> {
-
-    private let requiredConfidence: Float
-    private let sudokuModelURL: URL
+    private let requiredConfidence: CGFloat
+    private let sudokuImageParser: SudokuImageParser
     
     init(
         initialState state: DetectorViewControllerState = .init(),
-        requiredConfidence: Float = 0.95,
-        sudokuModelURL: URL = Bundle.main.url(forResource: "Sudoku", withExtension: "mlmodelc")!
+        requiredConfidence: CGFloat = 0.95,
+        sudokuImageParser: SudokuImageParser = .init()
     ) {
         self.requiredConfidence = requiredConfidence
-        self.sudokuModelURL = sudokuModelURL
-        
+        self.sudokuImageParser = sudokuImageParser
+
         super.init(initialState: state)
+        
+        sudokuImageParser.delegate = self
+        
     }
 }
 
-extension DetectorViewControllerModel {
+extension DetectorViewControllerModel: SudokuImageParserDelegate {
+    func sudokuImageParser(_ parser: SudokuImageParser, didChangeState newState: SudokuImageParser.State) {
+        switch newState {
+        case .idle,
+             .searching:
+            update { state in
+                state.toDetecting()
+            }
+            
+        case let .parsingCells(visionObject):
+            update { state in
+                state.toParsingSudoku(in: visionObject.slice)
+            }
+            
+        case let .classifyingCells(image, visionObjects):
+            let locatedCells = visionObjects.map {
+                // TODO: determine how filled/empty is denoted
+                return DetectorViewControllerState.LocatedCell(frame: $0.location, type: .empty)
+            }
+
+            update { state in
+                state.toLocatedCells(in: image, cells: locatedCells)
+            }
+
+        case .parsed(_):
+            print("we parsed it!")
+        }
+    }
     
+    func didDetectSudoku(in object: VisionRequestObject) {
+        update { state in
+            state.toDetectedSudoku(
+                in: object.slice,
+                withSize: object.originalImageSize,
+                frameInImage: object.location,
+                confidence: object.confidence
+            )
+        }
+    }
+    
+    func shouldParseSudokuCells(_ object: VisionRequestObject) -> Bool {
+        return object.confidence >= requiredConfidence
+    }
+    
+    func failedToParseSudoku(_ error: SudokuParsingError?) {
+        if let error = error {
+            Logger.log(error: error)
+        }
+    }
+}
+
+// MARK: - Capture Session lifecycle
+extension DetectorViewControllerModel {
     func didStartCaptureSession() {
         
     }
@@ -38,6 +91,20 @@ extension DetectorViewControllerModel {
         
     }
     
+    func didFailToSetupCaptureSession(_ error: Error? = nil) {
+        // TODO: State to error state
+        Logger.log(.error, message: "Failed to setup capture session", params: ["error": error?.localizedDescription ?? "<nil>"])
+    }
+    
+    func didFailToStartCaptureSession(_ error: Error) {
+        Logger.log(.error, message: "Failed to start capture session", params: ["error": error])
+    }
+    
+}
+
+// MARK: - ML Integrations
+
+extension DetectorViewControllerModel {
     func didNotDetectSudoku() {
         update {
             $0.toDetecting()
@@ -49,77 +116,7 @@ extension DetectorViewControllerModel {
         bufferSize: CGSize,
         dispatchTo dispatchQueue: DispatchQueue = .main
     ) {
-        let modelConfig = MLModelConfiguration()
-        modelConfig.computeUnits = .all
-        
-        guard
-            let sudokuModel = try? Sudoku(configuration: modelConfig),
-            let visionModel = try? VNCoreMLModel(for: sudokuModel.model)
-        else {
-            didNotDetectSudoku()
-            return
-        }
-
-        let objectDetectionRequest = VNCoreMLRequest(model: visionModel) {
-            [weak self, image, bufferSize, dispatchQueue, requiredConfidence] (request, error) in
-            dispatchQueue.async {
-                // perform all the UI updates on the main queue
-                guard
-                    let results = request.results,
-                    let mostConfident = results.first as? VNRecognizedObjectObservation
-                else {
-                    self?.didNotDetectSudoku()
-                    return
-                }
-                
-                var objectBounds = VNImageRectForNormalizedRect(mostConfident.boundingBox, Int(bufferSize.width), Int(bufferSize.height))
-
-                // expand by 5% for blank space padding
-                let horizontalExpand = objectBounds.width * 0.05
-                let verticalExpand = objectBounds.height * 0.05
-                objectBounds.origin.x -= (horizontalExpand / 2)
-                objectBounds.origin.y -= (verticalExpand / 2)
-                objectBounds.size.height += verticalExpand
-                objectBounds.size.width += horizontalExpand
-
-                // Flip for UIKit/CoreGraphics frame coordinate system
-                objectBounds.origin.y = bufferSize.height - (objectBounds.height + objectBounds.origin.y)
-                self?.update {
-                    $0.toDetectedSudoku(
-                        in: image,
-                        withSize: bufferSize,
-                        frameInImage: objectBounds,
-                        confidence: mostConfident.confidence
-                    )
-                }
-                
-                if mostConfident.confidence > requiredConfidence {
-                    self?.parseSudoku(in: image, ofSize: bufferSize, withFrame: objectBounds)
-                } else {
-                    // TODO: something else?
-                }
-            }
-        }
-        
-        objectDetectionRequest.imageCropAndScaleOption = .scaleFill
-        
-        let handler = VNImageRequestHandler(cgImage: image, options: [:])
-        DispatchQueue.global(qos: .userInitiated).async { [handler, objectDetectionRequest] in
-            do {
-                try handler.perform([objectDetectionRequest])
-            } catch {
-                print("error: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func didFailToSetupCaptureSession(_ error: Error? = nil) {
-        // TODO: State to error state
-        Logger.log(.error, message: "Failed to setup capture session", params: ["error": error?.localizedDescription ?? "<nil>"])
-    }
-    
-    func didFailToStartCaptureSession(_ error: Error) {
-        Logger.log(.error, message: "Failed to start capture session", params: ["error": error])
+        sudokuImageParser.parseSudoku(from: image)
     }
 }
 
@@ -139,7 +136,6 @@ extension DetectorViewControllerModel {
         update {
             $0.toParsingSudoku(in: croppedImage)
         }
-        
         
     }
 }

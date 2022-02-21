@@ -46,4 +46,13 @@ enum Logger {
         }
         #endif
     }
+    
+    static func log(
+        error: Error,
+        file: String = #file,
+        line: Int = #line,
+        params: [String: Any]? = nil
+    ) {
+        self.log(.error, file: file, line: line, message: error.localizedDescription, params: params)
+    }
 }
