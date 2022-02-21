@@ -28,7 +28,7 @@ class SudokuImageParser {
         label: Bundle.main.bundleIdentifier ?? "" + ".SudokuImageParsingQueue",
         qos: .userInitiated
     )
-
+    
     enum State {
         case idle
         case searching(image: CGImage)
@@ -36,18 +36,19 @@ class SudokuImageParser {
         case classifyingCells(image: CGImage, visionObjects: [VisionRequestObject])
         case parsed([[Int]])
     }
-
+    
     private(set) var state: State = .idle {
         didSet {
             DispatchQueue.main.async { [weak self, state] in
                 guard let self = self else { return }
+                
                 self.delegate?.sudokuImageParser(self, didChangeState: state)
             }
         }
     }
     private var sudokuVisionRequest: VisionRequest?
     private var sudokuCellVisionRequest: VisionRequest?
-
+    
     weak var delegate: SudokuImageParserDelegate?
     
 }
@@ -57,85 +58,90 @@ extension SudokuImageParser {
         from image: CGImage,
         responseQueue: DispatchQueue = .main
     ) {
-        guard !(sudokuVisionRequest?.isRunning ?? false) else { return }
-        
-        state = .searching(image: image)
-
-        do {
-            sudokuVisionRequest = try VisionRequest.buildSudokuRequest(given: image)
-        } catch {
-            state = .idle
-            delegate?.failedToParseSudoku(.visionRequestInitFailed(error))
-            return
-        }
-
-        sudokuVisionRequest?.execute(responseQueue) { [weak self] result in
-            responseQueue.async {
-                defer {
-                    self?.sudokuVisionRequest = nil
-                }
-
-                switch result {
-                case .success(let objects):
-                    guard
-                        objects.count > 0,
-                        let mostConfidentResult = objects
-                            .sorted(by: {$0.confidence > $1.confidence })
-                            .first
-                    else {
-                        self?.state = .idle
-                        return
+        Self.parsingQueue.async {
+            guard !(self.sudokuVisionRequest?.isRunning ?? false) else { return }
+            
+            self.state = .searching(image: image)
+            
+            do {
+                self.sudokuVisionRequest = try VisionRequest.buildSudokuRequest(given: image)
+            } catch {
+                self.state = .idle
+                self.delegate?.failedToParseSudoku(.visionRequestInitFailed(error))
+                return
+            }
+            
+            self.sudokuVisionRequest?.execute(responseQueue) { [weak self] result in
+                responseQueue.async {
+                    defer {
+                        self?.sudokuVisionRequest = nil
                     }
                     
-                    self?.delegate?.didDetectSudoku(in: mostConfidentResult)
-                    
-                    if self?.delegate?.shouldParseSudokuCells(mostConfidentResult) ?? false {
-                        self?.parseSudokuCells(from: mostConfidentResult)
-                    } else {
+                    switch result {
+                    case .success(let objects):
+                        guard
+                            objects.count > 0,
+                            let mostConfidentResult = objects
+                                .sorted(by: {$0.confidence > $1.confidence })
+                                .first
+                        else {
+                            self?.state = .idle
+                            return
+                        }
+                        
+                        self?.delegate?.didDetectSudoku(in: mostConfidentResult)
+                        
+                        if self?.delegate?.shouldParseSudokuCells(mostConfidentResult) ?? false {
+                            self?.parseSudokuCells(from: mostConfidentResult)
+                        } else {
+                            self?.state = .idle
+                        }
+                        
+                    case .failure(let error):
                         self?.state = .idle
+                        self?.delegate?.failedToParseSudoku(.visionRequestError(error))
                     }
-                    
-                case .failure(let error):
-                    self?.state = .idle
-                    self?.delegate?.failedToParseSudoku(.visionRequestError(error))
                 }
             }
         }
+        
     }
     
     private func parseSudokuCells(from visionObject: VisionRequestObject, responseQueue: DispatchQueue = .main) {
-        if sudokuCellVisionRequest?.isRunning == true { return }
-        
-        self.state = .parsingCells(visionObject: visionObject)
-        let image = visionObject.slice
-        
-        do {
-            sudokuCellVisionRequest = try VisionRequest.buildSudokuCellRequest(given: image)
-        } catch {
-            state = .idle
-            responseQueue.async { [weak self] in
-                self?.delegate?.failedToParseSudoku(.visionRequestInitFailed(error))
-            }
-            return
-        }
-        
-        sudokuCellVisionRequest?.execute(responseQueue) { [weak self, image] result in
-            guard let self = self else { return }
+        Self.parsingQueue.async {
+            if self.sudokuCellVisionRequest?.isRunning == true { return }
             
-            defer {
-                self.sudokuCellVisionRequest = nil
+            self.state = .parsingCells(visionObject: visionObject)
+            let image = visionObject.slice
+            
+            do {
+                self.sudokuCellVisionRequest = try VisionRequest.buildSudokuCellRequest(given: image)
+            } catch {
+                self.state = .idle
+                responseQueue.async { [weak self] in
+                    self?.delegate?.failedToParseSudoku(.visionRequestInitFailed(error))
+                }
+                return
             }
-
-            switch result {
-            case let .success(visionObjects):
-                print("detected \(visionObjects.count) vision objects")
-                self.state = .classifyingCells(image: image, visionObjects: visionObjects)
-                // TODO: Sort into matrix
-                // TODO: parse digits in "filled" cells
-                // TODO: State to parsed or failure
-            case let .failure(error):
-                // TODO: State to idle
-                print(error.localizedDescription)
+            
+            self.sudokuCellVisionRequest?.execute(responseQueue) { [weak self, image] result in
+                guard let self = self else { return }
+                
+                defer {
+                    self.sudokuCellVisionRequest = nil
+                }
+                
+                switch result {
+                case let .success(visionObjects):
+                    print("detected \(visionObjects.count) vision objects")
+                    self.state = .classifyingCells(image: image, visionObjects: visionObjects)
+                    // TODO: Sort into matrix
+                    // TODO: parse digits in "filled" cells
+                    // TODO: State to parsed or failure
+                case let .failure(error):
+                    // TODO: State to idle
+                    print(error.localizedDescription)
+                }
             }
         }
     }

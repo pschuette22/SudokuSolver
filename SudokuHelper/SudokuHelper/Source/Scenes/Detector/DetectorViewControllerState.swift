@@ -14,6 +14,18 @@ struct DetectorViewControllerState: ViewState {
         enum CellType: Hashable {
             case filled
             case empty
+            case unknown
+            
+            init(from label: String?) {
+                switch label {
+                case "empty"?:
+                    self = .empty
+                case "filled"?:
+                    self = .filled
+                default:
+                    self = .unknown
+                }
+            }
         }
         let frame: CGRect
         let type: CellType

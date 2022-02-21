@@ -337,7 +337,15 @@ private extension DetectorViewController {
             
             let boxView = UIView(frame: scaledRect)
             boxView.backgroundColor = .clear
-            boxView.layer.borderColor = UIColor.blue.cgColor
+            switch $0.type {
+            case .filled:
+                boxView.layer.borderColor = UIColor.magenta.cgColor
+            case .empty:
+                boxView.layer.borderColor = UIColor.yellow.cgColor
+            case .unknown:
+                boxView.layer.borderColor = UIColor.blue.cgColor
+            }
+
             boxView.layer.borderWidth = 2
             self.parsingSudokuImage?.addSubview(boxView)
         }

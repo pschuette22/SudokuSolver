@@ -11,6 +11,7 @@ import Vision
 
 struct VisionRequestObject: Equatable {
     let id: UUID = UUID()
+    let label: String?
     let location: CGRect
     let originalImageSize: CGSize
     let confidence: CGFloat
@@ -119,7 +120,9 @@ extension VisionRequest {
             let visionObjects: [VisionRequestObject] = results.compactMap {
                 guard let object = $0 as? VNRecognizedObjectObservation else { return nil }
 
+                let label = object.labels.sorted(by: { $0.confidence > $1.confidence }).first?.identifier
                 let confidence = CGFloat(object.confidence)
+
                 guard
                     confidence >= requiredConfidence
                 else {
@@ -128,6 +131,7 @@ extension VisionRequest {
                         message: "Not confident enough",
                         params: [
                             "model": self.modelName ?? "<not-specified>",
+                            "label": label ?? "<not-found>",
                             "location": object.boundingBox,
                             "confidence": object.confidence
                         ]
@@ -142,8 +146,9 @@ extension VisionRequest {
                 else {
                     return nil
                 }
-                
+
                 return .init(
+                    label: label,
                     location: normalizedFrame,
                     originalImageSize: imageSize,
                     confidence: confidence,

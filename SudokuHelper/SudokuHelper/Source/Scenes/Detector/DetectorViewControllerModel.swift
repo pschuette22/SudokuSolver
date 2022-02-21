@@ -45,9 +45,10 @@ extension DetectorViewControllerModel: SudokuImageParserDelegate {
             }
             
         case let .classifyingCells(image, visionObjects):
-            let locatedCells = visionObjects.map {
+            let locatedCells: [DetectorViewControllerState.LocatedCell] = visionObjects.map {
                 // TODO: determine how filled/empty is denoted
-                return DetectorViewControllerState.LocatedCell(frame: $0.location, type: .empty)
+                let type = DetectorViewControllerState.LocatedCell.CellType(from: $0.label)
+                return DetectorViewControllerState.LocatedCell(frame: $0.location, type: type)
             }
 
             update { state in
