@@ -7,15 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49F5E92927CC87EA00F87294 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E92827CC87EA00F87294 /* Logger.swift */; };
+		49F5E92D27CC882F00F87294 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E92C27CC882F00F87294 /* Array+Extensions.swift */; };
+		49F5E93027CC889000F87294 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E92F27CC889000F87294 /* Cell.swift */; };
+		49F5E93227CC889E00F87294 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E93127CC889E00F87294 /* Group.swift */; };
+		49F5E93427CC88B200F87294 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E93327CC88B200F87294 /* Line.swift */; };
+		49F5E93627CC88C400F87294 /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E93527CC88C400F87294 /* Square.swift */; };
+		49F5E93827CC88D600F87294 /* Puzzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E93727CC88D600F87294 /* Puzzle.swift */; };
+		49F5E93B27CC897400F87294 /* Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E93A27CC897400F87294 /* Move.swift */; };
+		49F5E93D27CC898900F87294 /* SolutionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E93C27CC898900F87294 /* SolutionEngine.swift */; };
 		60403C6B1E0F21B9004E738C /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C6A1E0F21B9004E738C /* main.swift */; };
-		60403C721E0F21D1004E738C /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C711E0F21D1004E738C /* Cell.swift */; };
-		60403C751E0F225E004E738C /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C741E0F225E004E738C /* Row.swift */; };
-		60403C771E0F227D004E738C /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C761E0F227D004E738C /* Square.swift */; };
-		60403C791E0F2286004E738C /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C781E0F2286004E738C /* Group.swift */; };
-		60403C7C1E0F23AE004E738C /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C7B1E0F23AE004E738C /* Utils.swift */; };
-		60403C7E1E0F2A26004E738C /* Column.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C7D1E0F2A26004E738C /* Column.swift */; };
-		60403C801E0F2B6C004E738C /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C7F1E0F2B6C004E738C /* Board.swift */; };
-		60403C981E1C1B5F004E738C /* BoardBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60403C971E1C1B5F004E738C /* BoardBuilder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,16 +32,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		49F5E92827CC87EA00F87294 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		49F5E92C27CC882F00F87294 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		49F5E92F27CC889000F87294 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
+		49F5E93127CC889E00F87294 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		49F5E93327CC88B200F87294 /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		49F5E93527CC88C400F87294 /* Square.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square.swift; sourceTree = "<group>"; };
+		49F5E93727CC88D600F87294 /* Puzzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Puzzle.swift; sourceTree = "<group>"; };
+		49F5E93A27CC897400F87294 /* Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Move.swift; sourceTree = "<group>"; };
+		49F5E93C27CC898900F87294 /* SolutionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionEngine.swift; sourceTree = "<group>"; };
 		60403C671E0F21B9004E738C /* SudokuSolver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SudokuSolver; sourceTree = BUILT_PRODUCTS_DIR; };
 		60403C6A1E0F21B9004E738C /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		60403C711E0F21D1004E738C /* Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
-		60403C741E0F225E004E738C /* Row.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Row.swift; sourceTree = "<group>"; };
-		60403C761E0F227D004E738C /* Square.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Square.swift; sourceTree = "<group>"; };
-		60403C781E0F2286004E738C /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		60403C7B1E0F23AE004E738C /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		60403C7D1E0F2A26004E738C /* Column.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Column.swift; sourceTree = "<group>"; };
-		60403C7F1E0F2B6C004E738C /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
-		60403C971E1C1B5F004E738C /* BoardBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardBuilder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,78 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		49F5E92427CC879400F87294 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E92627CC87B300F87294 /* Library */,
+				60403C6A1E0F21B9004E738C /* main.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		49F5E92527CC879C00F87294 /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		49F5E92627CC87B300F87294 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E93927CC896300F87294 /* Solution */,
+				49F5E92E27CC888100F87294 /* Models */,
+				49F5E92727CC87DF00F87294 /* Logging */,
+				49F5E92A27CC880700F87294 /* Extensions */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		49F5E92727CC87DF00F87294 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E92827CC87EA00F87294 /* Logger.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		49F5E92A27CC880700F87294 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E92B27CC880F00F87294 /* Foundation */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		49F5E92B27CC880F00F87294 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E92C27CC882F00F87294 /* Array+Extensions.swift */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		49F5E92E27CC888100F87294 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E92F27CC889000F87294 /* Cell.swift */,
+				49F5E93127CC889E00F87294 /* Group.swift */,
+				49F5E93327CC88B200F87294 /* Line.swift */,
+				49F5E93527CC88C400F87294 /* Square.swift */,
+				49F5E93727CC88D600F87294 /* Puzzle.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		49F5E93927CC896300F87294 /* Solution */ = {
+			isa = PBXGroup;
+			children = (
+				49F5E93A27CC897400F87294 /* Move.swift */,
+				49F5E93C27CC898900F87294 /* SolutionEngine.swift */,
+			);
+			path = Solution;
+			sourceTree = "<group>";
+		};
 		60403C5E1E0F21B9004E738C = {
 			isa = PBXGroup;
 			children = (
@@ -74,33 +148,10 @@
 		60403C691E0F21B9004E738C /* SudokuSolver */ = {
 			isa = PBXGroup;
 			children = (
-				60403C7A1E0F23A3004E738C /* Utils */,
-				60403C731E0F2251004E738C /* Board */,
-				60403C6A1E0F21B9004E738C /* main.swift */,
+				49F5E92527CC879C00F87294 /* SupportingFiles */,
+				49F5E92427CC879400F87294 /* Sources */,
 			);
 			path = SudokuSolver;
-			sourceTree = "<group>";
-		};
-		60403C731E0F2251004E738C /* Board */ = {
-			isa = PBXGroup;
-			children = (
-				60403C711E0F21D1004E738C /* Cell.swift */,
-				60403C741E0F225E004E738C /* Row.swift */,
-				60403C761E0F227D004E738C /* Square.swift */,
-				60403C781E0F2286004E738C /* Group.swift */,
-				60403C7D1E0F2A26004E738C /* Column.swift */,
-				60403C7F1E0F2B6C004E738C /* Board.swift */,
-			);
-			name = Board;
-			sourceTree = "<group>";
-		};
-		60403C7A1E0F23A3004E738C /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				60403C7B1E0F23AE004E738C /* Utils.swift */,
-				60403C971E1C1B5F004E738C /* BoardBuilder.swift */,
-			);
-			name = Utils;
 			sourceTree = "<group>";
 		};
 		60403C811E14F87B004E738C /* SudokuSolverTests */ = {
@@ -160,6 +211,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 60403C5E1E0F21B9004E738C;
@@ -177,15 +229,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60403C771E0F227D004E738C /* Square.swift in Sources */,
-				60403C981E1C1B5F004E738C /* BoardBuilder.swift in Sources */,
 				60403C6B1E0F21B9004E738C /* main.swift in Sources */,
-				60403C751E0F225E004E738C /* Row.swift in Sources */,
-				60403C7E1E0F2A26004E738C /* Column.swift in Sources */,
-				60403C791E0F2286004E738C /* Group.swift in Sources */,
-				60403C721E0F21D1004E738C /* Cell.swift in Sources */,
-				60403C801E0F2B6C004E738C /* Board.swift in Sources */,
-				60403C7C1E0F23AE004E738C /* Utils.swift in Sources */,
+				49F5E93B27CC897400F87294 /* Move.swift in Sources */,
+				49F5E93D27CC898900F87294 /* SolutionEngine.swift in Sources */,
+				49F5E93827CC88D600F87294 /* Puzzle.swift in Sources */,
+				49F5E93027CC889000F87294 /* Cell.swift in Sources */,
+				49F5E92D27CC882F00F87294 /* Array+Extensions.swift in Sources */,
+				49F5E93627CC88C400F87294 /* Square.swift in Sources */,
+				49F5E93427CC88B200F87294 /* Line.swift in Sources */,
+				49F5E93227CC889E00F87294 /* Group.swift in Sources */,
+				49F5E92927CC87EA00F87294 /* Logger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,11 +285,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -274,27 +328,34 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 		60403C6F1E0F21B9004E738C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				DEVELOPMENT_TEAM = 384WS8QBWW;
+				MACOSX_DEPLOYMENT_TARGET = 12.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peteschuette.SudokuSolver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		60403C701E0F21B9004E738C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				DEVELOPMENT_TEAM = 384WS8QBWW;
+				MACOSX_DEPLOYMENT_TARGET = 12.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.peteschuette.SudokuSolver;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -317,6 +378,7 @@
 				60403C701E0F21B9004E738C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
