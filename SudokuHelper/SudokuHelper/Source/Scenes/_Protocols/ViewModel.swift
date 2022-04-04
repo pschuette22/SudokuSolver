@@ -12,7 +12,7 @@ class ViewModel<State: ViewState> {
     @Published
     private(set) var state: State
     
-    required init(initialState state: State) {
+    init(initialState state: State) {
         self.state = state
     }
 }

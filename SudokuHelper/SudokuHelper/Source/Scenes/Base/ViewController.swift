@@ -10,30 +10,37 @@ import Combine
 
 class ViewController<State: ViewState, Model: ViewModel<State>>: UIViewController {
     private(set) var model: Model
-    private var stateSubscriptions = Set<AnyCancellable>()
+    private var stateSubscription: AnyCancellable?
     
     required init(model: Model) {
         self.model = model
 
         super.init(nibName: nil, bundle: nil)
-
-        stateSubscriptions.insert(
-            model.$state.sink(
-                receiveValue: { [weak self] state in
-                    self?.render(state)
-                }
-            )
-        )
+        
+        setupSubviews()
     }
-
+    
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("Decoding not supported")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupSubviews()
+
+        stateSubscription = model.$state.sink(
+            receiveValue: { [weak self] state in
+                self?.render(state)
+            }
+        )
         render(model.state)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        stateSubscription?.cancel()
+        stateSubscription = nil
     }
     
     func setupSubviews() {

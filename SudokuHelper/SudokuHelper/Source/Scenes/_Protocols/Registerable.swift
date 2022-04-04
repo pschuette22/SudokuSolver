@@ -18,6 +18,7 @@ extension UICollectionView {
     }
     
     func dequeueRegistered<T: Registerable>(_ cellType: T.Type, for indexPath: IndexPath) -> T? {
+        register(cellType)
         return dequeueReusableCell(withReuseIdentifier: cellType.reuseIdentifier, for: indexPath) as? T
     }
 }

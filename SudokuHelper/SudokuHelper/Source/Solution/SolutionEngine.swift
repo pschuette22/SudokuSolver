@@ -120,7 +120,6 @@ extension SolutionEngine {
     }
     
     func singlePossibilityInGroupMoves(_ groups: [Group]?=nil) -> Set<Move> {
-        // TODO: single possibility in group solve
         var moves = Set<Move>()
         (groups ?? puzzle.groups).forEach { group in
             group.remainingValues.forEach { [group] value in
