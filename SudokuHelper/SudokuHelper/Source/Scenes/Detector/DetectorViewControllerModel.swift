@@ -79,6 +79,10 @@ extension DetectorViewControllerModel: SudokuImageParserDelegate {
         if let error = error {
             Logger.log(error: error)
         }
+        
+        update { state in
+            state.toDetecting()
+        }
     }
 }
 
@@ -114,10 +118,13 @@ extension DetectorViewControllerModel {
     
     func findSudoku(
         in image: CGImage,
-        bufferSize: CGSize,
         dispatchTo dispatchQueue: DispatchQueue = .main
     ) {
+//        if let grayscaleImage = UIImage(cgImage: image).grayscaled {
+//            sudokuImageParser.parseSudoku(from: grayscaleImage)
+//        } else {
         sudokuImageParser.parseSudoku(from: image)
+//        }
     }
 }
 

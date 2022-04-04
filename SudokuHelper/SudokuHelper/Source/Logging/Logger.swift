@@ -40,10 +40,6 @@ enum Logger {
             message += "\(params)"
         }
         NSLog(message)
-        
-        if case .error = level {
-            assertionFailure("\(file) [\(line)]: " + message)
-        }
         #endif
     }
     

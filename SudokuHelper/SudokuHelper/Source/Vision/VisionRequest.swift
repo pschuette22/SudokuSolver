@@ -9,7 +9,7 @@ import CoreGraphics
 import UIKit
 import Vision
 
-struct VisionRequestObject: Equatable {
+struct VisionRequestObject: Hashable {
     let id: UUID = UUID()
     let label: String?
     let location: CGRect
@@ -18,7 +18,6 @@ struct VisionRequestObject: Equatable {
     let slice: CGImage
 }
 
-// TODO: make this it's own class and create static initializers for the vision items
 class VisionRequest {
     typealias Completion = (Result<[VisionRequestObject], Error>) -> Void
     private static let defaultWorkerQueue = DispatchQueue(
@@ -83,7 +82,7 @@ extension VisionRequest {
             modelName: "SudokuCell",
             model: model,
             image: image,
-            requiredConfidence: 0.8
+            requiredConfidence: 0.6
         )
     }
 }
@@ -185,7 +184,7 @@ extension VisionRequest {
         
         switch fittingStrategy {
         case .scaleFit:
-            objectBounds = normaizeScaleToFit(objectBounds)
+            objectBounds = normalizeScaleToFit(objectBounds)
         case .centerCrop:
             objectBounds = normalizeCenterCrop(objectBounds)
         case .scaleFill:
@@ -204,7 +203,7 @@ extension VisionRequest {
         return objectBounds
     }
     
-    private func normaizeScaleToFit(_ frame: CGRect) -> CGRect {
+    private func normalizeScaleToFit(_ frame: CGRect) -> CGRect {
         
         return frame
     }

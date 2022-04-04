@@ -58,6 +58,7 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
         case .detecting:
             removeSudokuDetectionPreview()
             visionInputVerifierView.image = nil
+            captureSession.startRunning()
 
         case let .detectedSudoku(image, size, frame, confidence):
             let scaleX = previewLayer.frame.width / size.width
@@ -77,6 +78,7 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             #if DEBUG
             visionInputVerifierView.image = UIImage(cgImage: image)
             #endif
+
         case let .parsingSudoku(image):
             captureSession.stopRunning()
             drawSudokuBeingParsed(from: image)
@@ -124,7 +126,7 @@ extension DetectorViewController {
         }
 
         captureSession.beginConfiguration()
-        captureSession.sessionPreset = .vga640x480
+        captureSession.sessionPreset = .hd1280x720
 
         guard
             captureSession.canAddInput(deviceInput)
@@ -139,7 +141,7 @@ extension DetectorViewController {
         
         let videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
-        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)]
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_OneComponent32Float)]
         let videoQueueLabel = (Bundle.main.bundleIdentifier ?? "") + ".videoOutputQueue"
         let videoDataOutputQueue = DispatchQueue(label: videoQueueLabel)
         videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
@@ -276,8 +278,7 @@ extension DetectorViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         DispatchQueue.main.async { [weak self, imageData] in
             self?.model.findSudoku(
-                in: imageData.image,
-                bufferSize: imageData.size
+                in: imageData.image
             )
         }
     }

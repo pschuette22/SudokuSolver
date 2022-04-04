@@ -8,6 +8,9 @@
 import Foundation
 import Combine
 import CoreGraphics
+import CoreML
+import Vision
+import UIKit
 
 protocol SudokuImageParserDelegate: AnyObject {
     func sudokuImageParser(_ parser: SudokuImageParser, didChangeState newState: SudokuImageParser.State)
@@ -48,6 +51,7 @@ class SudokuImageParser {
     }
     private var sudokuVisionRequest: VisionRequest?
     private var sudokuCellVisionRequest: VisionRequest?
+    private var cellClassifierTask: CellClassifierTask?
     
     weak var delegate: SudokuImageParserDelegate?
     
@@ -58,8 +62,12 @@ extension SudokuImageParser {
         from image: CGImage,
         responseQueue: DispatchQueue = .main
     ) {
-        Self.parsingQueue.async {
-            guard !(self.sudokuVisionRequest?.isRunning ?? false) else { return }
+        Self.parsingQueue.async { [weak self] in
+            guard
+                let self = self,
+                case .idle = self.state,
+                !(self.sudokuVisionRequest?.isRunning ?? false)
+            else { return }
             
             self.state = .searching(image: image)
             
@@ -108,8 +116,13 @@ extension SudokuImageParser {
     }
     
     private func parseSudokuCells(from visionObject: VisionRequestObject, responseQueue: DispatchQueue = .main) {
-        Self.parsingQueue.async {
-            if self.sudokuCellVisionRequest?.isRunning == true { return }
+        Self.parsingQueue.async { [weak self] in
+            guard
+                let self = self,
+                self.sudokuCellVisionRequest?.isRunning != true
+            else {
+                return
+            }
             
             self.state = .parsingCells(visionObject: visionObject)
             let image = visionObject.slice
@@ -134,15 +147,105 @@ extension SudokuImageParser {
                 switch result {
                 case let .success(visionObjects):
                     print("detected \(visionObjects.count) vision objects")
+                    guard visionObjects.count == 81 else {
+                        responseQueue.async {
+                            self.delegate?.failedToParseSudoku(.visionRequestError(NSError()))
+                        }
+                        return
+                    }
                     self.state = .classifyingCells(image: image, visionObjects: visionObjects)
-                    // TODO: Sort into matrix
-                    // TODO: parse digits in "filled" cells
+                    let sortedObject = SudokuCellOrganizer.organize(sudokuCellObjects: visionObjects, foundIn: image)
+                    self.cellClassifierTask = CellClassifierTask(cellVisionObjects: sortedObject)
+                    
+                    self.cellClassifierTask?.classifyCells(responseQueue: responseQueue) { result in
+                        switch result {
+                        case let .success(puzzleDigits):
+                            print("Classified images:")
+                            for row in puzzleDigits {
+                                print(row.map({ $0 == 0 ? "_" : "\($0)" }).joined(separator: "."))
+                            }
+                        case let .failure(error):
+                            print(error.localizedDescription)
+                            self.state = .idle
+                        }
+                    }
+                    
                     // TODO: State to parsed or failure
                 case let .failure(error):
                     // TODO: State to idle
                     print(error.localizedDescription)
+                    self.state = .idle
                 }
             }
+        }
+    }
+}
+
+// MARK: - CellClassifierTask
+
+private extension SudokuImageParser {
+    class CellClassifierTask {
+        private let group = DispatchGroup()
+        private let cellVisionObjects: [[VisionRequestObject]]
+        private var result: [[Int]]
+        private var errors = [VisionRequestObject: Error]()
+
+        init(cellVisionObjects: [[VisionRequestObject]]) {
+            self.cellVisionObjects = cellVisionObjects
+            result = (0..<9).reduce(into: []) { result, _ in
+                result.append(Array<Int>(repeating: -1, count: 9))
+            }
+        }
+        
+        func classifyCells(
+            responseQueue: DispatchQueue,
+            completion: @escaping (Result<[[Int]], Error>) -> Void
+        ) {
+            cellVisionObjects.enumerated().forEach { y, objectRow in
+                objectRow.enumerated().forEach { x, object in
+                    
+                    if object.label == "empty" {
+                        self.result[y][x] = 0
+                        return
+                    }
+                    
+                    let sliceImage = UIImage(cgImage: object.slice)
+
+                    group.enter()
+
+                    self.runDigitClassifier(on: sliceImage) { [weak self, object, group] result in
+                        switch result {
+                        case .success(let digit):
+                            self?.result[y][x] = digit
+                        case .failure(let error):
+                            self?.errors[object] = error
+                            Logger.log(error: error)
+                        }
+                        group.leave()
+                    }
+                }
+            }
+            
+            // Dispatch the classifying group
+            group.notify(queue: responseQueue) { [weak self] in
+                guard let self = self else { return }
+
+                if self.errors.isEmpty {
+                    completion(.success(self.result))
+                } else {
+                    completion(.failure(CellClassifierTaskError.classifying(self.errors, self.result)))
+                }
+            }
+        }
+        
+        private func runDigitClassifier(on image: UIImage, completion: @escaping (Result<Int, Error>) -> Void) {
+            PuzzleDigitClassifier().classifyDigit(in: image, completion)
+        }
+        
+        enum CellClassifierTaskError: Error {
+            case classifying([VisionRequestObject: Error], [[Int]])
+            case unknown
+            case failedToFormatSlice
         }
     }
 }
