@@ -23,7 +23,6 @@
 		4984D4B627EEF55700136F44 /* Optional+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984D4B527EEF55600136F44 /* Optional+Extensions.swift */; };
 		49F5E90F27CC07FC00F87294 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E90E27CC07FC00F87294 /* UIImage+Extensions.swift */; };
 		49F5E91827CC7B0100F87294 /* MNISTClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E91727CC7B0100F87294 /* MNISTClassifier.mlmodel */; };
-		49F5E91D27CC7DD700F87294 /* SudokuImageParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E91C27CC7DD700F87294 /* SudokuImageParserTests.swift */; };
 		49F5E92127CC7E5200F87294 /* Sudoku9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 49F5E92027CC7E5200F87294 /* Sudoku9.jpg */; };
 		49F5E92327CC7E8900F87294 /* Sudoku1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 49F5E92227CC7E8900F87294 /* Sudoku1.jpg */; };
 		49F7EC8C27F22D4700811AD3 /* imageSlice_6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 49F7EC8627F22D4600811AD3 /* imageSlice_6.jpg */; };
@@ -114,7 +113,6 @@
 		4984D4B527EEF55600136F44 /* Optional+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Extensions.swift"; sourceTree = "<group>"; };
 		49F5E90E27CC07FC00F87294 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		49F5E91727CC7B0100F87294 /* MNISTClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MNISTClassifier.mlmodel; sourceTree = "<group>"; };
-		49F5E91C27CC7DD700F87294 /* SudokuImageParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuImageParserTests.swift; sourceTree = "<group>"; };
 		49F5E92027CC7E5200F87294 /* Sudoku9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Sudoku9.jpg; sourceTree = "<group>"; };
 		49F5E92227CC7E8900F87294 /* Sudoku1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Sudoku1.jpg; sourceTree = "<group>"; };
 		49F7EC8627F22D4600811AD3 /* imageSlice_6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = imageSlice_6.jpg; sourceTree = "<group>"; };
@@ -248,7 +246,6 @@
 		49F5E91927CC7D9400F87294 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
-				49F5E91C27CC7DD700F87294 /* SudokuImageParserTests.swift */,
 				4984D4A727EEC38500136F44 /* PuzzleDigitClassifierTests.swift */,
 			);
 			path = Vision;
@@ -792,7 +789,6 @@
 				4984D4A827EEC38500136F44 /* PuzzleDigitClassifierTests.swift in Sources */,
 				D78C657526EF252B000ADBE5 /* SolutionEngineTests.swift in Sources */,
 				D7B502AA26B51359007908DA /* PuzzleTests.swift in Sources */,
-				49F5E91D27CC7DD700F87294 /* SudokuImageParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
