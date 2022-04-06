@@ -19,6 +19,7 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     private let visionInputVerifierView: UIImageView = UIImageView()
     private let parsingContainerView = UIView()
     private var parsingSudokuImage: UIImageView?
+    private var captureButton = UIButton(type: .custom)
     
     required init(model: DetectorViewControllerModel = .init()) {
         super.init(model: model)
@@ -48,17 +49,22 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
         #if DEBUG
         setupVisionInputVerifier()
         #endif
+        setupCaptureButton()
     }
 
     override func render(_ state: DetectorViewControllerState) {
         previewContainer.isHidden = state.isPreviewLayerDisplayed == false
         parsingContainerView.isHidden = state.isParsingViewDisplayed == false
-        
+        captureButton.isHidden = state.isCaptureButtonHidden
+        captureButton.alpha = state.captureButtonAlpha
+        captureButton.setTitle(state.captureButtonText, for: .normal)
+        captureButton.sizeToFit()
+
         switch state.context {
         case .detecting:
             removeSudokuDetectionPreview()
             visionInputVerifierView.image = nil
-            captureSession.startRunning()
+            startCaptureSession()
 
         case let .detectedSudoku(image, size, frame, confidence):
             let scaleX = previewLayer.frame.width / size.width
@@ -80,7 +86,7 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             #endif
 
         case let .parsingSudoku(image):
-            captureSession.stopRunning()
+            endCaptureSession()
             drawSudokuBeingParsed(from: image)
             // TODO: some sort of parsing animation
         
@@ -89,7 +95,6 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             draw(locatedCells: cells, scale: drawingResult.scale)
             
         case let .parsedSudoku(image, imageSize, cells, values):
-            // TODO: handle this
             Logger.log(.debug, message: "Parsed sudoku", params: ["values": values])
         }
     }
@@ -209,7 +214,28 @@ extension DetectorViewController {
         visionInputVerifierView.frame = CGRect(origin: .init(x: originX, y: originY), size: size)
         visionInputVerifierView.backgroundColor = .clear
         visionInputVerifierView.contentMode = .scaleAspectFit
-        visionInputVerifierView.clipsToBounds = false
+        visionInputVerifierView.clipsToBounds = true
+    }
+    
+    func setupCaptureButton() {
+        view.addSubview(captureButton)
+        captureButton.translatesAutoresizingMaskIntoConstraints = false
+        captureButton.backgroundColor = .yellow
+        captureButton.setTitleColor(.black, for: .normal)
+        captureButton.isHidden = true
+        captureButton.layer.cornerRadius = 16
+        captureButton.titleEdgeInsets = .init(16)
+        captureButton.addTarget(self, action: #selector(didTapCaptureButton(_:)), for: .touchUpInside)
+        
+        NSLayoutConstraint.activate([
+            captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -48),
+            captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
+    }
+    
+    @objc
+    func didTapCaptureButton(_ sender: Any?) {
+        model.didTapCaptureButton()
     }
 }
 
@@ -254,8 +280,7 @@ extension DetectorViewController {
         }
 
         ciImage = ciImage.oriented(forExifOrientation: Int32(orientation.rawValue))
-        
-        
+
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
         
         return (image: cgImage, size: ciImage.extent.size)
@@ -272,7 +297,6 @@ extension DetectorViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 videoOrientation: connection.videoOrientation
             )
         else {
-            model.didNotDetectSudoku()
             return
         }
         

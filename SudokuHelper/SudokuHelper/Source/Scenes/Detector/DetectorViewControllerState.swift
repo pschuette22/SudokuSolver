@@ -83,6 +83,37 @@ extension DetectorViewControllerState {
             return true
         }
     }
+    
+    var isCaptureButtonHidden: Bool {
+        switch context {
+        case .detectedSudoku(_, _, _, let confidence):
+            return confidence < 0.8 // 80% or greater confidence and we defer to user
+
+        case .detecting,
+             .parsingSudoku,
+             .locatedCells,
+             .parsedSudoku:
+            return true
+        }
+    }
+    
+    var captureButtonAlpha: CGFloat {
+        switch context {
+        case .detectedSudoku(_, _, _, let confidence):
+            return confidence
+
+        case .detecting,
+             .parsingSudoku,
+             .locatedCells,
+             .parsedSudoku:
+            return 0
+        }
+    }
+    
+    var captureButtonText: String {
+        guard case .detectedSudoku(_, _, _, let confidence) = context else { return "" }
+        return "Capture - \(Int(confidence * 100))% confidence"
+    }
 }
 
 // MARK: - Mutations

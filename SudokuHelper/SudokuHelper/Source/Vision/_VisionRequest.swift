@@ -56,30 +56,14 @@ class VisionRequest {
 //MARK: - Predefined static requests
 
 extension VisionRequest {
-    static func buildSudokuRequest(given image: CGImage) throws -> VisionRequest {
-        let modelConfig = MLModelConfiguration()
-        modelConfig.computeUnits = .all
-        let sudokuModel = try Sudoku(configuration: modelConfig)
-        let model = try VNCoreMLModel(for: sudokuModel.model)
-        
-        return .init(
-            modelName: "Sudoku",
-            model: model,
-            image: image,
-            // 5% expansion seems to be useful
-            sliceInset: .init(0.025),
-            requiredConfidence: 0.6
-        )
-    }
-    
     static func buildSudokuCellRequest(given image: CGImage) throws -> VisionRequest {
         let modelConfig = MLModelConfiguration()
         modelConfig.computeUnits = .all
-        let sudokuCellModel = try SudokuCell(configuration: modelConfig)
+        let sudokuCellModel = try SudokuCellDetector(configuration: modelConfig)
         let model = try VNCoreMLModel(for: sudokuCellModel.model)
         
         return .init(
-            modelName: "SudokuCell",
+            modelName: "SudokuCellDetector",
             model: model,
             image: image,
             requiredConfidence: 0.6
