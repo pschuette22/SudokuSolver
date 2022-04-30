@@ -105,6 +105,10 @@ class Puzzle {
             }
         }
     }
+    
+    func valueAt(x: Int, y: Int) -> Int? {
+        return cells[y][x].value
+    }
 }
 
 // MARK: - Puzzle+Equatable

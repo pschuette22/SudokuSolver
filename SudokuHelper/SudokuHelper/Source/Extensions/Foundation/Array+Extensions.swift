@@ -48,7 +48,7 @@ extension Array where Element: Equatable {
     }
     
     func permutations(ofSize size: Int, where isIncluded: (([Element]) -> Bool)?=nil) -> [[Element]] {
-        guard size >= count else { return [] }
+        guard size <= count else { return [] }
 
         var result = [[Element]]()
 

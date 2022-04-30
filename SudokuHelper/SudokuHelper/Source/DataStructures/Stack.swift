@@ -8,10 +8,11 @@
 import Foundation
 
 
-struct Stack<T> {
+class Stack<T> {
     private(set) var count: Int = 0
     private var first: Node<T>?
     private weak var last: Node<T>?
+    private let lock = NSLock()
     
     init(
         _ data: [T] = []
@@ -38,17 +39,33 @@ struct Stack<T> {
         return last?.data
     }
     
-    mutating
     func push(_ data: T) {
-        first = Node(data, previous: nil, next: first)
+        print("locking")
+        lock.lock()
+        print("did lock")
+        defer {
+            lock.unlock()
+            print("did unlock")
+        }
+
+        let node = Node(data, previous: nil, next: first)
+        self.first = node
         if last.isNil {
             last = first
         }
+
         count += 1
     }
     
-    mutating
     func pop() -> T? {
+        print("locking")
+        lock.lock()
+        print("did lock")
+        defer {
+            lock.unlock()
+            print("did unlock")
+        }
+        
         let data = first?.data
         self.first = first?.next
         
@@ -59,16 +76,41 @@ struct Stack<T> {
         return data
     }
     
-    mutating
     func dropLast() {
         guard last.isNotNil else { return }
         
-        last = last?.previous
+        print("locking")
+        lock.lock()
+        print("did lock")
+        defer {
+            lock.unlock()
+            print("did unlock")
+        }
+        
+        self.last = self.last?.previous
+        self.last?.removeNext()
         count -= 1
+        
+        #if DEBUG
+        var node = self.first
+        var count = 0
+        while node != nil {
+            count += 1
+            node = node?.next
+        }
+        print("drop last real count: \(count)")
+        #endif
     }
     
-    mutating
     func clear() {
+        print("locking")
+        lock.lock()
+        print("did lock")
+        defer {
+            lock.unlock()
+            print("did unlock")
+        }
+
         first = nil
         last = nil
         count = 0
@@ -92,23 +134,28 @@ private extension Stack {
     class Node<T> {
         let data: T
         weak var previous: Node<T>?
-        var next: Node<T>?
+        private var wasFreed = false
+        var next: Node<T>? {
+            get {
+                wasFreed ? nil : _next
+            }
+
+            set {
+                wasFreed = newValue.isNil
+                _next = newValue
+            }
+        }
+        
+        private var _next: Node<T>?
         
         init(_ data: T, previous: Node<T>? = nil, next: Node<T>? = nil) {
             self.data = data
             self.previous = previous
-            self.next = next
+            self._next = next
         }
         
-        func push(_ data: T) -> Node<T> {
-            if let next = next {
-                return next.push(data)
-            } else {
-                let node = Node<T>(data)
-                node.previous = self
-                next = node
-                return node
-            }
+        func removeNext() {
+            self.next = nil
         }
     }
 }

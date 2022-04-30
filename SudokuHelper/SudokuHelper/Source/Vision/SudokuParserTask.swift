@@ -15,7 +15,7 @@ import UIKit
 protocol SudokuParserTaskDelegate: AnyObject {
     func sudokuParserTask(_ task: SudokuParserTask, didChangeState newState: SudokuParserTask.State)
     // Rather than dispatch state change, should we dispatch relevant changes?
-    func sudokuParserTask(_ task: SudokuParserTask, didParse sudoku: [[Int]])
+    func sudokuParserTask(_ task: SudokuParserTask, didParse sudoku: [[(Int, CGRect, SudokuParserTask.CellType)]])
     func sudokuParserTask(_ task: SudokuParserTask, failedToParseSudokuWithError error: SudokuParsingError?)
 }
 
@@ -34,11 +34,18 @@ class SudokuParserTask {
         qos: .userInitiated
     )
     
+    enum CellType {
+        case unknown
+        case provided
+        case empty
+        case error
+    }
+    
     enum State {
         case idle
         case parsingCells
         case classifyingCells(visionObjects: [VisionRequestObject])
-        case parsed([[Int]])
+        case parsed([[(Int, CGRect, CellType)]])
     }
     
     private(set) var state: State = .idle {
@@ -133,7 +140,7 @@ extension SudokuParserTask {
                             #if DEBUG
                             print("Classified images:")
                             for row in puzzleDigits {
-                                print(row.map({ $0 == 0 ? "_" : "\($0)" }).joined(separator: "."))
+                                print(row.map({ $0.0 == 0 ? "_" : "\($0.0)" }).joined(separator: "."))
                             }
                             #endif
                             self.state = .parsed(puzzleDigits)
@@ -159,25 +166,30 @@ private extension SudokuParserTask {
     class CellClassifierTask {
         private let group = DispatchGroup()
         private let cellVisionObjects: [[VisionRequestObject]]
-        private var result: [[Int]]
+        private var result: [[(Int, CGRect, CellType)]]
         private var errors = [VisionRequestObject: Error]()
 
         init(cellVisionObjects: [[VisionRequestObject]]) {
             self.cellVisionObjects = cellVisionObjects
-            result = (0..<9).reduce(into: []) { result, _ in
-                result.append(Array<Int>(repeating: -1, count: 9))
+            result = (0..<9).reduce(into: []) { result, y in
+                var line = [(Int, CGRect, CellType)]()
+                for item in cellVisionObjects[y] {
+                    line.append((-1, item.location, .unknown))
+                }
+                result.append(line)
             }
         }
         
         func classifyCells(
             responseQueue: DispatchQueue,
-            completion: @escaping (Result<[[Int]], Error>) -> Void
+            completion: @escaping (Result<[[(Int, CGRect, CellType)]], Error>) -> Void
         ) {
             cellVisionObjects.enumerated().forEach { y, objectRow in
                 objectRow.enumerated().forEach { x, object in
                     
                     if object.label == "empty" {
-                        self.result[y][x] = 0
+                        self.result[y][x].0 = 0
+                        self.result[y][x].2 = .empty
                         return
                     }
                     
@@ -188,8 +200,10 @@ private extension SudokuParserTask {
                     self.runDigitClassifier(on: sliceImage) { [weak self, object, group] result in
                         switch result {
                         case .success(let digit):
-                            self?.result[y][x] = digit
+                            self?.result[y][x].0 = digit
+                            self?.result[y][x].2 = .provided
                         case .failure(let error):
+                            self?.result[y][x].2 = .error
                             self?.errors[object] = error
                             Logger.log(error: error)
                         }
@@ -215,7 +229,7 @@ private extension SudokuParserTask {
         }
         
         enum CellClassifierTaskError: Error {
-            case classifying([VisionRequestObject: Error], [[Int]])
+            case classifying([VisionRequestObject: Error], [[(Int, CGRect, CellType)]])
             case unknown
             case failedToFormatSlice
         }

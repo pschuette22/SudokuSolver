@@ -184,7 +184,7 @@ class PuzzleDigitClassifier {
             bottomRight = (x: bottomRight.x+1, y: bottomRight.y+1)
         }
         
-        assert(hasFoundImage)
+//        assert(hasFoundImage)
         
         // work out by 1 in each direction until all white pixels have been encapsulated / surrounded with a single layer of dark pixels
         outerloop: while true {
@@ -215,7 +215,7 @@ class PuzzleDigitClassifier {
         // This is the bounding area
         #if DEBUG
         print("Isolated digit image:\n")
-        for y in topLeft.y...bottomRight.y {
+        for y in max(topLeft.y, 0)...min(bottomRight.y, matrix.count-1) {
             guard
                 matrix.indices.contains(y),
                 let indicies = matrix.first
@@ -223,7 +223,7 @@ class PuzzleDigitClassifier {
                 continue
             }
             let lhs = max(indicies.startIndex, topLeft.x)
-            let rhs = min(indicies.endIndex, bottomRight.x)
+            let rhs = min(indicies.endIndex-1, bottomRight.x)
             print(matrix[y][lhs...rhs]
                 .map({ $0 ? "X" : " "})
                 .joined()

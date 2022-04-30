@@ -47,7 +47,11 @@ class SudokuParserTaskTests: XCTestCase {
                 [3,6,0,0,1,0,0,0,8],
                 [0,0,9,0,0,0,0,6,0],
             ]
-            XCTAssertEqual(sudoku, expected)
+            let digits = sudoku.reduce(into: [[Int]]()) { partialResult, row in
+                partialResult.append(row.map(\.0))
+            }
+            
+            XCTAssertEqual(digits, expected)
         case let .failure(error):
             XCTFail(error.localizedDescription)
         }
@@ -70,7 +74,7 @@ class SudokuParserTaskTests: XCTestCase {
 
 private extension SudokuParserTaskTests {
     class MockSudokuParserTaskDelegate: SudokuParserTaskDelegate {
-        var result: Result<[[Int]], Error>?
+        var result: Result<[[(Int, CGRect, SudokuParserTask.CellType)]], Error>?
         let expectation: XCTestExpectation
         
         init(expectation: XCTestExpectation) {
@@ -81,7 +85,7 @@ private extension SudokuParserTaskTests {
             print("did change state: \(newState)")
         }
         
-        func sudokuParserTask(_ task: SudokuParserTask, didParse sudoku: [[Int]]) {
+        func sudokuParserTask(_ task: SudokuParserTask, didParse sudoku: [[(Int, CGRect, SudokuParserTask.CellType)]]) {
             self.result = .success(sudoku)
             expectation.fulfill()
         }
