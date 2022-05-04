@@ -29,8 +29,10 @@ class ViewController<State: ViewState, Model: ViewModel<State>>: UIViewControlle
         super.viewWillAppear(animated)
 
         stateSubscription = model.$state.sink(
-            receiveValue: { [weak self] state in
-                self?.render(state)
+            receiveValue: { state in
+                DispatchQueue.main.async { [weak self] in
+                    self?.render(state)
+                }
             }
         )
         render(model.state)

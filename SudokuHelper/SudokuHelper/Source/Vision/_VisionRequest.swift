@@ -22,7 +22,7 @@ class VisionRequest {
     typealias Completion = (Result<[VisionRequestObject], Error>) -> Void
     private static let defaultWorkerQueue = DispatchQueue(
         label: Bundle.main.bundleIdentifier ?? "" + ".VisionRequest",
-        qos: .userInitiated
+        qos: .default
     )
     let modelName: String?
     let model: VNCoreMLModel
@@ -32,8 +32,8 @@ class VisionRequest {
     let fittingStrategy: VNImageCropAndScaleOption
     let requiredConfidence: CGFloat
     private(set) var isRunning: Bool = false
-    
- 
+    private var objectDetectionRequest: VNCoreMLRequest?
+
     required init(
         modelName: String? = nil,
         model: VNCoreMLModel,
@@ -51,6 +51,11 @@ class VisionRequest {
         self.fittingStrategy = fittingStrategy
         self.requiredConfidence = requiredConfidence
     }
+    
+    deinit {
+        // manual cleanup
+        objectDetectionRequest?.cancel()
+    }
 }
 
 //MARK: - Predefined static requests
@@ -58,7 +63,11 @@ class VisionRequest {
 extension VisionRequest {
     static func buildSudokuCellRequest(given image: CGImage) throws -> VisionRequest {
         let modelConfig = MLModelConfiguration()
+        #if targetEnvironment(simulator)
+        modelConfig.computeUnits = .cpuOnly
+        #else
         modelConfig.computeUnits = .all
+        #endif
         let sudokuCellModel = try SudokuCellDetector(configuration: modelConfig)
         let model = try VNCoreMLModel(for: sudokuCellModel.model)
         
@@ -95,7 +104,6 @@ extension VisionRequest {
             }
             
             guard let results = request.results else {
-                // TODO: error
                 result = .success([])
                 return
             }
@@ -144,15 +152,17 @@ extension VisionRequest {
         objectDetectionRequest.imageCropAndScaleOption = fittingStrategy
         
         let handler = VNImageRequestHandler(cgImage: image, options: [:])
-        workerQueue.async { [handler, objectDetectionRequest] in
+        workerQueue.async { [weak responseQueue, handler, objectDetectionRequest] in
             do {
                 try handler.perform([objectDetectionRequest])
             } catch {
-                responseQueue.async {
+                responseQueue?.async {
                     completion?(.failure(error))
                 }
             }
         }
+        
+        self.objectDetectionRequest = objectDetectionRequest
     }
 }
 
