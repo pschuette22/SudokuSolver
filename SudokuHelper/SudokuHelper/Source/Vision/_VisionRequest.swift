@@ -32,7 +32,6 @@ class VisionRequest {
     let fittingStrategy: VNImageCropAndScaleOption
     let requiredConfidence: CGFloat
     private(set) var isRunning: Bool = false
-    private var objectDetectionRequest: VNCoreMLRequest?
 
     required init(
         modelName: String? = nil,
@@ -51,33 +50,6 @@ class VisionRequest {
         self.fittingStrategy = fittingStrategy
         self.requiredConfidence = requiredConfidence
     }
-    
-    deinit {
-        // manual cleanup
-        objectDetectionRequest?.cancel()
-    }
-}
-
-//MARK: - Predefined static requests
-
-extension VisionRequest {
-    static func buildSudokuCellRequest(given image: CGImage) throws -> VisionRequest {
-        let modelConfig = MLModelConfiguration()
-        #if targetEnvironment(simulator)
-        modelConfig.computeUnits = .cpuOnly
-        #else
-        modelConfig.computeUnits = .all
-        #endif
-        let sudokuCellModel = try SudokuCellDetector(configuration: modelConfig)
-        let model = try VNCoreMLModel(for: sudokuCellModel.model)
-        
-        return .init(
-            modelName: "SudokuCellDetector",
-            model: model,
-            image: image,
-            requiredConfidence: 0.6
-        )
-    }
 }
 
 //MARK: - Execute
@@ -93,7 +65,7 @@ extension VisionRequest {
         }
         
         let objectDetectionRequest = VNCoreMLRequest(model: model) {
-            [image, requiredConfidence, completion] (request, error) in
+            [weak self, image, requiredConfidence, completion] (request, error) in
             
             var result: Result<[VisionRequestObject], Error>!
             
@@ -103,7 +75,10 @@ extension VisionRequest {
                 }
             }
             
-            guard let results = request.results else {
+            guard
+                let self = self,
+                let results = request.results
+            else {
                 result = .success([])
                 return
             }
@@ -161,8 +136,6 @@ extension VisionRequest {
                 }
             }
         }
-        
-        self.objectDetectionRequest = objectDetectionRequest
     }
 }
 

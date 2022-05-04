@@ -11,6 +11,8 @@ import CoreGraphics
 import Vision
 
 class PuzzleDigitClassifier {
+    private static var classifierModel: VNCoreMLModel?
+
     func classifyDigit(in image: UIImage, _ completion: @escaping (Result<Int, Error>) -> Void) {
         guard
             let transformed = PureBlackWhiteFilter()
@@ -40,9 +42,12 @@ class PuzzleDigitClassifier {
         #endif
         
         do {
-            let digitClassifier = try MNISTClassifier(configuration: config)
-            let classifierModel = try VNCoreMLModel(for: digitClassifier.model)
-            let classificationRequest = VNCoreMLRequest(model: classifierModel) { [image, resizedImage] request, error in
+            if Self.classifierModel.isNil {
+                let digitClassifier = try MNISTClassifier(configuration: config)
+                Self.classifierModel = try VNCoreMLModel(for: digitClassifier.model)
+            }
+            
+            let classificationRequest = VNCoreMLRequest(model: Self.classifierModel!) { [image, resizedImage] request, error in
                 _ = image
                 _ = resizedImage
                 if

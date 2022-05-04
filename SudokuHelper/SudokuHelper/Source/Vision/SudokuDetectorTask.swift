@@ -20,6 +20,8 @@ class SudokuDetectorTask {
         qos: .userInitiated
     )
     
+    private static var detectionModel: VNCoreMLModel?
+    
     enum State {
         case idle
         case detecting
@@ -76,16 +78,20 @@ extension SudokuDetectorTask {
             self.state = .detecting
             
             do {
-                let modelConfig = MLModelConfiguration()
-                #if targetEnvironment(simulator)
-                modelConfig.computeUnits = .cpuOnly
-                #endif
-                let sudokuModel = try SudokuDetector(configuration: modelConfig)
-                let model = try VNCoreMLModel(for: sudokuModel.model)
+                if Self.detectionModel.isNil {
+                    let modelConfig = MLModelConfiguration()
+                    #if targetEnvironment(simulator)
+                    modelConfig.computeUnits = .cpuOnly
+                    #else
+                    modelConfig.computeUnits = .all
+                    #endif
+                    let sudokuModel = try SudokuDetector(configuration: modelConfig)
+                    Self.detectionModel = try VNCoreMLModel(for: sudokuModel.model)
+                }
                 
                 self.sudokuVisionRequest = VisionRequest(
                     modelName: "SudokuDetector",
-                    model: model,
+                    model: Self.detectionModel!,
                     image: self.image,
                     // 5% expansion seems to be useful
                     sliceInset: .init(0.025),

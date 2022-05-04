@@ -100,6 +100,8 @@ extension DetectorViewControllerModel {
             }
         }
         let puzzle = Puzzle(values: digits)
+        puzzle.print()
+
         if SolutionEngine(puzzle: puzzle).solve() {
             var cells = cells
             cells.enumerated().forEach { y, row in
@@ -118,6 +120,8 @@ extension DetectorViewControllerModel {
             update { state in
                 state.toSolvedSudoku(in: image, withSize: .zero, locatedCells: cells)
             }
+            
+            puzzle.print()
             
         } else {
             update { state in

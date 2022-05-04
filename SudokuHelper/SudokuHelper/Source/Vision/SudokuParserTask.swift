@@ -33,6 +33,7 @@ class SudokuParserTask {
         label: Bundle.main.bundleIdentifier ?? "" + ".SudokuParserTask",
         qos: .userInitiated
     )
+    private static var parserModel: VNCoreMLModel?
     
     enum CellType {
         case unknown
@@ -100,7 +101,25 @@ extension SudokuParserTask {
             self.state = .parsingCells
             
             do {
-                self.sudokuCellVisionRequest = try VisionRequest.buildSudokuCellRequest(given: self.image)
+                if Self.parserModel.isNil {
+                    let modelConfig = MLModelConfiguration()
+                    #if targetEnvironment(simulator)
+                    modelConfig.computeUnits = .cpuOnly
+                    #else
+                    modelConfig.computeUnits = .all
+                    #endif
+                    let sudokuCellModel = try SudokuCellDetector(configuration: modelConfig)
+                    Self.parserModel = try VNCoreMLModel(for: sudokuCellModel.model)
+                }
+                
+                self.sudokuCellVisionRequest = .init(
+                    modelName: "SudokuCellDetector",
+                    model: Self.parserModel!,
+                    image: self.image,
+                    requiredConfidence: 0.6
+                )
+                
+                
             } catch {
                 self.state = .idle
                 self.responseQueue.async {
