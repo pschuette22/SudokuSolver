@@ -55,8 +55,13 @@ class PuzzleDigitClassifierTests: XCTestCase {
     }
 
     
-    private func testImageSlice(of testDigit: Int) throws {
-        let imageURL = try XCTUnwrap(testBundle.path(forResource: "imageSlice_\(testDigit)", ofType: "jpg"))
+    func testClassifyImage_shady9Slice() throws {
+        try testImageSlice(of: 9, isShady: true)
+    }
+    
+    private func testImageSlice(of testDigit: Int, isShady: Bool = false, fileType: String = "jpg") throws {
+        let fileName = isShady ? "shadyImageSlice_\(testDigit)" : "imageSlice_\(testDigit)"
+        let imageURL = try XCTUnwrap(testBundle.path(forResource: fileName, ofType: fileType))
         let image = try XCTUnwrap(UIImage(contentsOfFile: imageURL))
         let classifier = PuzzleDigitClassifier()
         let expectation = XCTestExpectation(description: "The digit will be classified")
