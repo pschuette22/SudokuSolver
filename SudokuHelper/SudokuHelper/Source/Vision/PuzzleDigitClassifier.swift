@@ -14,18 +14,47 @@ class PuzzleDigitClassifier {
     private static var classifierModel: VNCoreMLModel?
 
     func classifyDigit(in image: UIImage, _ completion: @escaping (Result<Int, Error>) -> Void) {
-        guard
-            let transformed = PureBlackWhiteFilter()
-                .apply(to: image)?
-                .inverted()
-        else {
-            completion(.failure(ClassifyingError.failedToInitialize))
-            return
+        
+        var isolatedImage: CGImage?
+        var attempts = 0
+        var exposureMin = Float(0.05)
+        var exposureMax = Float(0.65)
+        
+        while attempts < 10, isolatedImage.isNil {
+            attempts += 1
+            let filterExposure = ((exposureMax - exposureMin) / 2) + exposureMin
+            guard
+                let transformed = PureBlackWhiteFilter()
+                    .apply(to: image, threshold: filterExposure)?
+                    .inverted()
+            else {
+                completion(.failure(ClassifyingError.failedToInitialize))
+                return
+            }
+            
+            do {
+                isolatedImage = try isolateDigit(in: transformed)
+            } catch let error as IsolationError {
+                switch error {
+                case .overExposed:
+                    print("over exposed, lowering exposure max")
+                    exposureMax = filterExposure
+                    
+                case .underExposed:
+                    print("under exposed, increasing exposure max")
+                    exposureMin = filterExposure
+                }
+            } catch {
+                completion(.failure(ClassifyingError.failedToIsolate(attempts: attempts)))
+                return
+            }
         }
         
-        // TODO: handle over and under filtering
+        guard let isolatedImage = isolatedImage else {
+            completion(.failure(ClassifyingError.failedToIsolate(attempts: attempts)))
+            return
+        }
 
-        let isolatedImage = isolateDigit(in: transformed)
         
         UIGraphicsBeginImageContext(.init(width: 28, height: 28))
         UIImage(cgImage: isolatedImage).draw(in: CGRect(origin: .zero, size: .init(width: 28, height: 28)))
@@ -80,9 +109,25 @@ class PuzzleDigitClassifier {
         }
     }
 
-    private func isolateDigit(in image: CGImage) -> CGImage {
+    private func isolateDigit(in image: CGImage) throws -> CGImage {
         let frame = frameOfDigit(in: image)
         // Redraw image and convert all pixels outside of digit area to black
+        let croppedArea = Double((frame.bottomRight.x - frame.topLeft.x) * (frame.bottomRight.y - frame.topLeft.y))
+        let originalArea = Double(image.height * image.width)
+        let percentArea = croppedArea / originalArea
+#if DEBUG
+        print("percent area: \(percentArea)")
+#endif
+        // NOTE: This is a bad assumption. It assumes a certain digit to cell area ratio.
+        // This should be based on classification confidence
+        let requiredArea = 0.05...0.2
+        guard requiredArea.contains(percentArea) else {
+            if requiredArea.lowerBound > percentArea {
+                throw IsolationError.underExposed
+            } else {
+                throw IsolationError.overExposed
+            }
+        }
 
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         var bitmapInfo: UInt32 = CGBitmapInfo.byteOrder32Big.rawValue
@@ -315,12 +360,22 @@ private extension PuzzleDigitClassifier {
     }
 }
 
-// MARK: - ClassifyingError
+// MARK: - Errors
 
 extension PuzzleDigitClassifier {
+    /// Error thrown when classifier is unable to isolate digit in a filled cell
+    private enum IsolationError: Error {
+        /// Too much light pixels, increase contrast
+        case overExposed
+        /// Not enough light pixels, decrease contrast
+        case underExposed
+    }
+    
+    /// Classifier failed with unrecoverable error
     enum ClassifyingError: Error {
         case failedToInitialize
         case failedToConvertToMNISTFormat
+        case failedToIsolate(attempts: Int)
         case unknown
     }
 }
