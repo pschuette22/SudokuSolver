@@ -7,17 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		494F4A0A289EE9AB000B5A3E /* shadyImageSlice_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 494F4A09289EE9AB000B5A3E /* shadyImageSlice_2.jpg */; };
-		494F4A0E289EEA10000B5A3E /* shadyImageSlice_9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */; };
-		494F4A10289EF476000B5A3E /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494F4A0F289EF476000B5A3E /* CGRect+Extensions.swift */; };
-		49550A9227C16DBB00F5BC96 /* SudokuCell.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9127C16DBB00F5BC96 /* SudokuCell.mlmodel */; };
-		49550A9627C174F500F5BC96 /* SudokuImageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9527C174F500F5BC96 /* SudokuImageParser.swift */; };
 		490EA61A27FD3611000A206F /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA61927FD3611000A206F /* Stack.swift */; };
 		490EA61C27FD414D000A206F /* SudokuDetectorTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA61B27FD414D000A206F /* SudokuDetectorTask.swift */; };
 		490EA62027FDD7DD000A206F /* SudokuDetectorTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA61F27FDD7DD000A206F /* SudokuDetectorTaskTests.swift */; };
 		490EA62227FDDECB000A206F /* SudokuParserTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA62127FDDECB000A206F /* SudokuParserTaskTests.swift */; };
 		490EA62427FDF465000A206F /* Sudoku1CroppedWithShade.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 490EA62327FDF465000A206F /* Sudoku1CroppedWithShade.jpg */; };
 		490EA62627FDF91F000A206F /* Sudoku1Cropped.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 490EA62527FDF91F000A206F /* Sudoku1Cropped.jpg */; };
+		492C659E289F002B00E37806 /* shadyImageSlice_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 492C659D289F002B00E37806 /* shadyImageSlice_2.jpg */; };
+		494F4A0E289EEA10000B5A3E /* shadyImageSlice_9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */; };
+		494F4A10289EF476000B5A3E /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494F4A0F289EF476000B5A3E /* CGRect+Extensions.swift */; };
 		49550A9227C16DBB00F5BC96 /* SudokuCellDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9127C16DBB00F5BC96 /* SudokuCellDetector.mlmodel */; };
 		49550A9627C174F500F5BC96 /* SudokuParserTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9527C174F500F5BC96 /* SudokuParserTask.swift */; };
 		49550A9827C1776A00F5BC96 /* _VisionRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9727C1776A00F5BC96 /* _VisionRequest.swift */; };
@@ -108,17 +106,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		494F4A09289EE9AB000B5A3E /* shadyImageSlice_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shadyImageSlice_2.jpg; path = ../../../../../../../../var/folders/p9/xpsk2w0d6n99h0t2vzh1gmsr0000gn/T/TemporaryItems/NSIRD_screencaptureui_fNpBiZ/shadyImageSlice_2.jpg; sourceTree = "<group>"; };
-		494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shadyImageSlice_9.jpg; path = ../../../../../../../../var/folders/p9/xpsk2w0d6n99h0t2vzh1gmsr0000gn/T/TemporaryItems/NSIRD_screencaptureui_HqYLaD/shadyImageSlice_9.jpg; sourceTree = "<group>"; };
-		494F4A0F289EF476000B5A3E /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
-		49550A9127C16DBB00F5BC96 /* SudokuCell.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SudokuCell.mlmodel; sourceTree = "<group>"; };
-		49550A9527C174F500F5BC96 /* SudokuImageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuImageParser.swift; sourceTree = "<group>"; };
 		490EA61927FD3611000A206F /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		490EA61B27FD414D000A206F /* SudokuDetectorTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuDetectorTask.swift; sourceTree = "<group>"; };
 		490EA61F27FDD7DD000A206F /* SudokuDetectorTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuDetectorTaskTests.swift; sourceTree = "<group>"; };
 		490EA62127FDDECB000A206F /* SudokuParserTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuParserTaskTests.swift; sourceTree = "<group>"; };
 		490EA62327FDF465000A206F /* Sudoku1CroppedWithShade.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Sudoku1CroppedWithShade.jpg; sourceTree = "<group>"; };
 		490EA62527FDF91F000A206F /* Sudoku1Cropped.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Sudoku1Cropped.jpg; sourceTree = "<group>"; };
+		492C659D289F002B00E37806 /* shadyImageSlice_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = shadyImageSlice_2.jpg; sourceTree = "<group>"; };
+		494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shadyImageSlice_9.jpg; path = ../../../../../../../../var/folders/p9/xpsk2w0d6n99h0t2vzh1gmsr0000gn/T/TemporaryItems/NSIRD_screencaptureui_HqYLaD/shadyImageSlice_9.jpg; sourceTree = "<group>"; };
+		494F4A0F289EF476000B5A3E /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		49550A9127C16DBB00F5BC96 /* SudokuCellDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SudokuCellDetector.mlmodel; sourceTree = "<group>"; };
 		49550A9527C174F500F5BC96 /* SudokuParserTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuParserTask.swift; sourceTree = "<group>"; };
 		49550A9727C1776A00F5BC96 /* _VisionRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _VisionRequest.swift; sourceTree = "<group>"; };
@@ -222,21 +218,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		494F4A08289EE972000B5A3E /* ShadyCellImageSlices */ = {
-			isa = PBXGroup;
-			children = (
-				494F4A09289EE9AB000B5A3E /* shadyImageSlice_2.jpg */,
-				494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */,
-			);
-			path = ShadyCellImageSlices;
-                        sourceTree = "<group>";
-                };
-                490EA61827FD35FD000A206F /* DataStructures */ = {
+		490EA61827FD35FD000A206F /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
 				490EA61927FD3611000A206F /* Stack.swift */,
 			);
 			path = DataStructures;
+			sourceTree = "<group>";
+		};
+		494F4A08289EE972000B5A3E /* ShadyCellImageSlices */ = {
+			isa = PBXGroup;
+			children = (
+				492C659D289F002B00E37806 /* shadyImageSlice_2.jpg */,
+				494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */,
+			);
+			path = ShadyCellImageSlices;
 			sourceTree = "<group>";
 		};
 		49550A9427C1745100F5BC96 /* Vision */ = {
@@ -748,10 +744,10 @@
 			files = (
 				49F7EC9127F22D4700811AD3 /* imageSlice_7.jpg in Resources */,
 				49F7EC8C27F22D4700811AD3 /* imageSlice_6.jpg in Resources */,
+				492C659E289F002B00E37806 /* shadyImageSlice_2.jpg in Resources */,
 				490EA62627FDF91F000A206F /* Sudoku1Cropped.jpg in Resources */,
 				49F5E92127CC7E5200F87294 /* Sudoku9.jpg in Resources */,
 				49F7EC9027F22D4700811AD3 /* imageSlice_4.jpg in Resources */,
-				494F4A0A289EE9AB000B5A3E /* shadyImageSlice_2.jpg in Resources */,
 				49F7EC8D27F22D4700811AD3 /* imageSlice_3.jpg in Resources */,
 				49F7EC8F27F22D4700811AD3 /* imageSlice_2.jpg in Resources */,
 				49F5E92327CC7E8900F87294 /* Sudoku1.jpg in Resources */,
