@@ -25,9 +25,11 @@ final class SolutionEngineTests: XCTestCase {
         let puzzle = Puzzle(
             values: Self.expert5Values
         )
-        
+        let start = Date()
         let engine = SolutionEngine(puzzle: puzzle)
         engine.solve()
+        let solvedIn = Date().timeIntervalSince(start)
+        print("solved in \(solvedIn)")
         print(engine.history.reduce(into: Set<String>(), { $0.insert($1.strategy.rawValue)}))
 
         XCTAssertTrue(puzzle.isSolved)

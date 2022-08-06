@@ -11,6 +11,8 @@ import CoreGraphics
 import Vision
 
 class PuzzleDigitClassifier {
+    private static var classifierModel: VNCoreMLModel?
+
     func classifyDigit(in image: UIImage, _ completion: @escaping (Result<Int, Error>) -> Void) {
         
         var isolatedImage: CGImage?
@@ -69,9 +71,12 @@ class PuzzleDigitClassifier {
         #endif
         
         do {
-            let digitClassifier = try MNISTClassifier(configuration: config)
-            let classifierModel = try VNCoreMLModel(for: digitClassifier.model)
-            let classificationRequest = VNCoreMLRequest(model: classifierModel) { [image, resizedImage] request, error in
+            if Self.classifierModel.isNil {
+                let digitClassifier = try MNISTClassifier(configuration: config)
+                Self.classifierModel = try VNCoreMLModel(for: digitClassifier.model)
+            }
+            
+            let classificationRequest = VNCoreMLRequest(model: Self.classifierModel!) { [image, resizedImage] request, error in
                 _ = image
                 _ = resizedImage
                 if
@@ -229,7 +234,7 @@ class PuzzleDigitClassifier {
             bottomRight = (x: bottomRight.x+1, y: bottomRight.y+1)
         }
         
-        assert(hasFoundImage)
+//        assert(hasFoundImage)
         
         // work out by 1 in each direction until all white pixels have been encapsulated / surrounded with a single layer of dark pixels
         outerloop: while true {
@@ -260,7 +265,7 @@ class PuzzleDigitClassifier {
         // This is the bounding area
         #if DEBUG
         print("Isolated digit image:\n")
-        for y in topLeft.y...bottomRight.y {
+        for y in max(topLeft.y, 0)...min(bottomRight.y, matrix.count-1) {
             guard
                 matrix.indices.contains(y),
                 let indicies = matrix.first

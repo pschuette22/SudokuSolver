@@ -22,7 +22,7 @@ class VisionRequest {
     typealias Completion = (Result<[VisionRequestObject], Error>) -> Void
     private static let defaultWorkerQueue = DispatchQueue(
         label: Bundle.main.bundleIdentifier ?? "" + ".VisionRequest",
-        qos: .userInitiated
+        qos: .default
     )
     let modelName: String?
     let model: VNCoreMLModel
@@ -32,8 +32,7 @@ class VisionRequest {
     let fittingStrategy: VNImageCropAndScaleOption
     let requiredConfidence: CGFloat
     private(set) var isRunning: Bool = false
-    
- 
+
     required init(
         modelName: String? = nil,
         model: VNCoreMLModel,
@@ -53,40 +52,6 @@ class VisionRequest {
     }
 }
 
-//MARK: - Predefined static requests
-
-extension VisionRequest {
-    static func buildSudokuRequest(given image: CGImage) throws -> VisionRequest {
-        let modelConfig = MLModelConfiguration()
-        modelConfig.computeUnits = .all
-        let sudokuModel = try Sudoku(configuration: modelConfig)
-        let model = try VNCoreMLModel(for: sudokuModel.model)
-        
-        return .init(
-            modelName: "Sudoku",
-            model: model,
-            image: image,
-            // 5% expansion seems to be useful
-            sliceInset: .init(0.025),
-            requiredConfidence: 0.6
-        )
-    }
-    
-    static func buildSudokuCellRequest(given image: CGImage) throws -> VisionRequest {
-        let modelConfig = MLModelConfiguration()
-        modelConfig.computeUnits = .all
-        let sudokuCellModel = try SudokuCell(configuration: modelConfig)
-        let model = try VNCoreMLModel(for: sudokuCellModel.model)
-        
-        return .init(
-            modelName: "SudokuCell",
-            model: model,
-            image: image,
-            requiredConfidence: 0.6
-        )
-    }
-}
-
 //MARK: - Execute
 extension VisionRequest {
     /// Execute the vision request
@@ -100,7 +65,7 @@ extension VisionRequest {
         }
         
         let objectDetectionRequest = VNCoreMLRequest(model: model) {
-            [image, requiredConfidence, completion] (request, error) in
+            [weak self, image, requiredConfidence, completion] (request, error) in
             
             var result: Result<[VisionRequestObject], Error>!
             
@@ -110,8 +75,10 @@ extension VisionRequest {
                 }
             }
             
-            guard let results = request.results else {
-                // TODO: error
+            guard
+                let self = self,
+                let results = request.results
+            else {
                 result = .success([])
                 return
             }
@@ -160,11 +127,11 @@ extension VisionRequest {
         objectDetectionRequest.imageCropAndScaleOption = fittingStrategy
         
         let handler = VNImageRequestHandler(cgImage: image, options: [:])
-        workerQueue.async { [handler, objectDetectionRequest] in
+        workerQueue.async { [weak responseQueue, handler, objectDetectionRequest] in
             do {
                 try handler.perform([objectDetectionRequest])
             } catch {
-                responseQueue.async {
+                responseQueue?.async {
                     completion?(.failure(error))
                 }
             }

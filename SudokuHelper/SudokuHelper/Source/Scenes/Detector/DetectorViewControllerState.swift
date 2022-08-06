@@ -12,8 +12,10 @@ import UIKit
 struct DetectorViewControllerState: ViewState {
     struct LocatedCell: Hashable {
         enum CellType: Hashable {
-            case filled
+            case filled(Int?)
             case empty
+            case solved(Int)
+            case error
             case unknown
             
             init(from label: String?) {
@@ -21,7 +23,7 @@ struct DetectorViewControllerState: ViewState {
                 case "empty"?:
                     self = .empty
                 case "filled"?:
-                    self = .filled
+                    self = .filled(nil)
                 default:
                     self = .unknown
                 }
@@ -29,6 +31,16 @@ struct DetectorViewControllerState: ViewState {
         }
         let frame: CGRect
         let type: CellType
+        var value: Int? {
+            switch type {
+            case .filled(let value):
+                return value
+            case .solved(let value):
+                return value
+            case .empty, .error, .unknown:
+                return nil
+            }
+        }
     }
     
     enum Context: Hashable {
@@ -49,8 +61,12 @@ struct DetectorViewControllerState: ViewState {
         case parsedSudoku(
             image: CGImage,
             imageSize: CGSize,
-            cells: [[CGRect]],
-            values: [[Int]]
+            cells: [[LocatedCell]]
+        )
+        case solvedSudoku(
+            image: CGImage,
+            imageSize: CGSize,
+            cells: [[LocatedCell]]
         )
     }
     private(set) var context: Context
@@ -69,19 +85,53 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku:
             return true
         
-        case .parsingSudoku, .locatedCells, .parsedSudoku:
+        case .parsingSudoku, .locatedCells, .parsedSudoku, .solvedSudoku:
             return false
         }
     }
     
     var isParsingViewDisplayed: Bool {
         switch context {
-        case .detecting, .detectedSudoku:
+        case .detecting, .detectedSudoku, .solvedSudoku:
             return false
             
         case .parsingSudoku, .locatedCells, .parsedSudoku:
             return true
         }
+    }
+    
+    var isCaptureButtonHidden: Bool {
+        switch context {
+        case .detectedSudoku(_, _, _, let confidence):
+            return confidence < 0.8 // 80% or greater confidence and we defer to user
+
+        case .detecting,
+             .parsingSudoku,
+             .locatedCells,
+             .parsedSudoku,
+             .solvedSudoku:
+            return true
+        }
+    }
+    
+    var captureButtonAlpha: CGFloat {
+        switch context {
+        case .detectedSudoku(_, _, _, let confidence):
+            return confidence
+
+        case .detecting,
+             .parsingSudoku,
+             .locatedCells,
+             .parsedSudoku,
+             .solvedSudoku:
+            return 0
+        }
+    }
+    
+    var captureButtonText: String {
+        guard case .detectedSudoku(_, _, _, let confidence) = context else { return "" }
+        let percent = Int(confidence * 100)
+        return "Capture (\(percent)% confident)"
     }
 }
 
@@ -109,8 +159,13 @@ extension DetectorViewControllerState {
     }
     
     mutating
-    func toParsedSudoku(in image: CGImage, withSize imageSize: CGSize, cellFrames: [[CGRect]], values: [[Int]]) {
-        self.context = .parsedSudoku(image: image, imageSize: imageSize, cells: cellFrames, values: values)
+    func toParsedSudoku(in image: CGImage, withSize imageSize: CGSize, locatedCells: [[LocatedCell]]) {
+        self.context = .parsedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
+    }
+    
+    mutating
+    func toSolvedSudoku(in image: CGImage, withSize imageSize: CGSize, locatedCells: [[LocatedCell]]) {
+        self.context = .solvedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
     }
 }
 

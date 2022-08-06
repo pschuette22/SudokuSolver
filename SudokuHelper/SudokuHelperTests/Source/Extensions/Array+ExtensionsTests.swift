@@ -16,8 +16,8 @@ extension Array_ExtensionsTests {
     
     func testPermutations() {
         let array = [1,2,3,4]
-        let combinations = array.permutations(ofSize: 3)
-        let expectedCombinations = [
+        let permutations = array.permutations(ofSize: 3)
+        let expected = [
             [1, 2, 3],
             [1, 2, 4],
             [1, 3, 2],
@@ -44,7 +44,7 @@ extension Array_ExtensionsTests {
             [4, 3, 2],
         ]
         
-        XCTAssertEqual(combinations, expectedCombinations)
+        XCTAssertEqual(permutations, expected)
     }
     
     func testCombinations_threeOfFour() {
