@@ -54,8 +54,9 @@ final class PuzzleDigitClassifierTests: XCTestCase {
         try testImageSlice(of: 8)
     }
     
-    // TODO: test slice of 9
-
+    func testClassifyImage_shady2Slice() throws {
+        try testImageSlice(of: 2, isShady: true)
+    }
     
     func testClassifyImage_shady9Slice() throws {
         try testImageSlice(of: 9, isShady: true)

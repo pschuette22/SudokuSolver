@@ -118,7 +118,7 @@ class PuzzleDigitClassifier {
 #if DEBUG
         print("percent area: \(percentArea)")
 #endif
-        // NOTE: This is a bad assumption. It assumes a certain digit -> cell area ratio.
+        // NOTE: This is a bad assumption. It assumes a certain digit to cell area ratio.
         // This should be based on classification confidence
         let requiredArea = 0.05...0.2
         guard requiredArea.contains(percentArea) else {
