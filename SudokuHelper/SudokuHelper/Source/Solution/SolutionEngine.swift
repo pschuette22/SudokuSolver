@@ -256,7 +256,7 @@ extension SolutionEngine {
         var moves = Set<Move>()
         let values = puzzle.remainingValues
 
-        for axis in Line.Axis.allCases {
+        outer:  for axis in Line.Axis.allCases {
             let otherAxis = axis.other
             for value in values {
                 let lines = puzzle.lines(withAxis: axis)
@@ -284,15 +284,15 @@ extension SolutionEngine {
                             }
                         }
 
-                        if !moves.isEmpty { break }
+                        if !moves.isEmpty { break outer }
 
                     }
                     
-                    if !moves.isEmpty { break }
+                    if !moves.isEmpty { break outer }
 
                 }
                 
-                if !moves.isEmpty { break }
+                if !moves.isEmpty { break outer }
             }
             
             // Since this is an expensive op and this move tends to open up the board for other solves

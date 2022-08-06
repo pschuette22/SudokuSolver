@@ -9,7 +9,7 @@
 import UIKit
 import XCTest
 
-class PuzzleDigitClassifierTests: XCTestCase {
+final class PuzzleDigitClassifierTests: XCTestCase {
     private var testBundle: Bundle {
         Bundle(for: type(of: self))
     }
@@ -53,6 +53,8 @@ class PuzzleDigitClassifierTests: XCTestCase {
     func testClassifyingImage_8Slice() throws {
         try testImageSlice(of: 8)
     }
+    
+    // TODO: test slice of 9
 
     
     private func testImageSlice(of testDigit: Int) throws {

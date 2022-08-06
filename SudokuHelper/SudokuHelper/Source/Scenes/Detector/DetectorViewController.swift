@@ -19,6 +19,8 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     private let visionInputVerifierView: UIImageView = UIImageView()
     private let parsingContainerView = UIView()
     private var parsingSudokuImage: UIImageView?
+    private var captureButton = UIButton(type: .custom)
+    private var cellOverlayViews = [UIView]()
     
     required init(model: DetectorViewControllerModel = .init()) {
         super.init(model: model)
@@ -45,20 +47,24 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
         setupCaptureSession()
         setupPreviewLayer()
         setupParsingContainer()
-        #if DEBUG
-        setupVisionInputVerifier()
-        #endif
+//        #if DEBUG
+//        setupVisionInputVerifier()
+//        #endif
+        setupCaptureButton()
     }
 
     override func render(_ state: DetectorViewControllerState) {
         previewContainer.isHidden = state.isPreviewLayerDisplayed == false
         parsingContainerView.isHidden = state.isParsingViewDisplayed == false
-        
+        captureButton.isHidden = state.isCaptureButtonHidden
+        captureButton.alpha = state.captureButtonAlpha
+        captureButton.setTitle(state.captureButtonText, for: .normal)
+
         switch state.context {
         case .detecting:
             removeSudokuDetectionPreview()
             visionInputVerifierView.image = nil
-            captureSession.startRunning()
+            startCaptureSession()
 
         case let .detectedSudoku(image, size, frame, confidence):
             let scaleX = previewLayer.frame.width / size.width
@@ -80,17 +86,31 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             #endif
 
         case let .parsingSudoku(image):
-            captureSession.stopRunning()
-            drawSudokuBeingParsed(from: image)
+            endCaptureSession()
+            drawCapturedSudoku(from: image)
             // TODO: some sort of parsing animation
         
         case let.locatedCells(image, cells):
-            let drawingResult = drawSudokuBeingParsed(from: image)
+            let drawingResult = drawCapturedSudoku(from: image)
             draw(locatedCells: cells, scale: drawingResult.scale)
             
-        case let .parsedSudoku(image, imageSize, cells, values):
-            // TODO: handle this
-            Logger.log(.debug, message: "Parsed sudoku", params: ["values": values])
+        case let .parsedSudoku(image, imageSize, cells):
+            print("did parse sudoku!")
+//            let drawingResult = drawSudokuBeingParsed(from: image)
+//            draw(locatedCells: cells, scale: drawingResult.scale)
+
+        case let .solvedSudoku(image, imageSize, cells):
+            let drawingResult = drawCapturedSudoku(from: image)
+            let relevantCells = cells.flattened.filter { cell in
+                switch cell.type {
+                case .solved, .error:
+                    return true
+                case .unknown, .empty, .filled:
+                    return false
+                }
+                
+            }
+            draw(locatedCells: relevantCells, scale: drawingResult.scale)
         }
     }
     
@@ -209,7 +229,37 @@ extension DetectorViewController {
         visionInputVerifierView.frame = CGRect(origin: .init(x: originX, y: originY), size: size)
         visionInputVerifierView.backgroundColor = .clear
         visionInputVerifierView.contentMode = .scaleAspectFit
-        visionInputVerifierView.clipsToBounds = false
+        visionInputVerifierView.clipsToBounds = true
+    }
+    
+    func setupCaptureButton() {
+        view.addSubview(captureButton)
+        captureButton.translatesAutoresizingMaskIntoConstraints = false
+        captureButton.tintColor = .yellow
+        captureButton.setTitleColor(.black, for: .normal)
+        captureButton.isHidden = true
+        captureButton.addTarget(self, action: #selector(didTapCaptureButton(_:)), for: .touchUpInside)
+        if #available(iOS 15.0, *) {
+            var buttonConfiguration = UIButton.Configuration.filled()
+            buttonConfiguration.contentInsets = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
+            buttonConfiguration.cornerStyle = .capsule
+            captureButton.configuration = buttonConfiguration
+        } else {
+            // Fallback on earlier versions
+            captureButton.titleEdgeInsets = .init(top: 16, left: 16, bottom: 16, right: 16)
+            captureButton.layer.cornerRadius = 16
+        }
+        
+        NSLayoutConstraint.activate([
+            captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -48),
+            captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            captureButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75)
+        ])
+    }
+    
+    @objc
+    func didTapCaptureButton(_ sender: Any?) {
+        model.didTapCaptureButton()
     }
 }
 
@@ -254,8 +304,7 @@ extension DetectorViewController {
         }
 
         ciImage = ciImage.oriented(forExifOrientation: Int32(orientation.rawValue))
-        
-        
+
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
         
         return (image: cgImage, size: ciImage.extent.size)
@@ -272,7 +321,6 @@ extension DetectorViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 videoOrientation: connection.videoOrientation
             )
         else {
-            model.didNotDetectSudoku()
             return
         }
         
@@ -304,7 +352,7 @@ private extension DetectorViewController {
     }
     
     @discardableResult
-    func drawSudokuBeingParsed(from image: CGImage) -> (image: UIImageView, scale: CGPoint) {
+    func drawCapturedSudoku(from image: CGImage) -> (image: UIImageView, scale: CGPoint) {
         parsingSudokuImage?.subviews.forEach { $0.removeFromSuperview() }
         parsingContainerView.isHidden = false
         parsingSudokuImage?.removeFromSuperview()
@@ -328,6 +376,8 @@ private extension DetectorViewController {
     }
     
     func draw(locatedCells: [DetectorViewControllerState.LocatedCell], scale: CGPoint) {
+        cellOverlayViews.forEach { $0.removeFromSuperview() }
+        
         locatedCells.forEach {
             let scaledRect = CGRect(
                 x: $0.frame.origin.x * scale.x,
@@ -345,10 +395,27 @@ private extension DetectorViewController {
                 boxView.layer.borderColor = UIColor.yellow.cgColor
             case .unknown:
                 boxView.layer.borderColor = UIColor.blue.cgColor
+            case let .solved(value):
+                let horizontalInset = scaledRect.width * 0.2
+                let verticalInset = scaledRect.height * 0.2
+                let width = scaledRect.width * 0.6
+                let height = scaledRect.height * 0.6
+                
+                let solutionLabel = UILabel(frame: .init(x: horizontalInset, y: verticalInset, width: width, height: height))
+                solutionLabel.text = "\(value)"
+                solutionLabel.textAlignment = .center
+                solutionLabel.textColor = .darkGray
+                solutionLabel.font = UIFont.systemFont(ofSize: height)
+                boxView.addSubview(solutionLabel)
+                boxView.layer.borderColor = UIColor.clear.cgColor
+
+            case .error:
+                boxView.layer.borderColor = UIColor.red.cgColor
             }
 
             boxView.layer.borderWidth = 2
             self.parsingSudokuImage?.addSubview(boxView)
+            cellOverlayViews.append(boxView)
         }
     }
 }
