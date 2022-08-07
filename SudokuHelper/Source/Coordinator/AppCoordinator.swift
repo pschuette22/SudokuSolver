@@ -59,10 +59,8 @@ private extension AppCoordinator {
             }
         }
         .store(in: &cancellables)
-
-        let viewController = MenuViewController(model: model)
         
-        return viewController
+        return MenuViewController(model: model)
     }
     func buildPuzzleController() -> PuzzleViewController {
         let controller = PuzzleViewController(model: .init(puzzle: Puzzle(values: Puzzle.expert2Values)))

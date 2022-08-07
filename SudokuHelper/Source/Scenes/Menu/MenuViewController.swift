@@ -21,7 +21,7 @@ class MenuViewController: ViewController<MenuViewState, MenuViewControllerModel>
         Self.makeDataSource(for: collectionView)
     }()
     
-    required init(model: MenuViewControllerModel = .init()) {
+    required init(model: MenuViewControllerModel) {
         super.init(model: model)
     }
     
