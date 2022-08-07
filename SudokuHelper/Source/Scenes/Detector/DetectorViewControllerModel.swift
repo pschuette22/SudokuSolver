@@ -219,12 +219,6 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
             }
 
         case .parsed(let puzzleDigits):
-            let digits = puzzleDigits.map {
-                $0.map {
-                    $0.0
-                }
-            }
-
             let cells: [[DetectorViewControllerState.LocatedCell]] = puzzleDigits.map { row in
                 return row.map { cellData in
                     switch cellData.2 {
