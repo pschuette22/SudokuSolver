@@ -7,7 +7,12 @@
 
 import UIKit
 
-class SHView<State: ViewState>: UIView {
+protocol StateDrivenView: UIView {
+    associatedtype ViewState
+    func render(_ state: ViewState)
+}
+
+class SHView<State: ViewState>: UIView, StateDrivenView {
     func render(_ state: State) {
         Logger.log(.error, message: "render(_ state:) was not overridden")
     }

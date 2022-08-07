@@ -9,8 +9,7 @@ import UIKit
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-    let appSession = AppSession()
-    lazy var keyCoordinator = AppCoordinator(session: appSession)
+    lazy var keyCoordinator = AppCoordinator()
     
     static var shared: AppDelegate {
         if Thread.isMainThread {

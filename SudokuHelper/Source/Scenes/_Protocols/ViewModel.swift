@@ -10,7 +10,7 @@ import Combine
 
 class ViewModel<State: ViewState> {
     @Published
-    private(set) var state: State
+    fileprivate(set) var state: State
     
     init(initialState state: State) {
         self.state = state

@@ -11,7 +11,6 @@ import UIKit
 protocol Coordinator: AnyObject {
     associatedtype Scene
 
-    var session: AppSession { get }
     var navigationController: UINavigationController { get }
     
     func start()

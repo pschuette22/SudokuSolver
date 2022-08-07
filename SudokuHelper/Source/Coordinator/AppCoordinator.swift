@@ -5,20 +5,21 @@
 //  Created by Peter Schuette on 7/30/21.
 //
 
+import Combine
 import Foundation
 import UIKit
 
 final class AppCoordinator: Coordinator {
     enum Scene {
+        case menu
         case puzzle
         case detector
     }
     
-    let session: AppSession
+    private var cancellables = [AnyCancellable]()
     let navigationController = UINavigationController()
     
-    required init(session: AppSession) {
-        self.session = session
+    required init() {
         navigationController.navigationBar.isTranslucent = false
     }
 
@@ -27,11 +28,13 @@ final class AppCoordinator: Coordinator {
 // MARK: - Coordinator Functions
 extension AppCoordinator {
     func start() {
-        present(.detector)
+        present(.menu)
     }
     
     func present(_ scene: Scene) {
         switch scene {
+        case .menu:
+            presentMenuController()
         case .detector:
             presentDetectorScene()
         case .puzzle:
@@ -43,6 +46,24 @@ extension AppCoordinator {
 
 // MARK: - Controller Factory
 private extension AppCoordinator {
+    func buildMenuController() -> MenuViewController {
+        let model = MenuViewControllerModel()
+        model.action.sink { [weak self] action in
+            switch action {
+            case .didTapScan:
+                self?.presentDetectorScene()
+            case .didTapSpeedTest:
+                self?.presentPuzzleScene()
+            case .didTapSettings:
+                print("settings!")
+            }
+        }
+        .store(in: &cancellables)
+
+        let viewController = MenuViewController(model: model)
+        
+        return viewController
+    }
     func buildPuzzleController() -> PuzzleViewController {
         let controller = PuzzleViewController(model: .init(puzzle: Puzzle(values: Puzzle.expert2Values)))
         // TODO: Inject solvable puzzle
@@ -56,17 +77,24 @@ private extension AppCoordinator {
 
 // MARK: - Presentation Helpers
 private extension AppCoordinator {
+    func presentMenuController() {
+        navigationController.pushViewController(
+            buildMenuController(),
+            animated: false
+        )
+    }
+    
     func presentPuzzleScene() {
         navigationController.pushViewController(
             buildPuzzleController(),
-            animated: false
+            animated: true
         )
     }
     
     func presentDetectorScene() {
         navigationController.pushViewController(
             buildDetectorController(),
-            animated: false
+            animated: true
         )
     }
 }
