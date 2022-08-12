@@ -100,15 +100,10 @@ private extension ScanCoordinator {
             coordinatorIdentifier: self.identifier,
             model: .init(puzzle: .init(values: mappedValues))
         )
-        navigationController.pushViewController(viewController, animated: true)
-                
-        // wait until the animation completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            self?.navigationController.viewControllers.forEach {
-                guard $0 is DetectorViewController else { return }
-                // Remove the detectors from the stack
-                $0.removeFromParent()
-            }
-        }
+        var viewControllers = navigationController
+            .viewControllers
+            .filter { ($0 is DetectorViewController) == false }
+        viewControllers.append(viewController)
+        navigationController.setViewControllers(viewControllers, animated: true)
     }
 }
