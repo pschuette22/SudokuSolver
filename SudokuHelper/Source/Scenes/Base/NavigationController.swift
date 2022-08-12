@@ -60,9 +60,3 @@ extension NavigationController: UINavigationControllerDelegate {
         }
     }
 }
-
-extension NavigationStackListener {
-    func navigationStackDidChange() {
-        
-    }
-}
