@@ -6,20 +6,36 @@
 //
 
 import Foundation
+import Combine
 import CoreML
 import Vision
 import CoreGraphics
 import UIKit
 
 final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> {
+    enum Context {
+        case solveInPlace
+        case retrieveValues
+    }
+
+    enum Action: Equatable {
+        case didScan(values: [[Int?]])
+        case error
+    }
+    
+    private(set) lazy var action: AnyPublisher<Action, Never> = actionSubject.eraseToAnyPublisher()
+    private let actionSubject =  PassthroughSubject<Action, Never>()
+    private let context: Context
     private var sudokuDetectorTasks = Set<SudokuDetectorTask>()
     private var sudokuParserTask: SudokuParserTask?
     private var detectionStack = [(image: CGImage, expires: Date, location: CGRect, confidence: CGFloat)]()
     private static let validDetectionInterval: TimeInterval = .milliseconds(100)
     
-    override init(
+    required init(
+        context: Context = .solveInPlace,
         initialState state: DetectorViewControllerState = .init()
     ) {
+        self.context = context
         super.init(initialState: state)
     }
 }
@@ -35,7 +51,6 @@ extension DetectorViewControllerModel {
     }
     
     func didFailToSetupCaptureSession(_ error: Error? = nil) {
-        // TODO: State to error state
         Logger.log(.error, message: "Failed to setup capture session", params: ["error": error?.localizedDescription ?? "<nil>"])
     }
     
@@ -52,6 +67,7 @@ extension DetectorViewControllerModel {
         in image: CGImage
     ) {
         guard sudokuDetectorTasks.count < 5 else { return }
+
         let task = SudokuDetectorTask(
             delegate: self,
             image: image,
@@ -240,6 +256,13 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
                 )
             }
             
+            switch context {
+            case .solveInPlace:
+                solveSudoku(in: task.image, with: cells)
+            case .retrieveValues:
+                let mappedValues = cells.map { $0.map { $0.value }}
+                actionSubject.send(.didScan(values: mappedValues))
+            }
             solveSudoku(in: task.image, with: cells)
         }
     }
