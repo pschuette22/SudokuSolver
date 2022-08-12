@@ -150,22 +150,30 @@ extension DetectorViewControllerState {
     
     mutating
     func toParsingSudoku(in image: CGImage) {
-        self.context = .parsingSudoku(image: image)
+        update { state in
+            state.context = .parsingSudoku(image: image)
+        }
     }
     
     mutating
     func toLocatedCells(in image: CGImage, cells: [LocatedCell]) {
-        self.context = .locatedCells(image: image, cells: cells)
+        update { state in
+            state.context = .locatedCells(image: image, cells: cells)
+        }
     }
     
     mutating
     func toParsedSudoku(in image: CGImage, withSize imageSize: CGSize, locatedCells: [[LocatedCell]]) {
-        self.context = .parsedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
+        update { state in
+            state.context = .parsedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
+        }
     }
     
     mutating
     func toSolvedSudoku(in image: CGImage, withSize imageSize: CGSize, locatedCells: [[LocatedCell]]) {
-        self.context = .solvedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
+        update { state in
+            state.context = .solvedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
+        }
     }
 }
 

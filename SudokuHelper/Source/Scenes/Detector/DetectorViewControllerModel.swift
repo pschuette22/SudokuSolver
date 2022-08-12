@@ -87,10 +87,7 @@ extension DetectorViewControllerModel {
             return
         }
 
-        update { state in
-            state.toParsingSudoku(in: detectionData.image)
-        }
-        
+        state.toParsingSudoku(in: detectionData.image)
         
         sudokuParserTask = SudokuParserTask(
             delegate: self,
@@ -133,16 +130,13 @@ extension DetectorViewControllerModel {
                 }
             }
             
-            update { state in
-                state.toSolvedSudoku(in: image, withSize: .zero, locatedCells: cells)
-            }
+            state.toSolvedSudoku(in: image, withSize: .zero, locatedCells: cells)
+            
             
             puzzle.print()
             
         } else {
-            update { state in
-                state.toDetecting()
-            }
+            state.toDetecting()
         }
     }
 }
@@ -179,14 +173,13 @@ extension DetectorViewControllerModel: SudokuDetectorTaskDelegate {
 
         let originalImageSize = CGSize(width: task.image.width, height: task.image.height)
 
-        update { state in
-            state.toDetectedSudoku(
-                in: image,
-                withSize: originalImageSize,
-                frameInImage: location,
-                confidence: confidence
-            )
-        }
+        state.toDetectedSudoku(
+            in: image,
+            withSize: originalImageSize,
+            frameInImage: location,
+            confidence: confidence
+        )
+        
     }
     
     func sudokuDetectorTask(_ task: SudokuDetectorTask, failedToDetectSudokuWithError error: Error) {
@@ -200,9 +193,7 @@ extension DetectorViewControllerModel: SudokuDetectorTaskDelegate {
             detectionStack.removeAll()
         }
         
-        update { state in
-            state.toDetecting()
-        }
+        state.toDetecting()
     }
 }
 
@@ -214,13 +205,11 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
 
         switch newState {
         case .idle:
-            update { state in
-                state.toDetecting()
-            }
+            state.toDetecting()
+            
         case .parsingCells:
-            update { state in
-                state.toParsingSudoku(in: task.image)
-            }
+            state.toParsingSudoku(in: task.image)
+            
         case .classifyingCells(let visionObjects):
 
             // TODO: hide vision objects into task implementation
@@ -230,9 +219,8 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
                 return DetectorViewControllerState.LocatedCell(frame: $0.location, type: type)
             }
 
-            update { state in
-                state.toLocatedCells(in: task.image, cells: locatedCells)
-            }
+            state.toLocatedCells(in: task.image, cells: locatedCells)
+            
 
         case .parsed(let puzzleDigits):
             let cells: [[DetectorViewControllerState.LocatedCell]] = puzzleDigits.map { row in
@@ -248,13 +236,11 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
                 }
             }
             
-            update { state in
-                state.toParsedSudoku(
-                    in: task.image,
-                    withSize: .zero,
-                    locatedCells: cells
-                )
-            }
+            state.toParsedSudoku(
+                in: task.image,
+                withSize: .zero,
+                locatedCells: cells
+            )            
             
             switch context {
             case .solveInPlace:
@@ -263,7 +249,6 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
                 let mappedValues = cells.map { $0.map { $0.value }}
                 actionSubject.send(.didScan(values: mappedValues))
             }
-            solveSudoku(in: task.image, with: cells)
         }
     }
     

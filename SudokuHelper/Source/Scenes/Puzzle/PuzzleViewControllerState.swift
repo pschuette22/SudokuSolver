@@ -23,6 +23,8 @@ struct PuzzleViewControllerState: ViewState {
 extension PuzzleViewControllerState {
     mutating
     func set(puzzleCellViewStates: [[CellViewState]]) {
-        puzzleViewState.set(cellStates: puzzleCellViewStates)
+        update { state in
+            state.puzzleViewState.set(cellStates: puzzleCellViewStates)
+        }
     }
 }
