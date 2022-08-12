@@ -422,7 +422,6 @@
 		D730E8062773BC6100DFCC0E /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				D7B502AC26B5150E007908DA /* Foundation */,
 				D730E8072773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift */,
 				49550A9C27C17D1C00F5BC96 /* UIEdgeInsets+Extensions.swift */,
 				49F5E90E27CC07FC00F87294 /* UIImage+Extensions.swift */,
@@ -624,6 +623,7 @@
 			isa = PBXGroup;
 			children = (
 				495F621E27C343630004AEAF /* CoreGraphics */,
+				D7B502AC26B5150E007908DA /* Foundation */,
 				D730E8062773BC6100DFCC0E /* UIKit */,
 			);
 			path = Extensions;
