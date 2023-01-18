@@ -100,12 +100,12 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             let drawingResult = drawCapturedSudoku(from: image)
             draw(locatedCells: cells, scale: drawingResult.scale)
             
-        case let .parsedSudoku(image, imageSize, cells):
+        case .parsedSudoku: //(image, imageSize, cells):
             print("did parse sudoku!")
 //            let drawingResult = drawSudokuBeingParsed(from: image)
 //            draw(locatedCells: cells, scale: drawingResult.scale)
 
-        case let .solvedSudoku(image, imageSize, cells):
+        case let .solvedSudoku(image, _, cells):
             let drawingResult = drawCapturedSudoku(from: image)
             let relevantCells = cells.flattened.filter { cell in
                 switch cell.type {
@@ -167,7 +167,6 @@ extension DetectorViewController {
         
         let videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
-        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_OneComponent32Float)]
         let videoQueueLabel = (Bundle.main.bundleIdentifier ?? "") + ".videoOutputQueue"
         let videoDataOutputQueue = DispatchQueue(label: videoQueueLabel)
         videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)

@@ -11,7 +11,7 @@ protocol PuzzleUIViewDelegate: AnyObject {
     func didTapCell(at position: Puzzle.Location)
 }
 
-final class PuzzleUIView: SHView<PuzzleViewState> {
+final class PuzzleUIView: BaseView<PuzzleViewState> {
     typealias X = Int
     typealias Y = Int
 

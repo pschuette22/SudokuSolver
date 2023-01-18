@@ -37,13 +37,11 @@ class ViewController<State: ViewState, Model: ViewModel<State>>: UIViewControlle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        stateSubscription = model.$state.sink(
-            receiveValue: { state in
-                DispatchQueue.main.async { [weak self] in
-                    self?.render(state)
-                }
+        stateSubscription = model.$state
+            .receive(on: DispatchQueue.main)
+            .sink{ [weak self] state in
+                self?.render(state)
             }
-        )
         render(model.state)
     }
     

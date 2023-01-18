@@ -156,6 +156,10 @@ extension VisionRequest {
             objectBounds = normalizeCenterCrop(objectBounds)
         case .scaleFill:
             objectBounds = normalizeScaleToFill(objectBounds)
+        case .scaleFitRotate90CCW:
+            assertionFailure("what do")
+        case .scaleFillRotate90CCW:
+            assertionFailure("what do")
         @unknown default:
             
             break

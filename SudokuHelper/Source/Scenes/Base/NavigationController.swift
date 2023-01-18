@@ -21,14 +21,21 @@ class NavigationController: UINavigationController {
     
     override var delegate: UINavigationControllerDelegate? {
         didSet {
-            assert(delegate.isNil || (delegate as? NavigationController) == self)
+            assert(
+                delegate.isNil ||
+                (delegate as? NavigationController) == self
+            )
         }
     }
 
-    override init(navigationBarClass: AnyClass? = nil, toolbarClass: AnyClass? = nil) {
+    override init(
+        navigationBarClass: AnyClass? = nil,
+        toolbarClass: AnyClass? = nil
+    ) {
         super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
         delegate = self
     }
+
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         delegate = self
