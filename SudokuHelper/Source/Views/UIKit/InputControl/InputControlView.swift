@@ -9,7 +9,7 @@ import Foundation
 import CoreGraphics
 import UIKit
 
-final class InputControlView: SHView<InputControlViewState> {
+final class InputControlView: BaseView<InputControlViewState> {
     private(set) var renderedType: InputControlViewState.ControlType!
     private let contentView = UIView()
     private let primaryLabel = UILabel()

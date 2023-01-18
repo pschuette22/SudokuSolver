@@ -16,7 +16,7 @@ protocol PuzzleViewControllerDelegate: AnyObject {
 final class PuzzleViewController: ViewController<PuzzleViewControllerState, PuzzleViewControllerModel> {
     private static let defaultMargin: CGFloat = 16
     private lazy var puzzleView = PuzzleUIView()
-    private lazy var inputControlBar = InputControlBarView()
+    private lazy var inputControls = InputControlBar()
     private static let inputControlBarPadding: CGFloat = 24
     
     override func viewDidLoad() {
@@ -28,22 +28,14 @@ final class PuzzleViewController: ViewController<PuzzleViewControllerState, Puzz
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        inputControlBar.invalidateIntrinsicContentSize()
-        inputControlBar.render(model.state.inputControlBarState)
     }
     // MARK: - Base Functions
 
     override func setupSubviews() {
         // Input controls
-        inputControlBar.translatesAutoresizingMaskIntoConstraints = false
-        inputControlBar.delegate = self
-        view.addSubview(inputControlBar)
-        NSLayoutConstraint.activate([
-            inputControlBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            inputControlBar.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -2 * Self.inputControlBarPadding),
-            inputControlBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Self.inputControlBarPadding)
-        ])
-        
+        inputControls.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(inputControls)
+
         // Base puzzle view
         // TODO: account iPad
         let minimumSideLength = min(view.frame.width, view.frame.height)
@@ -62,7 +54,27 @@ final class PuzzleViewController: ViewController<PuzzleViewControllerState, Puzz
     
     override func render(_ state: PuzzleViewControllerState) {
         puzzleView.render(state.puzzleViewState)
-        inputControlBar.render(state.inputControlBarState)
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        let xOffset: CGFloat = 36
+        let width = view.frame.width - (2 * xOffset)
+        let height = InputControlBar.preferredHeight(given: width)
+        inputControls.frame = .init(
+            origin: .init(
+                x: xOffset,
+                y: view.frame.height - (36 + height)),
+            size: .init(
+                width: width,
+                height: height
+            )
+        )
     }
 }
 

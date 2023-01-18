@@ -11,7 +11,7 @@ protocol CellUIViewDelegate: AnyObject {
     func didTap(cell: CellUIView, at position: Cell.Position)
 }
 
-final class CellUIView: SHView<CellViewState> {
+final class CellUIView: BaseView<CellViewState> {
     weak var delegate: CellUIViewDelegate?
     /// Position of the cell within the puzzle
     private let position: Cell.Position

@@ -28,7 +28,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-                
+
         keyCoordinator.start()
         
         return true

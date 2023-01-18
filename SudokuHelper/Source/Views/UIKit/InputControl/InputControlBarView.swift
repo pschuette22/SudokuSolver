@@ -12,7 +12,7 @@ protocol InputControlBarViewDelegate: AnyObject {
     func didTapInputControl(_ inputControl: InputControlViewState.ControlType)
 }
 
-final class InputControlBarView: SHView<InputControlBarViewState> {
+final class InputControlBarView: BaseView<InputControlBarViewState> {
     weak var delegate: InputControlBarViewDelegate?
     private static var maximumSize: CGSize = .init(width: 65, height: 65)
     

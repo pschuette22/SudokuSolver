@@ -9,39 +9,40 @@ import Combine
 import Foundation
 import UIKit
 
-final class AppCoordinator: Coordinator {
+final class AppCoordinator: NSObject, ParentCoordinator {
     enum Scene {
         case menu
         case puzzle
-        case detector
+        case detector(context: ScanCoordinator.Context)
     }
-    
+    let identifier = UUID()
+    weak var parent: ParentCoordinator?
+    let navigationController: NavigationController
+    var children = [Coordinator]()
     private var cancellables = [AnyCancellable]()
-    let navigationController = UINavigationController()
     
-    required init() {
+    required init(navigationController: NavigationController = .init()) {
+        self.navigationController = navigationController
+        super.init()
+
         navigationController.navigationBar.isTranslucent = false
+        navigationController.register(navigationStackListener: self)
     }
 
-}
-
-// MARK: - Coordinator Functions
-extension AppCoordinator {
     func start() {
         present(.menu)
     }
     
-    func present(_ scene: Scene) {
+    private func present(_ scene: Scene) {
         switch scene {
         case .menu:
             presentMenuController()
-        case .detector:
-            presentDetectorScene()
+        case let .detector(context):
+            presentScannerFlow(context: context)
         case .puzzle:
             presentPuzzleScene()
         }
     }
-    
 }
 
 // MARK: - Controller Factory
@@ -51,25 +52,29 @@ private extension AppCoordinator {
         model.action.sink { [weak self] action in
             switch action {
             case .didTapScan:
-                self?.presentDetectorScene()
+                self?.present(.detector(context: .scanInPuzzle))
             case .didTapSpeedTest:
-                self?.presentPuzzleScene()
+                self?.present(.detector(context: .speedTest))
+            case .didTapDummyPuzzle:
+                self?.present(.puzzle)
             case .didTapSettings:
                 print("settings!")
             }
         }
         .store(in: &cancellables)
         
-        return MenuViewController(model: model)
+        return MenuViewController(
+            coordinatorIdentifier: self.identifier,
+            model: model
+        )
     }
     func buildPuzzleController() -> PuzzleViewController {
-        let controller = PuzzleViewController(model: .init(puzzle: Puzzle(values: Puzzle.expert2Values)))
+        let controller = PuzzleViewController(
+            coordinatorIdentifier: self.identifier,
+            model: .init(puzzle: Puzzle(values: Puzzle.expert2Values))
+        )
         // TODO: Inject solvable puzzle
         return controller
-    }
-    
-    func buildDetectorController() -> DetectorViewController {
-        return DetectorViewController()
     }
 }
 
@@ -89,10 +94,12 @@ private extension AppCoordinator {
         )
     }
     
-    func presentDetectorScene() {
-        navigationController.pushViewController(
-            buildDetectorController(),
-            animated: true
+    func presentScannerFlow(context: ScanCoordinator.Context) {
+        let scanCoordinator = ScanCoordinator(
+            context: context,
+            navigationController: navigationController
         )
+        children.append(scanCoordinator)
+        scanCoordinator.start()
     }
 }

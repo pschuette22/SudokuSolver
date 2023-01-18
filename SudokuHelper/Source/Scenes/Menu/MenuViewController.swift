@@ -21,10 +21,6 @@ class MenuViewController: ViewController<MenuViewState, MenuViewControllerModel>
         Self.makeDataSource(for: collectionView)
     }()
     
-    required init(model: MenuViewControllerModel) {
-        super.init(model: model)
-    }
-    
     override func setupSubviews() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)

@@ -9,3 +9,12 @@ import Foundation
 
 
 protocol ViewState: Hashable { }
+
+extension ViewState {
+    mutating
+    func update(_ changeHandler: (inout Self) -> Void) {
+        var updated = self
+        changeHandler(&updated)
+        self = updated
+    }
+}

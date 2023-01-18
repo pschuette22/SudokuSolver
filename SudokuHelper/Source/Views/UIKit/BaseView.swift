@@ -12,7 +12,7 @@ protocol StateDrivenView: UIView {
     func render(_ state: ViewState)
 }
 
-class SHView<State: ViewState>: UIView, StateDrivenView {
+class BaseView<State: ViewState>: UIView, StateDrivenView {
     func render(_ state: State) {
         Logger.log(.error, message: "render(_ state:) was not overridden")
     }

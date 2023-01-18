@@ -16,6 +16,8 @@ struct MenuItemCellState: ViewState {
             return "Scan Sudoku"
         case .speedTest:
             return "Speed Test"
+        case .dummyPuzzle:
+            return "Test puzzle view"
         case .settings:
             return "Settings"
         }

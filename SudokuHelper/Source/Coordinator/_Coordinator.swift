@@ -8,13 +8,38 @@
 import Foundation
 import UIKit
 
-protocol Coordinator: AnyObject {
-    associatedtype Scene
-
-    var navigationController: UINavigationController { get }
-    
+protocol Coordinator: NSObject, NavigationStackListener {
+    var identifier: UUID { get }
+    var navigationController: NavigationController { get }
+    var parent: ParentCoordinator? { get set }
     func start()
-    
-    func present(_ scene: Scene)
 }
 
+extension Coordinator {
+    func registerAsNavigationStackListener() {
+        navigationController.register(navigationStackListener: self)
+    }
+
+    func navigationStackDidChange() {
+        if navigationController
+            .viewControllers
+            .contains(
+                where: { ($0 as? CoordinatedViewController)?.coordinatorIdentifier == identifier }
+            )
+        { return }
+        
+        // If the navigation controller doesn't contain any view controllers
+        // This coordinator coordinates, assume we have completed
+        parent?.didComplete(self)
+    }
+}
+
+protocol ParentCoordinator: Coordinator {
+    var children: [Coordinator] { get set }
+}
+
+extension ParentCoordinator {
+    func didComplete(_ child: Coordinator) {
+        children.removeAll { $0 == child }
+    }
+}

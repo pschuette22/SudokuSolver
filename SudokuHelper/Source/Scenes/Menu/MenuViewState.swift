@@ -11,6 +11,7 @@ struct MenuViewState: ViewState {
     enum Option: Hashable {
         case scan
         case speedTest
+        case dummyPuzzle
         case settings
     }
     
@@ -18,6 +19,7 @@ struct MenuViewState: ViewState {
         [
             .scan,
             .speedTest,
+            .dummyPuzzle,
             .settings
         ]
     }
