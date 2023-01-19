@@ -53,9 +53,9 @@ private extension AppCoordinator {
             case .didTapScan:
                 self?.presentDetectorScene()
             case .didTapSpeedTest:
-                self?.presentPuzzleScene()
-            case .didTapSettings:
-                print("settings!")
+                self?.presentDetectorScene()
+//            case .didTapSettings:
+//                print("settings!")
             }
         }
         .store(in: &cancellables)

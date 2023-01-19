@@ -11,14 +11,14 @@ struct MenuViewState: ViewState {
     enum Option: Hashable {
         case scan
         case speedTest
-        case settings
+//        case settings
     }
     
     var options: [Option] {
         [
             .scan,
             .speedTest,
-            .settings
+//            .settings
         ]
     }
 }

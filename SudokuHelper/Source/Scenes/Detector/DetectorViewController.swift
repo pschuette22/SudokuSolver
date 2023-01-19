@@ -457,5 +457,7 @@ private extension DetectorViewController {
             self.parsingSudokuImage?.addSubview(boxView)
             cellOverlayViews.append(boxView)
         }
+        
+        print("did draw cells")
     }
 }

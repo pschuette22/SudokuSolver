@@ -15,7 +15,7 @@ class MenuViewControllerModel: ViewModel<MenuViewState> {
     enum Action: Hashable {
         case didTapScan
         case didTapSpeedTest
-        case didTapSettings
+//        case didTapSettings
     }
     
     override init(initialState state: MenuViewState = .init()) {
@@ -40,8 +40,8 @@ extension MenuViewControllerModel {
             actionSubject.send(.didTapScan)
         case .speedTest:
             actionSubject.send(.didTapSpeedTest)
-        case .settings:
-            actionSubject.send(.didTapSettings)
+//        case .settings:
+//            actionSubject.send(.didTapSettings)
         }
     }
 }

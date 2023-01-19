@@ -21,13 +21,13 @@ final class SolutionEngineTests: XCTestCase {
     // TODO: test individual moves
     
 
-    func testExpertPuzzleSolve() {
+    func testExpertPuzzleSolve() throws {
         let puzzle = Puzzle(
-            values: Self.expert5Values
+            values: Self.expert1Values
         )
         let start = Date()
         let engine = SolutionEngine(puzzle: puzzle)
-        engine.solve()
+        try engine.solve()
         let solvedIn = Date().timeIntervalSince(start)
         print("solved in \(solvedIn)")
         print(engine.history.reduce(into: Set<String>(), { $0.insert($1.strategy.rawValue)}))
@@ -39,18 +39,8 @@ final class SolutionEngineTests: XCTestCase {
     }
 }
 
-// MARK: - Solved in sibling tests
-extension SolutionEngineTests {
-    
-    func testSolvedInSibling() {
-        
-    }
-    
-}
-
 
 private extension SolutionEngineTests {
-    
     static let template: [[Int]] = [
         [0,0,0,  0,0,0,  0,0,0],
         [0,0,0,  0,0,0,  0,0,0],

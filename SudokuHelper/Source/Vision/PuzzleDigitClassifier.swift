@@ -90,7 +90,7 @@ class PuzzleDigitClassifier {
                         .map({ "\(($0 as? VNClassificationObservation)?.identifier ?? "<err>"): \($0.confidence)" })
                         .joined(separator: ", ")
                     )
-
+                    
                     completion(.success(identifiedInt))
                 } else {
                     completion(.failure(error ?? ClassifyingError.unknown))
