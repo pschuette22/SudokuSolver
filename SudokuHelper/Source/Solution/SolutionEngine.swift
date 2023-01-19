@@ -25,7 +25,7 @@ public class SolutionEngine {
 // MARK: - Move execution
 extension SolutionEngine {
     @discardableResult
-    func execute(_ move: Move) -> Set<Move> {
+    func execute(_ move: Move) throws -> Set<Move> {
         var resultingMoves = Set<Move>()
         
         switch move {
@@ -39,7 +39,7 @@ extension SolutionEngine {
             } // TODO: else, use this to kick off finding other moves efficiently
             
         case let .solve(value, cell, _):
-            cell.set(value: value)
+            try cell.set(value: value)
             cell.siblings.forEach { cell in
                 guard cell.possibilities.contains(value) else { return }
                     
@@ -64,11 +64,11 @@ extension SolutionEngine {
     
     // MARK: - Solve the puzzle
     @discardableResult
-    func solve() -> Bool {
+    func solve() throws -> Bool {
         while !availableMoves.isEmpty || !puzzle.isSolved {
             if !availableMoves.isEmpty {
                 let move = availableMoves.removeFirst()
-                let resultingMoves = execute(move)
+                let resultingMoves = try execute(move)
                 
                 if !resultingMoves.isEmpty {
                     availableMoves.formUnion(resultingMoves)

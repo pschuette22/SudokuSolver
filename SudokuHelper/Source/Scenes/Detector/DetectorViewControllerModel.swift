@@ -24,15 +24,19 @@ final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> 
     }
 }
 
+extension DetectorViewControllerModel {
+    func didTapTryAgainAfterFailure() {
+        update {
+            $0.toDetecting()
+        }
+    }
+}
+
 // MARK: - Capture Session lifecycle
 extension DetectorViewControllerModel {
-    func didStartCaptureSession() {
-        
-    }
+    func didStartCaptureSession() { }
     
-    func didEndCaptureSession() {
-        
-    }
+    func didEndCaptureSession() { }
     
     func didFailToSetupCaptureSession(_ error: Error? = nil) {
         // TODO: State to error state
@@ -85,7 +89,7 @@ extension DetectorViewControllerModel {
     }
     
     private func solveSudoku(in image: CGImage, with cells: [[DetectorViewControllerState.LocatedCell]]) {
-        // TODO: consider offloading to another thread
+        // TODO: consider pausing here and waiting for continue command
         
         let digits: [[Int]] = cells.map { row in
             return row.map { cell in
@@ -102,31 +106,42 @@ extension DetectorViewControllerModel {
         let puzzle = Puzzle(values: digits)
         puzzle.print()
 
-        if SolutionEngine(puzzle: puzzle).solve() {
-            var cells = cells
-            cells.enumerated().forEach { y, row in
-                row.enumerated().forEach { x, cell in
-                    guard let value = puzzle.valueAt(x: x, y: y) else {
-                        cells[y][x] = .init(frame: cells[y][x].frame, type: .empty)
-                        return
-                    }
+        do {
+            let didSolve = try SolutionEngine(puzzle: puzzle).solve()
+            if didSolve {
+                var cells = cells
+                cells.enumerated().forEach { y, row in
+                    row.enumerated().forEach { x, cell in
+                        guard let value = puzzle.valueAt(x: x, y: y) else {
+                            cells[y][x] = .init(frame: cells[y][x].frame, type: .empty)
+                            return
+                        }
 
-                    if case .empty = cells[y][x].type {
-                        cells[y][x] = .init(frame: cells[y][x].frame, type: .solved(value))
+                        if case .empty = cells[y][x].type {
+                            cells[y][x] = .init(frame: cells[y][x].frame, type: .solved(value))
+                        }
                     }
                 }
+                
+                update { state in
+                    state.toSolvedSudoku(in: image, withSize: .zero, locatedCells: cells)
+                }
+                
+                puzzle.print()
+                
+            } else {
+                update { state in
+                    state.toDetecting()
+                }
             }
-            
-            update { state in
-                state.toSolvedSudoku(in: image, withSize: .zero, locatedCells: cells)
-            }
-            
-            puzzle.print()
-            
-        } else {
-            update { state in
-                state.toDetecting()
-            }
+        } catch let error {
+            handle(solveError: error)
+        }
+    }
+    
+    private func handle(solveError: Error) {
+        update {
+            $0.toFailedToFindSolution()
         }
     }
 }

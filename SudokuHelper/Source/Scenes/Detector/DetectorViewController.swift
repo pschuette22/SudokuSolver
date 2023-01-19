@@ -96,8 +96,6 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
             
         case let .parsedSudoku(image, imageSize, cells):
             print("did parse sudoku!")
-//            let drawingResult = drawSudokuBeingParsed(from: image)
-//            draw(locatedCells: cells, scale: drawingResult.scale)
 
         case let .solvedSudoku(image, imageSize, cells):
             let drawingResult = drawCapturedSudoku(from: image)
@@ -111,6 +109,9 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
                 
             }
             draw(locatedCells: relevantCells, scale: drawingResult.scale)
+
+        case .failedToFindSolution:
+            presentInvalidPuzzleAlert()
         }
     }
     
@@ -161,7 +162,7 @@ extension DetectorViewController {
         
         let videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
-        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_OneComponent32Float)]
+
         let videoQueueLabel = (Bundle.main.bundleIdentifier ?? "") + ".videoOutputQueue"
         let videoDataOutputQueue = DispatchQueue(label: videoQueueLabel)
         videoDataOutput.setSampleBufferDelegate(self, queue: videoDataOutputQueue)
@@ -269,8 +270,10 @@ extension DetectorViewController {
     private func startCaptureSession() {
         guard !captureSession.isRunning else { return }
         
-        captureSession.startRunning()
-        model.didStartCaptureSession()
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.captureSession.startRunning()
+            self?.model.didStartCaptureSession()
+        }
     }
 
     private func endCaptureSession() {
@@ -329,6 +332,43 @@ extension DetectorViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 in: imageData.image
             )
         }
+    }
+}
+
+// MARK: - Error Handling
+
+extension DetectorViewController {
+    private func presentInvalidPuzzleAlert() {
+        let alert = UIAlertController(
+            title: "Invalid puzzle",
+            message: "There was a conflict in the solution. Either the devs messed up our solving algorithm or we didnt capture the puzzle correctly.",
+            preferredStyle: .alert
+        )
+        alert.addAction(
+            .init(
+                title: "Try Again?",
+                style: .default,
+                handler: { [weak self, weak alert] action in
+                    alert?.dismiss(animated: true)
+                    self?.model.didTapTryAgainAfterFailure()
+                }
+            )
+        )
+        
+        // TODO: add action for showing comparison view
+//        alert.addAction(
+//            .init(
+//                title: "Show what we found",
+//                style: .default,
+//                handler: { [ weak alert] action in
+//                    alert?.dismiss(animated: true)
+//                    // TODO: to puzzle comparison state
+//                }
+//            )
+//        )
+        
+        present(alert, animated: true)
+        
     }
 }
 

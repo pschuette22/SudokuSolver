@@ -68,6 +68,7 @@ struct DetectorViewControllerState: ViewState {
             imageSize: CGSize,
             cells: [[LocatedCell]]
         )
+        case failedToFindSolution
     }
     private(set) var context: Context
     
@@ -85,7 +86,7 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku:
             return true
         
-        case .parsingSudoku, .locatedCells, .parsedSudoku, .solvedSudoku:
+        case .parsingSudoku, .locatedCells, .parsedSudoku, .solvedSudoku, .failedToFindSolution:
             return false
         }
     }
@@ -95,7 +96,7 @@ extension DetectorViewControllerState {
         case .detecting, .detectedSudoku, .solvedSudoku:
             return false
             
-        case .parsingSudoku, .locatedCells, .parsedSudoku:
+        case .parsingSudoku, .locatedCells, .parsedSudoku, .failedToFindSolution:
             return true
         }
     }
@@ -109,7 +110,8 @@ extension DetectorViewControllerState {
              .parsingSudoku,
              .locatedCells,
              .parsedSudoku,
-             .solvedSudoku:
+             .solvedSudoku,
+             .failedToFindSolution:
             return true
         }
     }
@@ -123,7 +125,8 @@ extension DetectorViewControllerState {
              .parsingSudoku,
              .locatedCells,
              .parsedSudoku,
-             .solvedSudoku:
+             .solvedSudoku,
+             .failedToFindSolution:
             return 0
         }
     }
@@ -166,6 +169,11 @@ extension DetectorViewControllerState {
     mutating
     func toSolvedSudoku(in image: CGImage, withSize imageSize: CGSize, locatedCells: [[LocatedCell]]) {
         self.context = .solvedSudoku(image: image, imageSize: imageSize, cells: locatedCells)
+    }
+    
+    mutating
+    func toFailedToFindSolution() {
+        self.context = .failedToFindSolution
     }
 }
 

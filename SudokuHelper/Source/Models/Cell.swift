@@ -69,34 +69,47 @@ extension Cell: Hashable {
 
 extension Cell {
     @discardableResult
-    func set(value: Int) -> Set<Int> {
+    func set(value: Int) throws -> Set<Int> {
         
         // Already solved
         if value == self.value { return Set<Int>() }
         
-        guard
-            Self.validValues.contains(value)
-        else {
-            assertionFailure("Attempted to set invalid cell value")
-            return Set<Int>()
-        }
+        try validate(newValue: value)
         
-        if horizontalLine?.solvedValues.contains(value) ?? false {
-            assertionFailure("Already solved in horizontal line")
-        }
-        
-        if verticalLine?.solvedValues.contains(value) ?? false {
-            assertionFailure("Already solved in vertical line")
-        }
-        
-        if square?.solvedValues.contains(value) ?? false {
-            assertionFailure("Already solved in block")
-        }
-
         let others = possibilities.subtracting([value].set)
         self.value = value
         possibilities.removeAll()
         return others
+    }
+    
+    private func validate(newValue: Int) throws {
+        guard
+            Self.validValues.contains(newValue)
+        else {
+            throw SolveError.attemptedToSetInvalidValue(value: newValue)
+        }
+        
+        guard let horizontalLine, let verticalLine, let square else {
+            throw SolveError.lostGroupReference
+        }
+        
+        var conflictingGroups = [Group]()
+        
+        if horizontalLine.solvedValues.contains(newValue) {
+            conflictingGroups.append(horizontalLine)
+        }
+        
+        if verticalLine.solvedValues.contains(newValue) {
+            conflictingGroups.append(verticalLine)
+        }
+        
+        if square.solvedValues.contains(newValue) {
+            conflictingGroups.append(square)
+        }
+        
+        if conflictingGroups.isEmpty == false {
+            throw SolveError.alreadySolvedInGroup(groups: conflictingGroups)
+        }
     }
     
     func sharesGroup(with cell: Cell?) -> Bool {
@@ -121,6 +134,13 @@ extension Cell {
     }
 }
 
+extension Cell {
+    enum SolveError: Error {
+        case lostGroupReference
+        case attemptedToSetInvalidValue(value: Int)
+        case alreadySolvedInGroup(groups: [Group])
+    }
+}
 
 // MARK: - Printing
 extension Cell {
