@@ -1,18 +1,20 @@
-//
-//  ViewController.swift
-//  SudokuHelper
-//
-//  Created by Peter Schuette on 12/20/21.
-//
-
 import UIKit
 import Combine
 
-class ViewController<State: ViewState, Model: ViewModel<State>>: UIViewController {
+protocol CoordinatedViewController: UIViewController {
+    var coordinatorIdentifier: UUID { get }
+}
+
+class ViewController<State: ViewState, Model: ViewModel<State>>: UIViewController, CoordinatedViewController {
     private(set) var model: Model
     private var stateSubscription: AnyCancellable?
-    
-    required init(model: Model) {
+    let coordinatorIdentifier: UUID
+
+    required init(
+        coordinatorIdentifier: UUID,
+        model: Model
+    ) {
+        self.coordinatorIdentifier = coordinatorIdentifier
         self.model = model
 
         super.init(nibName: nil, bundle: nil)
@@ -28,16 +30,14 @@ class ViewController<State: ViewState, Model: ViewModel<State>>: UIViewControlle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        stateSubscription = model.$state.sink(
-            receiveValue: { state in
-                DispatchQueue.main.async { [weak self] in
-                    self?.render(state)
-                }
+        stateSubscription = model.$state
+            .receive(on: DispatchQueue.main)
+            .sink{ [weak self] state in
+                self?.render(state)
             }
-        )
         render(model.state)
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         

@@ -20,6 +20,8 @@
 		492C65AD289F54A500E37806 /* MenuItemCellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492C65AC289F54A500E37806 /* MenuItemCellState.swift */; };
 		492C65AF289F559400E37806 /* MenuViewControllerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492C65AE289F559400E37806 /* MenuViewControllerModel.swift */; };
 		492C65B1289F5C8B00E37806 /* MenuItemCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492C65B0289F5C8B00E37806 /* MenuItemCollectionCell.swift */; };
+		4935AFAF2979B05B0099C73F /* ScanCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935AFAE2979B05B0099C73F /* ScanCoordinator.swift */; };
+		4935AFB12979B0B60099C73F /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935AFB02979B0B60099C73F /* NavigationController.swift */; };
 		494F4A10289EF476000B5A3E /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494F4A0F289EF476000B5A3E /* CGRect+Extensions.swift */; };
 		49550A9227C16DBB00F5BC96 /* SudokuCellDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9127C16DBB00F5BC96 /* SudokuCellDetector.mlmodel */; };
 		49550A9627C174F500F5BC96 /* SudokuParserTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49550A9527C174F500F5BC96 /* SudokuParserTask.swift */; };
@@ -123,6 +125,8 @@
 		492C65AC289F54A500E37806 /* MenuItemCellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItemCellState.swift; sourceTree = "<group>"; };
 		492C65AE289F559400E37806 /* MenuViewControllerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewControllerModel.swift; sourceTree = "<group>"; };
 		492C65B0289F5C8B00E37806 /* MenuItemCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuItemCollectionCell.swift; sourceTree = "<group>"; };
+		4935AFAE2979B05B0099C73F /* ScanCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanCoordinator.swift; sourceTree = "<group>"; };
+		4935AFB02979B0B60099C73F /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		494F4A09289EE9AB000B5A3E /* shadyImageSlice_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shadyImageSlice_2.jpg; path = /var/folders/p9/xpsk2w0d6n99h0t2vzh1gmsr0000gn/T/TemporaryItems/NSIRD_screencaptureui_fNpBiZ/shadyImageSlice_2.jpg; sourceTree = "<absolute>"; };
 		494F4A0D289EEA10000B5A3E /* shadyImageSlice_9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shadyImageSlice_9.jpg; path = /var/folders/p9/xpsk2w0d6n99h0t2vzh1gmsr0000gn/T/TemporaryItems/NSIRD_screencaptureui_HqYLaD/shadyImageSlice_9.jpg; sourceTree = "<absolute>"; };
 		494F4A0F289EF476000B5A3E /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
@@ -346,6 +350,7 @@
 			isa = PBXGroup;
 			children = (
 				D730E7EA2770D19C00DFCC0E /* ViewController.swift */,
+				4935AFB02979B0B60099C73F /* NavigationController.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -578,6 +583,7 @@
 			children = (
 				D7B5029326B4AF5C007908DA /* _Coordinator.swift */,
 				D7B5029126B4AF4B007908DA /* AppCoordinator.swift */,
+				4935AFAE2979B05B0099C73F /* ScanCoordinator.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -842,6 +848,7 @@
 				4984D4AF27EED82E00136F44 /* TimeInterval+Extensions.swift in Sources */,
 				D730E80A2773BF5100DFCC0E /* InputControlBarView.swift in Sources */,
 				494F4A10289EF476000B5A3E /* CGRect+Extensions.swift in Sources */,
+				4935AFB12979B0B60099C73F /* NavigationController.swift in Sources */,
 				D7B5029D26B4B768007908DA /* Puzzle.swift in Sources */,
 				4984D4B627EEF55700136F44 /* Optional+Extensions.swift in Sources */,
 				D7B5029226B4AF4B007908DA /* AppCoordinator.swift in Sources */,
@@ -855,6 +862,7 @@
 				492C65AB289F53CE00E37806 /* MenuViewState.swift in Sources */,
 				D7B502A626B5043A007908DA /* Square.swift in Sources */,
 				490EA61A27FD3611000A206F /* Stack.swift in Sources */,
+				4935AFAF2979B05B0099C73F /* ScanCoordinator.swift in Sources */,
 				D7F7227626B741D3009D92D9 /* ViewState.swift in Sources */,
 				49550A9827C1776A00F5BC96 /* _VisionRequest.swift in Sources */,
 				D7B5028526B260BA007908DA /* PuzzleViewController.swift in Sources */,

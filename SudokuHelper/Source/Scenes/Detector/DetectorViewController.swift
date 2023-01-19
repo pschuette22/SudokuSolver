@@ -22,8 +22,14 @@ final class DetectorViewController: ViewController<DetectorViewControllerState, 
     private var captureButton = UIButton(type: .custom)
     private var cellOverlayViews = [UIView]()
     
-    required init(model: DetectorViewControllerModel = .init()) {
-        super.init(model: model)
+    required init(
+        coordinatorIdentifier: UUID,
+        model: DetectorViewControllerModel = .init()
+    ) {
+        super.init(
+            coordinatorIdentifier: coordinatorIdentifier,
+            model: model
+        )
     }
     
     @available(*, deprecated, message: "init(coder:) has not been implemented")

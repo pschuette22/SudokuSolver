@@ -20,11 +20,7 @@ class MenuViewController: ViewController<MenuViewState, MenuViewControllerModel>
     private lazy var dataSource: DataSource = {
         Self.makeDataSource(for: collectionView)
     }()
-    
-    required init(model: MenuViewControllerModel) {
-        super.init(model: model)
-    }
-    
+
     override func setupSubviews() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
