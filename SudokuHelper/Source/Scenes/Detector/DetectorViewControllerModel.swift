@@ -13,9 +13,36 @@ import CoreGraphics
 import UIKit
 
 final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> {
-    enum Context {
+    enum Context: Equatable {
         case solveInPlace
         case retrieveValues
+        case demoMode
+    }
+    
+    // Demo state?
+    private enum DemoState {
+        case captured(image: CGImage)
+        case parsed
+        case solved(image: CGImage, puzzleDigits: [[(Int, CGRect, SudokuParserTask.CellType)]])
+        case restart
+        
+        var isInParsedState: Bool {
+            switch self {
+            case .parsed:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        var isSolved: Bool {
+            switch self {
+            case .solved:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -26,6 +53,8 @@ final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> 
     private(set) lazy var action: AnyPublisher<Action, Never> = actionSubject.eraseToAnyPublisher()
     private let actionSubject =  PassthroughSubject<Action, Never>()
     private let context: Context
+    private var isInDemoMode: Bool { context == .demoMode }
+    private var demoState: DemoState?
     private var sudokuDetectorTasks = Set<SudokuDetectorTask>()
     private var sudokuParserTask: SudokuParserTask?
     private var detectionStack = [(image: CGImage, expires: Date, location: CGRect, confidence: CGFloat)]()
@@ -42,7 +71,9 @@ final class DetectorViewControllerModel: ViewModel<DetectorViewControllerState> 
 
 extension DetectorViewControllerModel {
     func didTapTryAgainAfterFailure() {
+        demoState = nil
         update {
+            $0.demoButtonText = nil
             $0.toDetecting()
         }
     }
@@ -82,6 +113,48 @@ extension DetectorViewControllerModel {
     }
     
     func didTapCaptureButton() {
+        if isInDemoMode, let demoState {
+            switch demoState {
+            case .captured(let puzzleImage):
+                executeParserTask(in: puzzleImage)
+            case .parsed:
+                break
+            case let .solved(image, puzzleDigits):
+                presentSolution(image: image, puzzleDigits: puzzleDigits)
+            case .restart:
+                self.demoState = nil
+                update {
+                    $0.demoButtonText = nil
+                    $0.toDetecting()
+                }
+            }
+        } else {
+            guard
+                let detectionData = detectionStack.first,
+                detectionData.confidence > 0.8,
+                let croppedPuzzle = detectionData.image.cropping(to: detectionData.location)
+                // TODO: assert we are not currently parsing the sudoku
+            else {
+                return
+            }
+
+            update { state in
+                state.toParsingSudoku(in: detectionData.image)
+            }
+            
+            if isInDemoMode {
+                demoState = .captured(image: croppedPuzzle)
+                update { state in
+                    state.demoButtonText = "Parse Sudoku"
+                    
+                }
+            } else {
+                executeParserTask(in: croppedPuzzle)
+            }
+        }
+    }
+    
+    private func captureImage() {
         guard
             let detectionData = detectionStack.first,
             detectionData.confidence > 0.8,
@@ -95,12 +168,24 @@ extension DetectorViewControllerModel {
             state.toParsingSudoku(in: detectionData.image)
         }
         
-        
+        if isInDemoMode {
+            demoState = .captured(image: croppedPuzzle)
+            update { state in
+                state.demoButtonText = "Parse Sudoku"
+                
+            }
+        } else {
+            executeParserTask(in: croppedPuzzle)
+        }
+    }
+    
+    
+    func executeParserTask(in image: CGImage) {
         sudokuParserTask = SudokuParserTask(
             delegate: self,
-            image: croppedPuzzle
+            image: image
         )
-
+        
         sudokuParserTask?.execute()
     }
     
@@ -184,7 +269,6 @@ extension DetectorViewControllerModel: SudokuDetectorTaskDelegate {
                 expires <= Current.date()
             {
                 self?.detectionStack.removeLast()
-                print("Detection stack, dropping last. \(self?.detectionStack.count ?? 0)")
             }
         }
         let removeAmount = detectionStack.count - 5
@@ -245,7 +329,12 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
                 return DetectorViewControllerState.LocatedCell(frame: $0.location, type: type)
             }
 
-            update { state in
+            demoState = .parsed
+            
+            update { [weak self] state in
+                if self?.isInDemoMode == true {
+                    state.demoButtonText = "Solve Puzzle"
+                }
                 state.toLocatedCells(in: task.image, cells: locatedCells)
             }
 
@@ -263,21 +352,47 @@ extension DetectorViewControllerModel: SudokuParserTaskDelegate {
                 }
             }
             
-            update { state in
-                state.toParsedSudoku(
-                    in: task.image,
-                    withSize: .zero,
-                    locatedCells: cells
-                )
-            }
-            
             switch context {
             case .solveInPlace:
-                solveSudoku(in: task.image, with: cells)
+                presentSolution(image: task.image, puzzleDigits: puzzleDigits)
             case .retrieveValues:
                 let mappedValues = cells.map { $0.map { $0.value }}
                 actionSubject.send(.didScan(values: mappedValues))
+            case .demoMode:
+                demoState = .solved(image: task.image, puzzleDigits: puzzleDigits)
+                break
             }
+        }
+    }
+    
+    private func presentSolution(image: CGImage, puzzleDigits: [[(Int, CGRect, SudokuParserTask.CellType)]]) {
+        let cells: [[DetectorViewControllerState.LocatedCell]] = puzzleDigits.map { row in
+            return row.map { cellData in
+                switch cellData.2 {
+                case .provided:
+                    return .init(frame: cellData.1, type: .filled(cellData.0))
+                case .empty:
+                    return .init(frame: cellData.1, type: .empty)
+                case .unknown, .error:
+                    return .init(frame: cellData.1, type: .error)
+                }
+            }
+        }
+        
+        update { [weak self] state in
+            state.toParsedSudoku(
+                in: image,
+                withSize: .zero,
+                locatedCells: cells
+            )
+            if self?.isInDemoMode == true {
+                state.demoButtonText = "restart"
+            }
+        }
+        solveSudoku(in: image, with: cells)
+        
+        if isInDemoMode {
+            demoState = .restart
         }
     }
     

@@ -35,7 +35,7 @@ class SudokuParserTask {
     )
     private static var parserModel: VNCoreMLModel?
     
-    enum CellType {
+    enum CellType: Equatable {
         case unknown
         case provided
         case empty

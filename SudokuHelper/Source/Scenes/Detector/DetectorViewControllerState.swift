@@ -72,6 +72,10 @@ struct DetectorViewControllerState: ViewState {
     }
     private(set) var context: Context
     
+    // This is getting smelly
+    // keeping for demo, but subclassing might be necessary
+    var demoButtonText: String? = nil
+    
     init(
         context: Context = .detecting
     ) {
@@ -112,7 +116,7 @@ extension DetectorViewControllerState {
              .parsedSudoku,
              .solvedSudoku,
              .failedToFindSolution:
-            return true
+            return demoButtonText.isNil
         }
     }
     
@@ -127,11 +131,15 @@ extension DetectorViewControllerState {
              .parsedSudoku,
              .solvedSudoku,
              .failedToFindSolution:
-            return 0
+            return demoButtonText.isNil ? 0 : 1
         }
     }
     
     var captureButtonText: String {
+        if let demoButtonText {
+            return demoButtonText
+        }
+        
         guard case .detectedSudoku(_, _, _, let confidence) = context else { return "" }
         let percent = Int(confidence * 100)
         return "Capture (\(percent)% confident)"

@@ -54,6 +54,8 @@ private extension AppCoordinator {
                 self?.present(.detector(context: .scanInPuzzle))
             case .didTapSpeedTest:
                 self?.present(.detector(context: .speedTest))
+            case .didTapDemo:
+                self?.present(.detector(context: .demo))
 //            case .didTapDummyPuzzle:
 //                self?.present(.puzzle)
 //            case .didTapSettings:

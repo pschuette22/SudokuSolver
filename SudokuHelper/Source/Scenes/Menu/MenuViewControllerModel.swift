@@ -15,6 +15,7 @@ class MenuViewControllerModel: ViewModel<MenuViewState> {
     enum Action: Hashable {
         case didTapScan
         case didTapSpeedTest
+        case didTapDemo
 //        case didTapSettings
     }
     
@@ -40,6 +41,8 @@ extension MenuViewControllerModel {
             actionSubject.send(.didTapScan)
         case .speedTest:
             actionSubject.send(.didTapSpeedTest)
+        case .demo:
+            actionSubject.send(.didTapDemo)
 //        case .settings:
 //            actionSubject.send(.didTapSettings)
         }

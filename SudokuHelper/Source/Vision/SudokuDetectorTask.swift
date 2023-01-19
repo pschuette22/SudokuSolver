@@ -112,10 +112,7 @@ extension SudokuDetectorTask {
                 switch result {
                 case .success(let objects):
                     guard
-                        objects.count > 0,
-                        let mostConfidentResult = objects
-                            .sorted(by: {$0.confidence > $1.confidence })
-                            .first
+                        let mostConfidentResult = objects.first
                     else {
                         self.state = .idle
                         self.delegate?.sudokuDetectorTask(

@@ -12,6 +12,7 @@ final class ScanCoordinator: NSObject, Coordinator {
     enum Context {
         case speedTest
         case scanInPuzzle
+        case demo
     }
     enum Scene {
         case scanner
@@ -56,6 +57,8 @@ private extension ScanCoordinator {
             context = .retrieveValues
         case .speedTest:
             context = .solveInPlace
+        case .demo:
+            context = .demoMode
         }
 
         let viewModel = DetectorViewControllerModel(context: context)
