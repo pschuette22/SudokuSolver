@@ -1,7 +1,7 @@
 # Sudoku Solver
 iOS Application that solves Sudoku using computer vision and a home cooked solving algorithm.
 
-<video src="Assets/SudokuSolver-SpeedTest.MP4" width="390" height="844" controls></video>
+<video src="Assets/SudokuSolver-SpeedTest.MP4" width="390" height="844"></video>
 
 ## How it works
 
@@ -32,4 +32,4 @@ Local benchmarks have shown solutions being produced for expert level Sudoku in 
 
 Here's an step by step demo of the computer vision
 
-<video src="Assets/SudokuSolver-Demo.MP4" width="390" height="844" controls></video>
+<video src="Assets/SudokuSolver-Demo.MP4" width="390" height="844"></video>
