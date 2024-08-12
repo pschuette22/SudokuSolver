@@ -72,7 +72,7 @@ class PuzzleDigitClassifier {
         
         do {
             if Self.classifierModel.isNil {
-                let digitClassifier = try MNISTClassifier(configuration: config)
+                let digitClassifier = try TunedDigitClassifier(configuration: config)
                 Self.classifierModel = try VNCoreMLModel(for: digitClassifier.model)
             }
             
@@ -198,19 +198,19 @@ class PuzzleDigitClassifier {
         
         var topLeft = (x: image.width / 2, y: image.height / 2)
         var bottomRight = (x: topLeft.x + 1, y: topLeft.y + 1)
-        var hasFoundImage = false
+//        var hasFoundImage = false
         // start with bounding area, look for white pixel
         outerLoop: for _ in 0..<min(topLeft.y, topLeft.x) {
             for y in topLeft.y...bottomRight.y {
                 if matrix[safe: y]?[safe: topLeft.x] == false {
                     topLeft = (x: topLeft.x, y: y)
                     bottomRight = (x: topLeft.x, y: y)
-                    hasFoundImage = true
+//                    hasFoundImage = true
                     break outerLoop
                 } else if matrix[safe: y]?[safe: bottomRight.x] == false {
                     topLeft = (x: bottomRight.x, y: y)
                     bottomRight = (x: bottomRight.x, y: y)
-                    hasFoundImage = true
+//                    hasFoundImage = true
                     break outerLoop
                 }
             }
@@ -219,12 +219,12 @@ class PuzzleDigitClassifier {
                 if matrix[safe: topLeft.y]?[safe: x] == false {
                     topLeft = (x: x, y: topLeft.y)
                     bottomRight = (x: x, y: topLeft.y)
-                    hasFoundImage = true
+//                    hasFoundImage = true
                     break outerLoop
                 } else if matrix[safe: bottomRight.y]?[safe: x] == false {
                     topLeft = (x: x, y: bottomRight.y)
                     bottomRight = (x: x, y: bottomRight.y)
-                    hasFoundImage = true
+//                    hasFoundImage = true
                     break outerLoop
                 }
             }

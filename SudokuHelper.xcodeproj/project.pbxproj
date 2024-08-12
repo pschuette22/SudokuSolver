@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4902C42B2C6A9C4D00671436 /* TunedDigitClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 4902C42A2C6A9C4D00671436 /* TunedDigitClassifier.mlmodel */; };
 		490EA61A27FD3611000A206F /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA61927FD3611000A206F /* Stack.swift */; };
 		490EA61C27FD414D000A206F /* SudokuDetectorTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA61B27FD414D000A206F /* SudokuDetectorTask.swift */; };
 		490EA62027FDD7DD000A206F /* SudokuDetectorTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490EA61F27FDD7DD000A206F /* SudokuDetectorTaskTests.swift */; };
@@ -40,7 +41,6 @@
 		4984D4B427EEE6CA00136F44 /* PureBlackWhiteFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984D4B327EEE6CA00136F44 /* PureBlackWhiteFilter.swift */; };
 		4984D4B627EEF55700136F44 /* Optional+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4984D4B527EEF55600136F44 /* Optional+Extensions.swift */; };
 		49F5E90F27CC07FC00F87294 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E90E27CC07FC00F87294 /* UIImage+Extensions.swift */; };
-		49F5E91827CC7B0100F87294 /* MNISTClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 49F5E91727CC7B0100F87294 /* MNISTClassifier.mlmodel */; };
 		49F5E92127CC7E5200F87294 /* Sudoku9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 49F5E92027CC7E5200F87294 /* Sudoku9.jpg */; };
 		49F5E92327CC7E8900F87294 /* Sudoku1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 49F5E92227CC7E8900F87294 /* Sudoku1.jpg */; };
 		49F7EC8C27F22D4700811AD3 /* imageSlice_6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 49F7EC8627F22D4600811AD3 /* imageSlice_6.jpg */; };
@@ -118,6 +118,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4902C42A2C6A9C4D00671436 /* TunedDigitClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = TunedDigitClassifier.mlmodel; sourceTree = "<group>"; };
 		490EA61927FD3611000A206F /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		490EA61B27FD414D000A206F /* SudokuDetectorTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuDetectorTask.swift; sourceTree = "<group>"; };
 		490EA61F27FDD7DD000A206F /* SudokuDetectorTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuDetectorTaskTests.swift; sourceTree = "<group>"; };
@@ -154,7 +155,6 @@
 		4984D4B327EEE6CA00136F44 /* PureBlackWhiteFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PureBlackWhiteFilter.swift; sourceTree = "<group>"; };
 		4984D4B527EEF55600136F44 /* Optional+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Optional+Extensions.swift"; sourceTree = "<group>"; };
 		49F5E90E27CC07FC00F87294 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
-		49F5E91727CC7B0100F87294 /* MNISTClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MNISTClassifier.mlmodel; sourceTree = "<group>"; };
 		49F5E92027CC7E5200F87294 /* Sudoku9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Sudoku9.jpg; sourceTree = "<group>"; };
 		49F5E92227CC7E8900F87294 /* Sudoku1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Sudoku1.jpg; sourceTree = "<group>"; };
 		49F7EC8627F22D4600811AD3 /* imageSlice_6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = imageSlice_6.jpg; sourceTree = "<group>"; };
@@ -466,7 +466,7 @@
 		D7A5F42E2776328200D97B11 /* CoreML */ = {
 			isa = PBXGroup;
 			children = (
-				49F5E91727CC7B0100F87294 /* MNISTClassifier.mlmodel */,
+				4902C42A2C6A9C4D00671436 /* TunedDigitClassifier.mlmodel */,
 				D7A5F42F2776328F00D97B11 /* SudokuDetector.mlmodel */,
 				49550A9127C16DBB00F5BC96 /* SudokuCellDetector.mlmodel */,
 			);
@@ -849,7 +849,6 @@
 				D7B5029626B4B3DD007908DA /* InitialSceneViewController.swift in Sources */,
 				49550A9227C16DBB00F5BC96 /* SudokuCellDetector.mlmodel in Sources */,
 				D730E8082773BC7000DFCC0E /* NSLayoutConstraint+Extensions.swift in Sources */,
-				49F5E91827CC7B0100F87294 /* MNISTClassifier.mlmodel in Sources */,
 				D7B5024B26B258A6007908DA /* AppDelegate.swift in Sources */,
 				49F5E90F27CC07FC00F87294 /* UIImage+Extensions.swift in Sources */,
 				4984D4B227EEE4FC00136F44 /* PureBlackWhiteShader.metal in Sources */,
@@ -900,6 +899,7 @@
 				49550A9827C1776A00F5BC96 /* _VisionRequest.swift in Sources */,
 				49FDD73929357F9100F24DAA /* InputOrderButton.swift in Sources */,
 				D7B5028526B260BA007908DA /* PuzzleViewController.swift in Sources */,
+				4902C42B2C6A9C4D00671436 /* TunedDigitClassifier.mlmodel in Sources */,
 				4984D4B427EEE6CA00136F44 /* PureBlackWhiteFilter.swift in Sources */,
 				49550A9D27C17D1C00F5BC96 /* UIEdgeInsets+Extensions.swift in Sources */,
 				D7B5024D26B258A6007908DA /* SceneDelegate.swift in Sources */,
@@ -1125,7 +1125,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WLBMJNA5RN;
 				INFOPLIST_FILE = SudokuHelperTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1147,7 +1147,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WLBMJNA5RN;
 				INFOPLIST_FILE = SudokuHelperTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
